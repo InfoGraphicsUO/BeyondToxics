@@ -6,6 +6,8 @@
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.13.0/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.13.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
+  <script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.2.0/web.js"></script>
   <style>
     body { margin: 0; padding: 0; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; }
@@ -14,11 +16,30 @@
 <body>
   <div id="map"></div>
   <script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q';
+    const ACCESS_TOKEN = 'pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q';
+    mapboxgl.accessToken = ACCESS_TOKEN;
     const map = new mapboxgl.Map({
       container: 'map', // container ID
       center: [-123.1, 44.06], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+      maxBounds: [
+        [-124.55417836738366, 41.99161889477894],
+        [-116.46390970729706, 46.26801803457034]
+      ],
       zoom: 8 // starting zoom
+    });
+
+    // Search Box
+    window.addEventListener('load', () => {
+        const searchBox = new MapboxSearchBox();
+        searchBox.accessToken = ACCESS_TOKEN;
+        searchBox.options = {
+            types: 'address,poi',
+            proximity: [-123.1, 44.06],  // TODO: Change proximity based on current map center? (on searchBox click)
+        };
+        searchBox.marker = true;
+        searchBox.mapboxgl = mapboxgl;
+        searchBox.componentOptions = { allowReverse: true, flipCoordinates: true };
+        map.addControl(searchBox, 'top-left');
     });
 
     // Load vector tileset
@@ -38,7 +59,6 @@
           'fill-color': 'orange',
           'fill-opacity': 0.5
         }
-
       });
     });
   </script>
