@@ -11,35 +11,88 @@
   <style>
     body { margin: 0; padding: 0; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+    /*Development panel to be removed for production*/
+    .dev-overlay {
+      font:
+        12px/20px 'Helvetica Neue',
+        Arial,
+        Helvetica,
+        sans-serif;
+      position: absolute;
+      width: 200px;
+      top: 0;
+      right: 0;
+      padding: 10px;
+    }
+
+    .dev-overlay .dev-overlay-inner {
+      background-color: #fff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .dev-overlay-inner h1 {
+      font-size: 15px;
+      font-weight: bolder;
+
+    }
+
+    .dev-overlay-inner fieldset {
+      display: flex;
+      justify-content: space-between;
+      border: none;
+    }
+
+    .dev-overlay-inner label {
+      margin-right: 5px;
+    }
+
   </style>
 </head>
 <body>
   <div id="map"></div>
+
+  <div class="dev-overlay top">
+    <div class="dev-overlay-inner">
+      <h1>Development Options</h1>
+      <fieldset>
+        <label for="showBoundsMarkers">Show Boundary Markers</label>
+        <input type="checkbox" id="showBoundsMarkers" checked>
+      </fieldset>
+    </div>
+  </div>
+
   <script>
+    const bounds = [
+      [-128.2951742043245, 41.27570884209203], // Southwest (lng,lat)
+      [-113.36579758866097, 46.46271965782327]  // Northeast (lng,lat)
+    ];
+
     const ACCESS_TOKEN = 'pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q';
     mapboxgl.accessToken = ACCESS_TOKEN;
     const map = new mapboxgl.Map({
       container: 'map', // container ID
       center: [-123.1, 44.06], // starting position [lng, lat]. Note that lat must be set between -90 and 90
-      maxBounds: [
-        [-124.55417836738366, 41.99161889477894],
-        [-116.46390970729706, 46.26801803457034]
-      ],
+      maxBounds: bounds,
       zoom: 8 // starting zoom
     });
 
     // Search Box
     window.addEventListener('load', () => {
-        const searchBox = new MapboxSearchBox();
-        searchBox.accessToken = ACCESS_TOKEN;
-        searchBox.options = {
-            types: 'address,poi',
-            proximity: [-123.1, 44.06],  // TODO: Change proximity based on current map center? (on searchBox click)
-        };
-        searchBox.marker = true;
-        searchBox.mapboxgl = mapboxgl;
-        searchBox.componentOptions = { allowReverse: true, flipCoordinates: true };
-        map.addControl(searchBox, 'top-left');
+      const searchBox = new MapboxSearchBox();
+      searchBox.accessToken = ACCESS_TOKEN;
+      searchBox.options = {
+        types: 'address,poi',
+        proximity: map.getCenter(),  // Bias search results to locations closer to current center
+        bbox: bounds
+      };
+      searchBox.marker = true;
+      searchBox.mapboxgl = mapboxgl;
+      searchBox.componentOptions = { allowReverse: true, flipCoordinates: true };
+      map.addControl(searchBox, 'top-left');
     });
 
     // Load vector tileset
@@ -61,6 +114,29 @@
         }
       });
     });
+
+    // Debug/Dev Boundary Markers
+    const markersw = new mapboxgl.Marker()  // Southwest corner
+      .setLngLat(bounds[0])
+      .addTo(map);
+    const markerne = new mapboxgl.Marker()  // Northeast corner
+      .setLngLat(bounds[1])
+      .addTo(map);
+
+    let markersVisible = true;
+    function showBoundsMarkers() {
+      if (markersVisible) {
+        markersw.getElement().style.display = 'none';
+        markerne.getElement().style.display = 'none';
+      } else {
+        markersw.getElement().style.display = '';
+        markerne.getElement().style.display = '';
+      }
+      markersVisible = !markersVisible;
+    }
+
+    document.getElementById('showBoundsMarkers')
+      .addEventListener('change', showBoundsMarkers)
   </script>
 
 </body>
