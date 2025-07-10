@@ -2,23 +2,40 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Display a map on a webpage</title>
+  <title>Beyond Toxics FERNS Pesticides</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <!-- Core Mapbox -->
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.13.0/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.13.0/mapbox-gl.js"></script>
+  <!-- Mapbox Search Box -->
   <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
   <script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.2.0/web.js"></script>
+  <!-- Beyond Toxics Font (proxima nova) -->
+  <link rel="stylesheet" href="https://use.typekit.net/acr2rva.css">
   <style>
     body { margin: 0; padding: 0; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
+    /*Tooltips*/
+    .mapboxgl-popup-content {
+      font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 10px;
+    }
+
+    /*Search Box*/
+    mapbox-search-box, mapbox-search-box *,
+    mapbox-search-box input, mapbox-search-box input *,
+    mapbox-search-listbox, mapbox-search-listbox *
+    {
+      font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+    }
+
     /*Development panel to be removed for production*/
     .dev-overlay {
-      font:
-        12px/20px 'Helvetica Neue',
-        Arial,
-        Helvetica,
-        sans-serif;
+      font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+      font-size: 12px;
       position: absolute;
       width: 200px;
       top: 0;
@@ -49,7 +66,6 @@
     .dev-overlay-inner label {
       margin-right: 5px;
     }
-
   </style>
 </head>
 <body>
@@ -104,7 +120,7 @@
 
       // add polygon layer from tileset
       map.addLayer({
-        id: 'custom-fill-layer',
+        id: 'pesticides_2022',
         source: 'custom-tileset',
         'source-layer': 'FERNS_Pesticides_2022-6yzkfk',
         type: 'fill',
@@ -112,6 +128,44 @@
           'fill-color': 'orange',
           'fill-opacity': 0.5
         }
+      });
+
+      map.on('click', 'pesticides_2022', (e) => {
+        const poly = e.features[0];
+        const methods = poly.properties.Methods;
+        const chemicals = poly.properties.Chemicals;
+        const startDateRaw = poly.properties.StartDate;
+        const endDateRaw = poly.properties.EndDate;
+        const owner = poly.properties.LandOwners;
+
+        // Helper function to format YYYYMMDD to MM/DD/YYYY
+        function formatDate(dateStr) {
+          if (!dateStr || dateStr.length !== 8) return dateStr;
+          const year = dateStr.slice(0, 4);
+          const month = dateStr.slice(4, 6);
+          const day = dateStr.slice(6, 8);
+          return `${month}/${day}/${year}`;
+        }
+        const startDate = formatDate(startDateRaw);
+        const endDate = formatDate(endDateRaw);
+
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(`
+            <p><strong>Method of Presticide Application:</strong><br>${methods}</p>
+            <p><strong>Chemicals Applied:</strong><br>${chemicals}</p>
+            <p><strong>Time Range of Application:</strong><br>${startDate} - ${endDate}</p>
+            <p><strong>Owner of Forest Stand:</strong><br>${owner}</p>
+            `)
+          .addTo(map);
+      });
+
+      map.on('mouseenter', 'pesticides_2022', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+
+      map.on('mouseleave', 'pesticides_2022', () => {
+        map.getCanvas().style.cursor = '';
       });
     });
 
