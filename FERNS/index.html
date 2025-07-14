@@ -22,6 +22,24 @@
       font-size: 13px;
       line-height: 1.5;
       padding: 10px;
+      color: #333;
+    }
+
+    .mapboxgl-popup-content .link-group {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .mapboxgl-popup-content .link-group a {
+      text-decoration: none;
+      color: #0066cc;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .mapboxgl-popup-content .link-group a:hover {
+      color: #004999;
+      text-decoration: underline;
     }
 
     /*Search Box*/
@@ -177,6 +195,8 @@
         const startDateRaw = poly.properties.StartDate;
         const endDateRaw = poly.properties.EndDate;
         const owner = poly.properties.LandOwners;
+        const summary = poly.properties.SummaryLin;
+        const pdf = poly.properties.PDFLink;
 
         // Helper function to format YYYYMMDD to MM/DD/YYYY
         function formatDate(dateStr) {
@@ -196,6 +216,13 @@
             <p><strong>Chemicals Applied:</strong><br>${chemicals}</p>
             <p><strong>Time Range of Application:</strong><br>${startDate} - ${endDate}</p>
             <p><strong>Owner of Forest Stand:</strong><br>${owner}</p>
+            <div id="links">
+              <p><strong>Links:</strong><br>
+              <div class="link-group">
+                <a href="${summary}" target="_blank">Summary</a>
+                <a href="${pdf}" target="_blank">PDF</a></p>
+              </div>
+            </div>
             `)
           .addTo(map);
       });
