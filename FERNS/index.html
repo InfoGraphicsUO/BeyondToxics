@@ -54,7 +54,6 @@
     .dev-overlay-inner h1 {
       font-size: 15px;
       font-weight: bolder;
-
     }
 
     .dev-overlay-inner fieldset {
@@ -65,6 +64,21 @@
 
     .dev-overlay-inner label {
       margin-right: 5px;
+    }
+
+    #basemaps h2 {
+      font-size: 12px;
+      font-weight: bolder;
+    }
+
+    #basemaps-inner {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #basemaps-inner label {
+      display: inline-flex;
+      align-items: center;
     }
   </style>
 </head>
@@ -78,6 +92,31 @@
         <label for="showBoundsMarkers">Show Boundary Markers</label>
         <input type="checkbox" id="showBoundsMarkers" checked>
       </fieldset>
+      <div id="basemaps">
+        <h2>Basemap</h2>
+        <div id="basemaps-inner">
+          <div>
+            <input id="standard-satellite" type="radio" name="rtoggle" value="satellite">
+            <label for="standard-satellite">standard-satellite</label>
+          </div>
+          <div>
+            <input id="light-v11" type="radio" name="rtoggle" value="light">
+            <label for="light-v11">light</label>
+          </div>
+          <div>
+            <input id="dark-v11" type="radio" name="rtoggle" value="dark">
+            <label for="dark-v11">dark</label>
+          </div>
+          <div>
+            <input id="standard" type="radio" name="rtoggle" value="streets">
+            <label for="standard">streets</label>
+          </div>
+          <div>
+            <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors" checked="checked">
+            <label for="outdoors-v12">outdoors</label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -91,6 +130,7 @@
     mapboxgl.accessToken = ACCESS_TOKEN;
     const map = new mapboxgl.Map({
       container: 'map', // container ID
+      style: 'mapbox://styles/mapbox/outdoors-v12',  // default style
       center: [-123.1, 44.06], // starting position [lng, lat]. Note that lat must be set between -90 and 90
       maxBounds: bounds,
       zoom: 8 // starting zoom
@@ -112,7 +152,7 @@
     });
 
     // Load vector tileset
-    map.on('load', () => {
+    function addSourceAndLayer() {
       map.addSource('custom-tileset', {
         type: 'vector',
         url: 'mapbox://infographics.blqieafd'
@@ -167,6 +207,10 @@
       map.on('mouseleave', 'pesticides_2022', () => {
         map.getCanvas().style.cursor = '';
       });
+    }
+
+    map.on('style.load', () => {
+      addSourceAndLayer();
     });
 
     // Debug/Dev Boundary Markers
@@ -191,6 +235,17 @@
 
     document.getElementById('showBoundsMarkers')
       .addEventListener('change', showBoundsMarkers)
+
+    // Basemap Picker
+    const layerList = document.getElementById('basemaps');
+    const inputs = layerList.getElementsByTagName('input');
+
+    for (const input of inputs) {
+      input.onclick = (layer) => {
+        const layerId = layer.target.id;
+        map.setStyle('mapbox://styles/mapbox/' + layerId);
+      };
+    }
   </script>
 
 </body>
