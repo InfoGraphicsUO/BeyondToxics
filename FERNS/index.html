@@ -179,11 +179,22 @@
       [-113.36579758866097, 46.46271965782327]  // Northeast (lng,lat)
     ];
 
+    // get selected basemap style from basemap selection
+    const basemapInputs = document.querySelectorAll('#basemaps-inner input');
+    let basemapStyleId = 'outdoors-v12';  // default basemap
+
+    for (const basemap of basemapInputs) {
+      if (basemap.checked) {
+        selectedStyleId = basemap.id;
+        break;
+      }
+    }
+
     const ACCESS_TOKEN = 'pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q';
     mapboxgl.accessToken = ACCESS_TOKEN;
     const map = new mapboxgl.Map({
       container: 'map', // container ID
-      style: 'mapbox://styles/mapbox/outdoors-v12',  // default style
+      style: 'mapbox://styles/mapbox/' + selectedStyleId,
       center: [-123.1, 44.06], // starting position [lng, lat]. Note that lat must be set between -90 and 90
       maxBounds: bounds,
       zoom: 8 // starting zoom
