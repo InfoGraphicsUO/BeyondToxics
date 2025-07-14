@@ -28,6 +28,10 @@
       color: #333;
     }
 
+    .mapboxgl-popup-content p {
+      margin-bottom: 0;
+    }
+
     .mapboxgl-popup-content .link-group {
       display: flex;
       justify-content: space-between;
@@ -179,7 +183,7 @@
       [-113.36579758866097, 46.46271965782327]  // Northeast (lng,lat)
     ];
 
-    // get selected basemap style from basemap selection
+    // Map polls basemap widget to get selected basemap style
     const basemapInputs = document.querySelectorAll('#basemaps-inner input');
     let basemapStyleId = 'outdoors-v12';  // default basemap
 
