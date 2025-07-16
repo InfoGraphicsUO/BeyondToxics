@@ -122,6 +122,8 @@
 <body>
   <div id="map"></div>
   <!-- Year Selection Dropdown not currently functional -->
+  <!-- TODO: Year Range? Ex: from 2022 to 2024 -->
+  <!-- TODO: More filters? by method, chemical, owner -->
   <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
       Filter by Year
@@ -239,12 +241,13 @@
       });
 
       map.on('click', 'pesticides_2022', (e) => {
+        // TODO: Check that owner var is correct
         const poly = e.features[0];
         const methods = poly.properties.Methods;
         const chemicals = poly.properties.Chemicals;
         const startDateRaw = poly.properties.StartDate;
         const endDateRaw = poly.properties.EndDate;
-        const owner = poly.properties.LandOwners;
+        const owner = poly.properties.Landowner_;
         const summary = poly.properties.SummaryLin;
         const pdf = poly.properties.PDFLink;
 
@@ -259,13 +262,22 @@
         const startDate = formatDate(startDateRaw);
         const endDate = formatDate(endDateRaw);
 
+        function displayValue(value) {
+          if (!value) return "Not Available";
+
+          return value
+            .replace(/^(\.\s*)+/, '')  // Remove leading ".. ", ". .", etc in landowners
+            .replace(/,\s*None/gi, '')  // Remove all ", None" (case-insensitive) in chemicals
+            .trim() || 'Not Available'; // Trim whitespace or return NA if cleaned str is empty
+        }
+
         new mapboxgl.Popup()
           .setLngLat(e.lngLat)
           .setHTML(`
-            <p><strong>Method of Presticide Application:</strong><br>${methods}</p>
-            <p><strong>Chemicals Applied:</strong><br>${chemicals}</p>
+            <p><strong>Method of Presticide Application:</strong><br>${displayValue(methods)}</p>
+            <p><strong>Chemicals Applied:</strong><br>${displayValue(chemicals)}</p>
             <p><strong>Time Range of Application:</strong><br>${startDate} - ${endDate}</p>
-            <p><strong>Owner of Forest Stand:</strong><br>${owner}</p>
+            <p><strong>Owner of Forest Stand:</strong><br>${displayValue(owner)}</p>
             <div id="links">
               <p><strong>Links:</strong><br>
               <div class="link-group">
@@ -299,6 +311,13 @@
       .addTo(map);
 
     let markersVisible = true;
+    // due to session caching: if unchecked on page load, hide markers first
+    if (!document.getElementById('showBoundsMarkers').checked) {
+      markersVisible = false;
+      markersw.getElement().style.display = 'none';
+      markerne.getElement().style.display = 'none';
+    }
+
     function showBoundsMarkers() {
       if (markersVisible) {
         markersw.getElement().style.display = 'none';
