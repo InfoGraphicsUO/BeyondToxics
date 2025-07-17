@@ -285,7 +285,8 @@
           return value
             .replace(/^(\.\s*)+/, '')  // Remove leading ".. ", ". .", etc in landowners
             .replace(/,\s*None/gi, '')  // Remove all ", None" (case-insensitive) in chemicals
-            .trim() || 'Not Available'; // Trim whitespace or return NA if cleaned str is empty
+            .trim()  // Trim whitespace
+            .replace(/,$/, '') || 'Not Available';  // Remove trailing comma or return NA if cleaned str is empty
         }
 
         new mapboxgl.Popup()
