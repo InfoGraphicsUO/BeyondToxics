@@ -222,6 +222,7 @@
     });
 
     // Load vector tileset
+    let hoveredPolygonId = null;
     function addSourceAndLayer() {
       map.addSource('custom-tileset', {
         type: 'vector',
@@ -230,17 +231,33 @@
 
       // add polygon layer from tileset
       map.addLayer({
-        id: 'pesticides_2022',
+        id: 'pesticides_2022-fill',
         source: 'custom-tileset',
         'source-layer': 'FERNS_Pesticides_2022-6yzkfk',
         type: 'fill',
         paint: {
           'fill-color': 'orange',
-          'fill-opacity': 0.5
+          'fill-opacity': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            1,
+            0.5
+          ]
+        }
+      });
+      map.addLayer({
+        id: 'pesticides_2022-stroke',
+        source: 'custom-tileset',
+        'source-layer': 'FERNS_Pesticides_2022-6yzkfk',
+        type: 'line',
+        layout: {},
+        paint: {
+          'line-color': 'orange',
+          'line-width': 2
         }
       });
 
-      map.on('click', 'pesticides_2022', (e) => {
+      map.on('click', 'pesticides_2022-fill', (e) => {
         // TODO: Check that owner var is correct
         const poly = e.features[0];
         const methods = poly.properties.Methods;
@@ -289,12 +306,34 @@
           .addTo(map);
       });
 
-      map.on('mouseenter', 'pesticides_2022', () => {
+      map.on('mousemove', 'pesticides_2022-fill', (e) => {
         map.getCanvas().style.cursor = 'pointer';
+
+        if (e.features.length > 0) {
+          if (hoveredPolygonId !== null) {
+            map.setFeatureState(
+              { source: 'custom-tileset', sourceLayer: 'FERNS_Pesticides_2022-6yzkfk', id: hoveredPolygonId },
+              { hover: false }
+            );
+          }
+          hoveredPolygonId = e.features[0].id;
+          map.setFeatureState(
+            { source: 'custom-tileset', sourceLayer: 'FERNS_Pesticides_2022-6yzkfk', id: hoveredPolygonId },
+            { hover: true }
+          );
+        }
       });
 
-      map.on('mouseleave', 'pesticides_2022', () => {
+      map.on('mouseleave', 'pesticides_2022-fill', () => {
         map.getCanvas().style.cursor = '';
+
+        if (hoveredPolygonId !== null) {
+          map.setFeatureState(
+            { source: 'custom-tileset', sourceLayer: 'FERNS_Pesticides_2022-6yzkfk', id: hoveredPolygonId },
+            { hover: false }
+          );
+        }
+        hoveredPolygonId = null;
       });
     }
 
