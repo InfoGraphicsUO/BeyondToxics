@@ -211,7 +211,7 @@
       const searchBox = new MapboxSearchBox();
       searchBox.accessToken = ACCESS_TOKEN;
       searchBox.options = {
-        types: 'city,address,poi',
+        types: 'city,locality,address,poi',
         proximity: map.getCenter(),  // Bias search results to locations closer to current center
         bbox: bounds
       };
