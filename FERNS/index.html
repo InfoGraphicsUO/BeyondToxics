@@ -18,6 +18,7 @@
   <style>
     body { margin: 0; padding: 0; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    #insetMap { position: absolute; top: 0; right: 0; width: 20%; height: 20%; z-index: 2 }
 
     /*Tooltips*/
     .mapboxgl-popup-content {
@@ -143,6 +144,7 @@
 </head>
 <body>
   <div id="map"></div>
+  <div id="insetMap"></div>
   <!-- Year Selection Dropdown not currently functional -->
   <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -230,6 +232,21 @@
       center: defaultCenter, // starting position [lng, lat]. Note that lat must be set between -90 and 90
       maxBounds: bounds,
       zoom: defaultZoom // starting zoom
+    });
+
+    const insetMap = new mapboxgl.Map({
+      container: 'insetMap',
+      style: 'mapbox://styles/mapbox/' + selectedStyleId,
+      center: defaultCenter,
+      interactive: false
+    });
+
+    map.on('move', () => {
+      const mainMapCenter = map.getCenter();
+      const mainMapBounds = map.getBounds();
+
+      insetMap.setCenter(mainMapCenter);
+      insetMap.setZoom(map.getZoom() - 4)
     });
 
     // Navigation Control (Zoom +/-)
