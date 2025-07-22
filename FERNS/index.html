@@ -66,6 +66,28 @@
       font-size: 12px;
     }
 
+    .resetExtent {
+      position: absolute;
+      bottom: 126px;
+      left: 10px;
+      margin-bottom: 10px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 0 0 2px #0000001a;
+      height: 29px;
+      width: 29px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .resetExtent img {
+      height: 20px;
+      width: 20px;
+      object-fit: contain;
+      color: rgb(33, 37, 41);
+    }
+
     /*Development panel to be removed for production*/
     .dev-overlay {
       font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
@@ -122,8 +144,6 @@
 <body>
   <div id="map"></div>
   <!-- Year Selection Dropdown not currently functional -->
-  <!-- TODO: Year Range? Ex: from 2022 to 2024 -->
-  <!-- TODO: More filters? by method, chemical, owner -->
   <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
       Filter by Year
@@ -144,6 +164,9 @@
       <li><a class="dropdown-item" href="#">2014</a></li>
     </ul>
   </div>
+  <button class="resetExtent" id="resetViewButton">
+    <img src="../icons/Expand_Icon_L.svg" alt="Reset view button" height="24px" width="24px">
+  </button>
   <div class="dev-overlay">
     <div class="dev-overlay-inner">
       <h1>Development Options</h1>
@@ -180,15 +203,18 @@
   </div>
 
   <script>
+    // Map Default Extent config
     const bounds = [
       [-128.2951742043245, 41.27570884209203], // Southwest (lng,lat)
       [-113.36579758866097, 46.46271965782327]  // Northeast (lng,lat)
     ];
+    const defaultCenter = [-123.1, 44.06];  // Eugene
+    const defaultZoom = 8;
+
 
     // Map polls basemap widget to get selected basemap style
     const basemapInputs = document.querySelectorAll('#basemaps-inner input');
     let basemapStyleId = 'outdoors-v12';  // default basemap
-
     for (const basemap of basemapInputs) {
       if (basemap.checked) {
         selectedStyleId = basemap.id;
@@ -201,9 +227,22 @@
     const map = new mapboxgl.Map({
       container: 'map', // container ID
       style: 'mapbox://styles/mapbox/' + selectedStyleId,
-      center: [-123.1, 44.06], // starting position [lng, lat]. Note that lat must be set between -90 and 90
+      center: defaultCenter, // starting position [lng, lat]. Note that lat must be set between -90 and 90
       maxBounds: bounds,
-      zoom: 8 // starting zoom
+      zoom: defaultZoom // starting zoom
+    });
+
+    // Navigation Control (Zoom +/-)
+    const nav = new mapboxgl.NavigationControl();
+    map.addControl(nav, 'bottom-left')
+
+    // Reset Extent
+    document.getElementById('resetViewButton').addEventListener('click', () => {
+      map.flyTo({
+        center: defaultCenter,
+        zoom: defaultZoom,
+        essential: true
+      });
     });
 
     // Search Box
@@ -211,7 +250,7 @@
       const searchBox = new MapboxSearchBox();
       searchBox.accessToken = ACCESS_TOKEN;
       searchBox.options = {
-        types: 'city,locality,address,poi',
+        types: 'city,locality,address',
         proximity: map.getCenter(),  // Bias search results to locations closer to current center
         bbox: bounds
       };
@@ -258,7 +297,6 @@
       });
 
       map.on('click', 'pesticides_2022-fill', (e) => {
-        // TODO: Check that owner var is correct
         const poly = e.features[0];
         const methods = poly.properties.Methods;
         const chemicals = poly.properties.Chemicals;
