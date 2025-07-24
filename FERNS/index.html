@@ -76,25 +76,22 @@
     }
 
     .resetExtent {
-      position: absolute;
-      bottom: 126px;
-      left: 10px;
-      margin-bottom: 10px;
       background: #fff;
       border-radius: 4px;
       box-shadow: 0 0 0 2px #0000001a;
       height: 29px;
       width: 29px;
-      display: flex;
+      display: flex !important;
       align-items: center;
       justify-content: center;
     }
 
     .resetExtent img {
-      height: 20px;
-      width: 20px;
-      object-fit: contain;
+      height: 18px;
+      width: 18px;
+      object-fit: scale-down;
       color: rgb(33, 37, 41);
+      line-height: 0;
     }
 
     /*Development panel to be removed for production*/
@@ -174,9 +171,6 @@
       <li><a class="dropdown-item" href="#">2014</a></li>
     </ul>
   </div>
-  <button class="resetExtent" id="resetViewButton">
-    <img src="../icons/Expand_Icon_L.svg" alt="Reset view button" height="24px" width="24px">
-  </button>
   <div class="dev-overlay">
     <div class="dev-overlay-inner">
       <h1>Development Options</h1>
@@ -325,19 +319,50 @@
     // Inset Map
     insetMap(map, insetBackgroundPath, insetWidth, insetHeight);
 
-
+    // [Bottom Left Mapbox Group]
     // Navigation Control (Zoom +/-)
     const nav = new mapboxgl.NavigationControl();
-    map.addControl(nav, 'bottom-left')
+    map.addControl(nav, 'bottom-left');
 
-    // Reset Extent
-    document.getElementById('resetViewButton').addEventListener('click', () => {
-      map.flyTo({
-        center: defaultCenter,
-        zoom: defaultZoom,
-        essential: true
-      });
-    });
+    // Reset Extent Class
+    class ResetExtentControl {
+      onAdd(map) {
+        this._map = map;  // add to map instance
+        // Create new container
+        this.container = document.createElement('div');
+        this.container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+
+        // Create button within container
+        this.button = document.createElement('button');
+        this.button.className = 'resetExtent';
+        this.button.type = 'button';
+        this.button.title = 'Reset Extent';
+        // Add icon to inside button
+        this.button.innerHTML = '<img src="../icons/Expand_Icon_L.svg" alt="Reset view button" height="18px" width="18px">';
+
+        // Add click event listener to button
+        this.button.addEventListener('click', () => {
+          this.map.flyTo({
+            center: defaultCenter,
+            zoom: defaultZoom,
+            essential: true
+          });
+        });
+
+        // Append button to container
+        this.container.appendChild(this.button);
+        return this.container;
+      }
+
+      onRemove() {
+        // Remove the container from the map
+        this.container.parentNode.removeChild(this.container);
+        this._map = undefined;
+      }
+    }
+    // Add Reset Extent Control to map
+    map.addControl(new ResetExtentControl(), 'bottom-left');
+
 
     // Search Box
     window.addEventListener('load', () => {
