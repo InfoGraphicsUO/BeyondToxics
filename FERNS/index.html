@@ -16,11 +16,17 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Inset Map -->
-  <script type="text/javascript" src="mapboxgl-control-minimap.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
   <style>
     body { margin: 0; padding: 0; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-    /*#insetMap { position: absolute; top: 0; right: 0; width: 20%; height: 20%; z-index: 2 }*/
+    #inset-map-container {
+      position: absolute;
+      bottom: 20px;
+      right: 10px;
+      margin-bottom: 10px;
+    }
 
     /*Tooltips*/
     .mapboxgl-popup-content {
@@ -96,8 +102,8 @@
       font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
       font-size: 12px;
       position: absolute;
-      bottom: 0;
-      right: 0;
+      bottom: 20px;
+      left: 50px;
       width: 200px;
       padding: 10px;
     }
@@ -146,6 +152,7 @@
 </head>
 <body>
   <div id="map"></div>
+  <div id="inset-map-container"></div>
   <!-- Year Selection Dropdown not currently functional -->
   <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -213,6 +220,10 @@
     ];
     const defaultCenter = [-123.1, 44.06];  // Eugene
     const defaultZoom = 8;
+    // Inset Map Settings
+    const insetBackgroundPath = 'oregon.geojson';
+    const insetWidth = 204;
+    const insetHeight = 153;
 
 
     // Map polls basemap widget to get selected basemap style
@@ -236,17 +247,87 @@
       zoom: defaultZoom // starting zoom
     });
 
-    // Inset Map
-    const insetMap = new mapboxgl.Minimap({
-      center: [-120.83, 43.87],
-      zoom: defaultZoom-4,
-      zoomLevels: [],
-      style: 'mapbox://styles/mapbox/' + selectedStyleId,
-    });
+    // Create Inset Map Function
+    function insetMap(map, path, width, height) {
+      function getBoundingBox(map) {
+        if (!map) return undefined;
 
-    map.on('load', function () {
-      map.addControl(insetMap, 'top-right');
-    });
+        const canvas = map.getCanvas();
+        const canvasWidth = canvas.width || parseFloat(canvas.style.width);
+        const canvasHeight = canvas.height || parseFloat(canvas.style.height);
+        const vertices = [];
+
+        // Get the four corners of the map canvas
+        vertices.push([0, 0]); // top-left
+        vertices.push([canvasWidth, 0]); // top-right
+        vertices.push([canvasWidth, canvasHeight]); // bottom-right
+        vertices.push([0, canvasHeight]); // bottom-left
+
+        // Convert pixel coordinates to geographic coordinates
+        const geographicCoordinates = vertices.map((pixelCoord) =>
+          map.unproject(pixelCoord)
+        );
+        // Close the polygon by repeating the first point
+        geographicCoordinates.push(geographicCoordinates[0]);
+
+        return {
+          type: "Feature",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              geographicCoordinates.map((coord) => [coord.lng, coord.lat])
+            ]
+          }
+        };
+      }
+
+      // Load Oregon GeoJSON
+      fetch(path)
+        .then(response => response.json())
+        .then(oregonGeojson => {
+          // Set up D3 projection
+          const projection = d3.geoConicConformal()
+            .parallels([43, 45.5]) // Standard parallels for Oregon
+            .rotate([120.5, 0])      // Center longitude (negative of Oregon's central meridian)
+            .center([0, 44])       // Center latitude of Oregon
+            .fitSize([width, height], oregonGeojson);
+          const path = d3.geoPath(projection);
+
+          // Draw the Oregon outline
+          const svg = d3.select("#inset-map-container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+          svg.append("path")
+            .datum(oregonGeojson)
+            .attr("d", path)
+            .attr("stroke", "black")
+            .attr("fill", "white")
+            .attr("fill-opacity", 0.6);
+
+          // Function to update bounding box
+          function updateInsetBox() {
+            const bounds = getBoundingBox(map); // Use your adapted _getBoundingBox function
+            svg.selectAll(".inset-box").remove();
+            svg.append("path")
+              .datum(bounds)
+              .attr("class", "inset-box")
+              .attr("d", path)
+              .attr("stroke", "red")
+              .attr("fill", "red")
+              .attr("fill-opacity", 0.1);
+          }
+
+          // Initial draw
+          updateInsetBox();
+
+          // Update on map move
+          map.on('move', updateInsetBox);
+      });
+    }
+    // Inset Map
+    insetMap(map, insetBackgroundPath, insetWidth, insetHeight);
 
 
     // Navigation Control (Zoom +/-)
