@@ -69,8 +69,9 @@
       width: 204px;
       margin-top: 10px;
       margin-right: 10px;
-      padding: 22px 10px 10px;
+      padding: 10px;
       font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+      line-height: normal;
       right: 0;
       top: 0;
       position: absolute;
@@ -81,14 +82,17 @@
 
     .sliders_control {
       position: relative;
-      min-height: 12px;
+      margin-top: 12px;
+      margin-bottom: 13px;
     }
 
     .form_control {
       position: relative;
       display: flex;
       justify-content: space-between;
-      font-size: 18px;
+      padding-top: 5px;
+      font-size: 15px;
+      line-height: normal;
       color: #635a5a;
     }
 
@@ -125,9 +129,9 @@
 
     input[type="number"] {
       color: #8a8383;
-      width: 65px;
+      width: auto;
       height: auto;
-      font-size: 16px;
+      font-size: 12px;;
       border: none;
     }
 
@@ -238,6 +242,7 @@
   <div id="inset-map-container"></div>
   <!-- Year Selection controller not currently functional -->
   <div class="range_container">
+    <h1><strong>Year Selection</strong></h1>
     <div class="sliders_control">
      <input id="fromSlider" type="range" value="2020" min="2014" max="2024"/>
      <input id="toSlider" type="range" value="2022" min="2014" max="2024"/>
@@ -651,7 +656,7 @@
         ${sliderColor} 100%)`;
     }
 
-    fillSlider(fromSlider, toSlider, '#C6C6C6', '#25daa5', toSlider);
+    fillSlider(fromSlider, toSlider, '#C6C6C6', '#bfe172', toSlider);
     setToggleAccessible(toSlider);
 
     function getParsed(currentFrom, currentTo) {
@@ -662,7 +667,7 @@
 
     function controlFromSlider(fromSlider, toSlider, fromInput) {
       const [from, to] = getParsed(fromSlider, toSlider);
-      fillSlider(fromSlider, toSlider, '#C6C6C6', '#25daa5', toSlider);
+      fillSlider(fromSlider, toSlider, '#C6C6C6', '#bfe172', toSlider);
       if (from > to) {
         fromSlider.value = to;
         fromInput.value = to;
@@ -674,7 +679,7 @@
 
     function controlToSlider(fromSlider, toSlider, toInput) {
       const [from, to] = getParsed(fromSlider, toSlider);
-      fillSlider(fromSlider, toSlider, '#C6C6C6', '#25daa5', toSlider);
+      fillSlider(fromSlider, toSlider, '#C6C6C6', '#bfe172', toSlider);
       setToggleAccessible(toSlider);
       if (from <= to) {
         toSlider.value = to;
@@ -688,7 +693,7 @@
 
     function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
       const [from, to] = getParsed(fromInput, toInput);
-      fillSlider(fromInput, toInput, '#C6C6C6', '#25daa5', controlSlider);
+      fillSlider(fromInput, toInput, '#C6C6C6', '#bfe172', controlSlider);
       if (from > to) {
         fromSlider.value = to;
         fromInput.value = to;
@@ -700,7 +705,7 @@
 
     function controlToInput(toSlider, fromInput, toInput, controlSlider) {
       const [from, to] = getParsed(fromInput, toInput);
-      fillSlider(fromInput, toInput, '#C6C6C6', '#25daa5', controlSlider);
+      fillSlider(fromInput, toInput, '#C6C6C6', '#bfe172', controlSlider);
       setToggleAccessible(toInput);
       if (from <= to) {
         toSlider.value = to;
