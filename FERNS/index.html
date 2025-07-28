@@ -551,8 +551,22 @@
           .addTo(map);
       });
 
+      let tooltip;
+
       map.on('mousemove', 'pesticides_2022-fill', (e) => {
         map.getCanvas().style.cursor = 'pointer';
+
+        if (!tooltip) {
+          tooltip = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false,
+          });
+        }
+        const coords = e.lngLat;
+        tooltip
+          .setLngLat(coords)
+          .setHTML('<div style="font-size:12px;">Click for more information</div>')
+          .addTo(map);
 
         if (e.features.length > 0) {
           if (hoveredPolygonId !== null) {
@@ -571,6 +585,11 @@
 
       map.on('mouseleave', 'pesticides_2022-fill', () => {
         map.getCanvas().style.cursor = '';
+
+        if (tooltip) {
+          tooltip.remove();
+          tooltip = null;
+        }
 
         if (hoveredPolygonId !== null) {
           map.setFeatureState(
