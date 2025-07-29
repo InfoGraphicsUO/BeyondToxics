@@ -516,52 +516,150 @@
       });
 
       map.on('click', 'pesticides_2022-fill', (e) => {
-        const poly = e.features[0];
-        const methods = poly.properties.Methods;
-        const chemicals = poly.properties.Chemicals;
-        const startDateRaw = poly.properties.StartDate;
-        const endDateRaw = poly.properties.EndDate;
-        const owner = poly.properties.Landowner_;
-        const summary = poly.properties.SummaryLin;
-        const pdf = poly.properties.PDFLink;
+        const features = map.queryRenderedFeatures(e.point, {
+          layers: ['pesticides_2022-fill']
+        });
 
-        // Helper function to format YYYYMMDD to MM/DD/YYYY
-        function formatDate(dateStr) {
-          if (!dateStr || dateStr.length !== 8) return dateStr;
-          const year = dateStr.slice(0, 4);
-          const month = dateStr.slice(4, 6);
-          const day = dateStr.slice(6, 8);
-          return `${month}/${day}/${year}`;
-        }
-        const startDate = formatDate(startDateRaw);
-        const endDate = formatDate(endDateRaw);
+        if (!features.length) return;  // No features found, exit early
 
-        function displayValue(value) {
-          if (!value) return "Not Available";
+        const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
 
-          return value
-            .replace(/^(\.\s*)+/, '')  // Remove leading ".. ", ". .", etc in landowners
-            .replace(/,\s*None/gi, '')  // Remove all ", None" (case-insensitive) in chemicals
-            .trim()  // Trim whitespace
-            .replace(/,$/, '') || 'Not Available';  // Remove trailing comma or return NA if cleaned str is empty
-        }
+        const container = document.createElement('div');
+        container.innerHTML = `
+          <label><strong>Select Polygon:</strong></label>
+          <div id="polygon-selector" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; cursor: pointer;"></div>
+          <div id="polygon-details" style="margin-top: 10px;"></div>
+        `;
 
-        new mapboxgl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(`
-            <p><strong>Method of Presticide Application:</strong><br>${displayValue(methods)}</p>
-            <p><strong>Chemicals Applied:</strong><br>${displayValue(chemicals)}</p>
-            <p><strong>Time Range of Application:</strong><br>${startDate} - ${endDate}</p>
-            <p><strong>Owner of Forest Stand:</strong><br>${displayValue(owner)}</p>
+        const select = container.querySelector('#polygon-selector');
+        const details = container.querySelector('#polygon-details');
+
+        function showDetails(feature) {
+          const f = feature.properties;
+          const formatDate = (dateStr) =>
+            !dateStr || dateStr.length !== 8
+              ? dateStr
+              : `${dateStr.slice(4, 6)}/${dateStr.slice(6)}/${dateStr.slice(0, 4)}`;
+          const displayValue = (v) =>
+            !v
+              ? 'Not Available'
+              : v
+              .replace(/^(\.\s*)+/, '')
+              .replace(/,\s*None/gi, '')
+              .trim()
+              .replace(/,$/, '') || 'Not Available';
+
+          details.innerHTML = `
+            <p><strong>Method of Presticide Application:</strong> ${displayValue(f.Methods)}</p>
+            <p><strong>Chemicals Applied:</strong> ${displayValue(f.Chemicals)}</p>
+            <p><strong>Time Range of Application:</strong> ${formatDate(f.StartDate)} - ${formatDate(f.EndDate)}</p>
+            <p><strong>Owner of Forest Stand:</strong> ${displayValue(f.Landowner_)}</p>
             <div id="links">
               <p><strong>Links:</strong><br>
-              <div class="link-group">
-                <a href="${summary}" target="_blank">Summary</a>
-                <a href="${pdf}" target="_blank">PDF</a></p>
-              </div>
+                <div class="link-group">
+                  <a href="${f.PDFLink}" target="_blank">PDF</a>
+                </div>
+              </p>
             </div>
-            `)
-          .addTo(map);
+          `;
+        }
+
+        function setHighlight(featureId) {
+          if (hoveredPolygonId !== null && hoveredPolygonId !== featureId) {
+            map.setFeatureState(
+              {
+                source: 'custom-tileset',
+                sourceLayer: 'FERNS_Pesticides_2022-6yzkfk',
+                id: hoveredPolygonId
+              },
+              { hover: false }
+            );
+          }
+
+          hoveredPolygonId = featureId;
+
+          map.setFeatureState(
+            {
+              source: 'custom-tileset',
+              sourceLayer: 'FERNS_Pesticides_2022-6yzkfk',
+              id: hoveredPolygonId
+            },
+            { hover: true }
+          );
+        }
+
+        let selectedIdx = 0;
+        let hoveredTempId = null;
+
+        features.forEach((feat, i) => {
+          const item = document.createElement('div');
+          item.textContent = feat.properties.Operation_ || `Polygon ${i + 1}`;
+          item.style.padding = '4px 8px';
+          item.style.cursor = 'pointer';
+
+          // Hover
+          item.addEventListener('mouseenter', () => {
+            item.style.backgroundColor = '#eee';
+
+            if (hoveredTempId !== null && hoveredTempId !== feat.id) {
+              map.setFeatureState(
+                {
+                  source: 'custom-tileset',
+                  sourceLayer: 'FERNS_Pesticides_2022-6yzkfk',
+                  id: hoveredTempId
+                },
+                { hover: false }
+              );
+            }
+
+            hoveredTempId = feat.id;
+
+            setHighlight(hoveredTempId);
+          });
+
+          // Stop hover
+          item.addEventListener('mouseleave', () => {
+            item.style.backgroundColor = '';
+
+            if (hoveredTempId !== null ) {
+              map.setFeatureState(
+                {
+                  source: 'custom-tileset',
+                  sourceLayer: 'FERNS_Pesticides_2022-6yzkfk',
+                  id: hoveredTempId
+                },
+                { hover: false }
+              );
+            }
+
+            hoveredTempId = null;
+          });
+
+          item.addEventListener('click', () => {
+            selectedIdx = i;
+            showDetails(feat);
+            setHighlight(feat.id);
+
+            Array.from(select.children).forEach(child => {
+              child.style.backgroundColor = '';
+              child.style.fontWeight = '';
+            });
+            item.style.backgroundColor = '#ddd';
+            item.style.fontWeight = 'bold';
+          });
+
+          if (i === 0) {
+            item.style.backgroundColor = '#ddd';
+            item.style.fontWeight = 'bold';
+          }
+
+          select.appendChild(item);
+        });
+
+        showDetails(features[selectedIdx]);
+        setHighlight(features[selectedIdx].id);
+
+        popup.setDOMContent(container).addTo(map);
       });
 
       let tooltip;  // Hover tooltip
