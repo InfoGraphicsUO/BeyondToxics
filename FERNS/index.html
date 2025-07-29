@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Beyond Toxics FERNS Pesticides</title>
@@ -16,8 +16,11 @@
   <script src="https://d3js.org/d3.v7.min.js"></script>
 
   <style>
+    /* Main */
     body { margin: 0; padding: 0; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+    /* Inset Map */
     #inset-map-container {
       position: absolute;
       bottom: 20px;
@@ -63,6 +66,7 @@
       font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
     }
 
+    /* Year Range Filter */
     .range_container {
       display: flex;
       flex-direction: column;
@@ -155,6 +159,7 @@
       z-index: 1;
     }
 
+    /* Reset Extent */
     .resetExtent {
       background: #fff;
       border-radius: 4px;
@@ -219,38 +224,39 @@
     #basemaps h2 {
       font-size: 12px;
       font-weight: bolder;
-      margin-top: 8px;
-      margin-bottom: 4px;
-      line-height: 14.4px;
+      margin: 4px 0;
+      line-height: normal;
     }
 
     #basemaps-inner {
       display: flex;
       flex-direction: column;
-      line-height: 18px;
+      line-height: normal;
     }
 
     #basemaps-inner label {
       display: inline-flex;
       align-items: center;
-      line-height: 18px;
     }
   </style>
 </head>
 <body>
+  <!-- Main and Inset Maps -->
   <div id="map"></div>
   <div id="inset-map-container"></div>
   <!-- Year Selection controller not currently functional -->
   <div class="range_container">
     <h1><strong>Year Selection</strong></h1>
+    <!-- Slider Bars -->
     <div class="sliders_control">
-     <input id="fromSlider" type="range" value="2020" min="2014" max="2024"/>
+     <input id="fromSlider" type="range" value="2015" min="2014" max="2024"/>
      <input id="toSlider" type="range" value="2022" min="2014" max="2024"/>
     </div>
+    <!-- Numeric Input Boxes -->
     <div class="form_control">
       <div class="form_control_container">
         <div class="form_control_container__time">Min</div>
-        <input class="form_control_container__time__input" type="number" id="fromInput" value="2020" min="2014" max="2024"/>
+        <input class="form_control_container__time__input" type="number" id="fromInput" value="2015" min="2014" max="2024"/>
       </div>
       <div class="form_control_container">
         <div class="form_control_container__time">Max</div>
@@ -258,13 +264,16 @@
       </div>
     </div>
   </div>
+  <!-- Dev Panel -->
   <div class="dev-overlay">
     <div class="dev-overlay-inner">
       <h1>Development Options</h1>
+      <!-- Show Boundary Markers -->
       <fieldset>
         <label for="showBoundsMarkers">Show Boundary Markers</label>
         <input type="checkbox" id="showBoundsMarkers" checked>
       </fieldset>
+      <!-- Basemap Picker -->
       <div id="basemaps">
         <h2>Basemap</h2>
         <div id="basemaps-inner">
@@ -305,7 +314,7 @@
 
     // Map polls basemap widget to get selected basemap style
     const basemapInputs = document.querySelectorAll('#basemaps-inner input');
-    let basemapStyleId = 'outdoors-v12';  // default basemap
+    let selectedStyleId = 'outdoors-v12';  // default basemap
     for (const basemap of basemapInputs) {
       if (basemap.checked) {
         selectedStyleId = basemap.id;
@@ -446,7 +455,7 @@
       onRemove() {
         // Remove the container from the map
         this.container.parentNode.removeChild(this.container);
-        this._map = undefined;
+        this.map = undefined;
       }
     }
     // Add Reset Extent Control to map
@@ -465,8 +474,10 @@
       searchBox.marker = true;
       searchBox.mapboxgl = mapboxgl;
       searchBox.componentOptions = { allowReverse: true, flipCoordinates: true };
+
       map.addControl(searchBox, 'top-left');
     });
+
 
     // Load vector tileset
     let hoveredPolygonId = null;
@@ -553,7 +564,7 @@
           .addTo(map);
       });
 
-      let tooltip;
+      let tooltip;  // Hover tooltip
 
       map.on('mousemove', 'pesticides_2022-fill', (e) => {
         map.getCanvas().style.cursor = 'pointer';
