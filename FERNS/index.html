@@ -58,6 +58,16 @@
       text-decoration: underline;
     }
 
+    #polygon-selector {
+      border-radius: 4px;
+      box-shadow: 0 0 0 2px #0000001a;
+      cursor: pointer;
+    }
+
+    #polygon-details {
+      margin-top: 8px;
+    }
+
     /*Search Box*/
     mapbox-search-box, mapbox-search-box *,
     mapbox-search-box input, mapbox-search-box input *,
@@ -480,7 +490,7 @@
 
 
     // Load vector tileset
-    let hoveredPolygonId = null;
+    let hoveredPolygonId = null;  // Variable to store the currently hovered polygon ID
     function addSourceAndLayer() {
       map.addSource('custom-tileset', {
         type: 'vector',
@@ -524,31 +534,40 @@
 
         const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
 
+        // Container for the entire popup content
         const container = document.createElement('div');
         container.innerHTML = `
           <label><strong>Select Polygon:</strong></label>
-          <div id="polygon-selector" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; cursor: pointer;"></div>
-          <div id="polygon-details" style="margin-top: 10px;"></div>
+          <div id="polygon-selector"></div>
+          <div id="polygon-details"></div>
         `;
 
-        const select = container.querySelector('#polygon-selector');
-        const details = container.querySelector('#polygon-details');
+        const select = container.querySelector('#polygon-selector');  // Dropdown for polygon selection
+        const details = container.querySelector('#polygon-details');  // Details section for selected polygon
 
         function showDetails(feature) {
-          const f = feature.properties;
-          const formatDate = (dateStr) =>
-            !dateStr || dateStr.length !== 8
-              ? dateStr
-              : `${dateStr.slice(4, 6)}/${dateStr.slice(6)}/${dateStr.slice(0, 4)}`;
-          const displayValue = (v) =>
-            !v
-              ? 'Not Available'
-              : v
-              .replace(/^(\.\s*)+/, '')
-              .replace(/,\s*None/gi, '')
-              .trim()
-              .replace(/,$/, '') || 'Not Available';
+          const f = feature.properties;  // Shorthand for properties
 
+          // Format the date strings to MM/DD/YYYY
+          function formatDate(dateStr) {
+            if (!dateStr || dateStr.length !== 8) return dateStr;
+            const year = dateStr.slice(0, 4);
+            const month = dateStr.slice(4, 6);
+            const day = dateStr.slice(6, 8);
+            return `${month}/${day}/${year}`;
+          }
+
+          // Clean up the values for display
+          function displayValue(value) {
+            if (!value) return "Not Available";
+            return value
+              .replace(/^(\.\s*)+/, '')  // Remove leading ".. ", ". .", etc in landowners
+              .replace(/,\s*None/gi, '')  // Remove all ", None" (case-insensitive) in chemicals
+              .trim()  // Trim whitespace
+              .replace(/,$/, '') || 'Not Available';  // Remove trailing comma or return NA if cleaned str is empty
+          }
+
+          // Details of the selected polygon
           details.innerHTML = `
             <p><strong>Method of Presticide Application:</strong> ${displayValue(f.Methods)}</p>
             <p><strong>Chemicals Applied:</strong> ${displayValue(f.Chemicals)}</p>
@@ -564,6 +583,7 @@
           `;
         }
 
+        // Switch highlighted polygon to passed feature ID
         function setHighlight(featureId) {
           if (hoveredPolygonId !== null && hoveredPolygonId !== featureId) {
             map.setFeatureState(
@@ -588,27 +608,35 @@
           );
         }
 
-        let selectedIdx = 0;
-        let hoveredTempId = null;
+        let selectedIdx = 0;  // Index of selected polygon in list of polygons
+        let hoveredTempId = null;  // Temporary ID for hovered polygon
 
+        // For each polygon feature,
         features.forEach((feat, i) => {
-          const item = document.createElement('div');
-          item.textContent = feat.properties.Operation_ || `Polygon ${i + 1}`;
+          const item = document.createElement('div');  // Create a new item in the list
+          item.textContent = feat.properties.Operation_ || `Polygon ${i + 1}`;  // Name of the polygon or 'Polygon X'
           item.style.padding = '4px 8px';
           item.style.cursor = 'pointer';
+          if (i !== features.length - 1) {  // Add bottom border to all but last item
+            item.style.borderBottom = '2px solid #0000001a';
+          }
 
           // Hover
           item.addEventListener('mouseenter', () => {
-            item.style.backgroundColor = '#eee';
+            // Dont change highlight of selected polygon
+            if (i !== selectedIdx) {
+              item.style.backgroundColor = '#eee';  // Light gray background on hover (not as dark as background for selected)
+            }
 
-            if (hoveredTempId !== null && hoveredTempId !== feat.id) {
+            // Set feature state to highlight hovered polygon
+            if (hoveredTempId !== null && hoveredTempId !== feat.id) {  // If there is a previously hovered polygon, remove its highlight
               map.setFeatureState(
                 {
                   source: 'custom-tileset',
                   sourceLayer: 'FERNS_Pesticides_2022-6yzkfk',
                   id: hoveredTempId
                 },
-                { hover: false }
+                {hover: false}
               );
             }
 
@@ -619,7 +647,9 @@
 
           // Stop hover
           item.addEventListener('mouseleave', () => {
-            item.style.backgroundColor = '';
+            if (i !== selectedIdx) {
+              item.style.backgroundColor = '';
+            }
 
             if (hoveredTempId !== null ) {
               map.setFeatureState(
