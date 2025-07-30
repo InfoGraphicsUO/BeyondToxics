@@ -614,7 +614,7 @@
         // For each polygon feature,
         features.forEach((feat, i) => {
           const item = document.createElement('div');  // Create a new item in the list
-          item.textContent = feat.properties.Operation_ || `Polygon ${i + 1}`;  // Name of the polygon or 'Polygon X'
+          item.textContent = feat.properties.NoapID || `Polygon ${i + 1}`;  // Name of the polygon or 'Polygon X'
           item.style.padding = '4px 8px';
           item.style.cursor = 'pointer';
           if (i !== features.length - 1) {  // Add bottom border to all but last item
