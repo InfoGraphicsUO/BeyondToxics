@@ -318,7 +318,7 @@
     const defaultZoom = 8;
     // Inset Map Settings
     const insetBackgroundPath = 'oregon.geojson';
-    const insetCountiesPath = 'OR_COUNTY.geojson';
+    const insetCountiesPath = 'OR_COUNTY_SUPER.geojson';
     const insetWidth = 204;
     const insetHeight = 153;
 
@@ -379,62 +379,68 @@
 
       // Load Oregon State and Counties GeoJSONs
       Promise.all([
-       fetch(statePath).then(response => response.json()),
-       fetch(countyPath).then(response => response.json())
+        fetch(statePath).then(response => response.json()),
+        fetch(countyPath).then(response => response.json())
       ])
         .then(([oregonState, countiesGeojson]) => {
-         // Set up D3 projection using the state boundary for proper fitting
-         const projection = d3.geoConicConformal()
-           .parallels([43, 45.5]) // Standard parallels for Oregon
-           .rotate([120.5, 0])      // Center longitude (negative of Oregon's central meridian)
-           .center([0, 44])       // Center latitude of Oregon
-           .fitSize([width, height], oregonState);
-         const path = d3.geoPath(projection);
+          // Set up D3 projection using the state boundary for proper fitting
+          const projection = d3.geoConicConformal()
+            .parallels([43, 45.5]) // Standard parallels for Oregon
+            .rotate([120.5, 0])      // Center longitude (negative of Oregon's central meridian)
+            .center([0, 44])       // Center latitude of Oregon
+            .fitSize([width, height], oregonState);
+          const path = d3.geoPath(projection);
 
-         // Draw the Oregon state boundary first
-         const svg = d3.select("#inset-map-container")
-           .append("svg")
-           .attr("width", width)
-           .attr("height", height);
+          // Draw the Oregon state boundary first
+          const svg = d3.select("#inset-map-container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
 
-         // Draw state boundary
-         svg.append("path")
-           .datum(oregonState)
-           .attr("d", path)
-           .attr("stroke", "black")
-           .attr("stroke-width", 1.0)
-           .attr("fill", "white")
-           .attr("fill-opacity", 0.6);
-
-         // Draw county boundaries on top
-         svg.selectAll("path.county")
-           .data(countiesGeojson.features)
-           .enter()
-           .append("path")
-           .attr("class", "county")
-           .attr("d", path)
-           .attr("stroke", "black")
-           .attr("stroke-width", 0.3)
-           .attr("fill", "none");
-
-        // Function to update bounding box
-        function updateInsetBox() {
-          const bounds = getBoundingBox(map);
-          svg.selectAll(".inset-box").remove();
+          // Draw state boundary
           svg.append("path")
-            .datum(bounds)
-            .attr("class", "inset-box")
+            .datum(oregonState)
             .attr("d", path)
-            .attr("stroke", "red")
-            .attr("fill", "red")
-            .attr("fill-opacity", 0.1);
-        }
+            .attr("stroke", "black")
+            .attr("stroke-width", 1.0)
+            .attr("fill", "white")
+            .attr("fill-opacity", 0.6);
 
-        // Initial draw
-        updateInsetBox();
+          // Draw county boundaries on top
+          svg.selectAll("path.county")
+            .data(countiesGeojson.features)
+            .enter()
+            .append("path")
+            .attr("class", "county")
+            .attr("d", path)
+            .attr("stroke", "black")
+            .attr("stroke-width", 0.3)
+            .attr("fill", "none");
 
-        // Update on map move
-        map.on('move', updateInsetBox);
+          // Function to update bounding box with throttling
+          let updateTimeout;
+          function updateInsetBox() {
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => {
+              const bounds = getBoundingBox(map);
+              if (bounds) {
+                svg.selectAll(".inset-box").remove();
+                svg.append("path")
+                  .datum(bounds)
+                  .attr("class", "inset-box")
+                  .attr("d", path)
+                  .attr("stroke", "red")
+                  .attr("fill", "red")
+                  .attr("fill-opacity", 0.1);
+              }
+           }, 50); // Throttle to 50ms
+          }
+
+          // Initial draw
+          updateInsetBox();
+
+         // Update on map move with throttling
+         map.on('move', updateInsetBox);
       });
     }
     // Inset Map
