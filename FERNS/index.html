@@ -423,6 +423,7 @@
             clearTimeout(updateTimeout);
             updateTimeout = setTimeout(() => {
               const bounds = getBoundingBox(map);
+              console.log("Inset Map Bounds:", bounds);
               if (bounds) {
                 svg.selectAll(".inset-box").remove();
                 svg.append("path")
@@ -512,6 +513,7 @@
 
     // Load vector tileset
     let hoveredPolygonId = null;  // Variable to store the currently hovered polygon ID
+    window.selectedPolygonId = null;  // Variable to store the currently selected polygon ID
     function addSourceAndLayer() {
       map.addSource('custom-tileset', {
         type: 'vector',
@@ -541,8 +543,43 @@
         type: 'line',
         layout: {},
         paint: {
-          'line-color': 'orange',
+          // Black for selected, white for hovered, orange otherwise
+          'line-color': [
+            'case',
+            ['boolean', ['feature-state', 'selected'], false],
+            'black',
+            [
+              'case',
+              ['boolean', ['feature-state', 'hover'], false],
+              'white',
+              'orange'
+            ]
+          ],
           'line-width': 2
+        }
+      });
+
+      // Add a separate stroke layer that renders on top of everything
+      // TODO: Fix Layering
+      map.addLayer({
+        id: 'pesticides_2022-stroke-overlay',
+        source: 'custom-tileset',
+        'source-layer': 'FERNS_Pesticides_2022-6yzkfk',
+        type: 'line',
+        layout: {},
+        paint: {
+          'line-color': [
+            'case',
+            ['boolean', ['feature-state', 'selected'], false],
+            'black',
+            [
+              'case',
+              ['boolean', ['feature-state', 'hover'], false],
+              'white',
+              'transparent'
+            ]
+          ],
+          'line-width': 3
         }
       });
 
@@ -629,6 +666,33 @@
           );
         }
 
+        // TODO: Sus checker?
+        // Set selected state for clicked polygon
+        function setSelected(featureId) {
+          // Clear any previously selected polygon
+          if (window.selectedPolygonId !== null && window.selectedPolygonId !== featureId) {
+            map.setFeatureState(
+              {
+                source: 'custom-tileset',
+                sourceLayer: 'FERNS_Pesticides_2022-6yzkfk',
+                id: window.selectedPolygonId
+              },
+              { selected: false }
+            );
+          }
+
+          window.selectedPolygonId = featureId;
+
+          map.setFeatureState(
+            {
+              source: 'custom-tileset',
+              sourceLayer: 'FERNS_Pesticides_2022-6yzkfk',
+              id: window.selectedPolygonId
+            },
+            { selected: true }
+          );
+        }
+
         let selectedIdx = 0;  // Index of selected polygon in list of polygons
         let hoveredTempId = null;  // Temporary ID for hovered polygon
 
@@ -690,6 +754,7 @@
             selectedIdx = i;
             showDetails(feat);
             setHighlight(feat.id);
+            setSelected(feat.id);
 
             Array.from(select.children).forEach(child => {
               child.style.backgroundColor = '';
@@ -707,8 +772,13 @@
           select.appendChild(item);
         });
 
+        popup.on('close', () => {
+          setSelected(null);
+        });
+
         showDetails(features[selectedIdx]);
         setHighlight(features[selectedIdx].id);
+        setSelected(features[selectedIdx].id);
 
         popup.setDOMContent(container).addTo(map);
       });
