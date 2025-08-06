@@ -103,9 +103,9 @@
       padding: 10px;
       font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
       line-height: normal;
-      right: 0;
-      top: 0;
-      position: absolute;
+      /*right: 0;*/
+      /*top: 0;*/
+      /*position: absolute;*/
       background: #fff;
       box-shadow: 0 0 0 2px #0000001a;
       border-radius: 4px;
@@ -265,6 +265,87 @@
       display: inline-flex;
       align-items: center;
     }
+
+    @media (min-width: 601px) {
+      .range_container {
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+    }
+
+    @media (max-width: 600px) {
+      /* Inset Map */
+      #inset-map-container {
+        position: fixed;
+        bottom: 39px;
+        right: 10px;
+        width: 40vw;
+        min-width: 120px;
+        max-width: 204px;
+        height: calc(40vw * 0.75);
+        margin-bottom: 0;
+      }
+
+      #inset-map-container svg {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* TODO: Search ? its hard so if possible we should move over things around to accommodate default sizing */
+
+      /* Year Range Filter */
+      .range_container {
+        position: fixed;
+        right: 0;
+        margin-top: 0;
+        margin-bottom: 10px;
+        bottom: 40vw;
+        z-index: 1001;
+        width: 40vw;
+        min-width: 120px;
+        max-width: 204px;
+      }
+
+      .dev-overlay {
+        font-size: 10px;
+        bottom: 39px;
+        left: 50px;
+        width: 139px;
+        height: 126px;
+        padding: 0;
+      }
+
+      .dev-overlay .dev-overlay-inner {
+        width: 139px;
+        height: 126px;
+        margin-bottom: 0;
+      }
+
+      .dev-overlay-inner h1 {
+        font-size: 12px;
+        font-weight: bolder;
+        margin-bottom: 0;
+        line-height: 14px;
+      }
+
+      .dev-overlay-inner fieldset {
+        font-size: 10px;
+        line-height: 12px;
+      }
+
+      .dev-overlay-inner input {
+        height: 11px;
+        width: 11px;
+      }
+
+      #basemaps h2 {
+        font-size: 12px;
+        font-weight: bold;
+        margin: 2px 0;
+        line-height: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -368,6 +449,17 @@
 
     // Create Inset Map Function
     function insetMap(map, statePath, countyPath, width, height) {
+      d3.select('#inset-map-container').selectAll("svg").remove();  // remove any existing insets
+      // helper function for reactive resizing
+      function getInsetSize() {
+        const container = document.getElementById('inset-map-container');
+        if (window.innerWidth <= 600 && container) {
+          const w = Math.max(container.offsetWidth, 120);
+          const h = Math.round(w * 0.75); // 4:3 aspect ratio
+          return [w, h];
+        }
+        return [width, height]
+      }
       function getBoundingBox(map) {
         if (!map) return undefined;
 
@@ -405,19 +497,21 @@
         fetch(countyPath).then(response => response.json())
       ])
         .then(([oregonState, countiesGeojson]) => {
+          const [svgWidth, svgHeight] = getInsetSize();
+
           // Set up D3 projection using the state boundary for proper fitting
           const projection = d3.geoConicConformal()
             .parallels([43, 45.5]) // Standard parallels for Oregon
             .rotate([120.5, 0])      // Center longitude (negative of Oregon's central meridian)
             .center([0, 44])       // Center latitude of Oregon
-            .fitSize([width, height], oregonState);
+            .fitSize([svgWidth, svgHeight], oregonState);
           const path = d3.geoPath(projection);
 
           // Draw the Oregon state boundary first
           const svg = d3.select("#inset-map-container")
             .append("svg")
-            .attr("width", width)
-            .attr("height", height);
+            .attr("width", svgWidth)
+            .attr("height", svgHeight);
 
           // Draw state boundary
           svg.append("path")
@@ -468,6 +562,19 @@
     }
     // Inset Map
     insetMap(map, insetBackgroundPath, insetCountiesPath, insetWidth, insetHeight);
+
+    // Debug for resizing inset map on window resize
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+    window.addEventListener('resize', debounce(() => {
+      d3.select('#inset-map-container').selectAll("svg").remove();
+      insetMap(map, insetBackgroundPath, insetCountiesPath, insetWidth, insetHeight);
+    }, 150));  // 150ms timeout before resizing inset map
 
     // [Bottom Left Mapbox Group]
     // Navigation Control (Zoom +/-)
