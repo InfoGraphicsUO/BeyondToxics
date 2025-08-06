@@ -649,72 +649,88 @@
         url: 'mapbox://infographics.blqieafd'
       });
 
-      // add polygon layer from tileset
+      // Base fill (all polygons, semi-transparent)
       map.addLayer({
-        id: 'pesticides_2022-fill',
+        id: 'pesticides_2022-fill_base',
         source: 'custom-tileset',
         'source-layer': 'FERNS_Pesticides_2022-6yzkfk',
         type: 'fill',
         paint: {
           'fill-color': 'orange',
-          'fill-opacity': [
-            'case',
-            ['boolean', ['feature-state', 'hover'], false],
-            1,
-            0.5
-          ]
+          'fill-opacity': 0.5
         }
       });
+
+      // Base stroke (all polygons, orange)
       map.addLayer({
-        id: 'pesticides_2022-stroke',
+        id: 'pesticides_2022-stroke_base',
         source: 'custom-tileset',
         'source-layer': 'FERNS_Pesticides_2022-6yzkfk',
         type: 'line',
         layout: {},
         paint: {
-          // Black for selected, white for hovered, orange otherwise
+          'line-color': 'orange',
+          'line-width': 2
+        }
+      });
+
+      // Black stroke for selected polygon (below hover)
+      map.addLayer({
+        id: 'pesticides_2022-stroke_selected',
+        source: 'custom-tileset',
+        'source-layer': 'FERNS_Pesticides_2022-6yzkfk',
+        type: 'line',
+        paint: {
           'line-color': [
             'case',
-            ['boolean', ['feature-state', 'selected'], false],
+            ['all',
+              ['boolean', ['feature-state', 'selected'], false],
+              ['!', ['boolean', ['feature-state', 'hover'], false]]
+            ],
             'black',
-            [
-              'case',
-              ['boolean', ['feature-state', 'hover'], false],
-              'white',
-              'orange'
-            ]
+            'transparent'
           ],
           'line-width': 2
         }
       });
 
-      // Add a separate stroke layer that renders on top of everything
-      // TODO: Fix Layering
+      // Hovered polygon fill (fully opaque when hovered)
       map.addLayer({
-        id: 'pesticides_2022-stroke-overlay',
+        id: 'pesticides_2022-fill_hover',
         source: 'custom-tileset',
         'source-layer': 'FERNS_Pesticides_2022-6yzkfk',
-        type: 'line',
-        layout: {},
+        type: 'fill',
         paint: {
-          'line-color': [
+          'fill-color': [
             'case',
-            ['boolean', ['feature-state', 'selected'], false],
-            'black',
-            [
-              'case',
-              ['boolean', ['feature-state', 'hover'], false],
-              'white',
-              'transparent'
-            ]
+            ['boolean', ['feature-state', 'hover'], false],
+            'orange',
+            'transparent'
           ],
-          'line-width': 3
+          'fill-opacity': 1
         }
       });
 
-      map.on('click', 'pesticides_2022-fill', (e) => {
+      // White stroke for hovered polygon (on top)
+      map.addLayer({
+        id: 'pesticides_2022-stroke_hover',
+        source: 'custom-tileset',
+        'source-layer': 'FERNS_Pesticides_2022-6yzkfk',
+        type: 'line',
+        paint: {
+          'line-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            'white',
+            'transparent'
+          ],
+          'line-width': 2
+        }
+      });
+
+      map.on('click', 'pesticides_2022-fill_base', (e) => {
         const features = map.queryRenderedFeatures(e.point, {
-          layers: ['pesticides_2022-fill']
+          layers: ['pesticides_2022-fill_base']
         });
 
         if (!features.length) return;  // No features found, exit early
@@ -914,7 +930,7 @@
 
       let tooltip;  // Hover tooltip
 
-      map.on('mousemove', 'pesticides_2022-fill', (e) => {
+      map.on('mousemove', 'pesticides_2022-fill_base', (e) => {
         map.getCanvas().style.cursor = 'pointer';
 
         if (!tooltip) {
@@ -937,6 +953,7 @@
             );
           }
           hoveredPolygonId = e.features[0].id;
+          console.debug('Hovered ID:', hoveredPolygonId);
           map.setFeatureState(
             { source: 'custom-tileset', sourceLayer: 'FERNS_Pesticides_2022-6yzkfk', id: hoveredPolygonId },
             { hover: true }
@@ -944,7 +961,7 @@
         }
       });
 
-      map.on('mouseleave', 'pesticides_2022-fill', () => {
+      map.on('mouseleave', 'pesticides_2022-fill_base', () => {
         map.getCanvas().style.cursor = '';
 
         if (tooltip) {
