@@ -20,6 +20,23 @@
     body { margin: 0; padding: 0; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
+    /* Custom Attribution Footer */
+    .mapboxgl-ctrl-attrib {
+      font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+    }
+
+    .mapboxgl-ctrl-attrib .beyond-toxics-link {
+      /*color: #0066cc;*/
+      font-weight: 700;
+      text-decoration: none;
+      /*transition: color 0.3s ease;*/
+    }
+
+    .mapboxgl-ctrl-attrib .beyond-toxics-link:hover {
+      /*color: #004999;*/
+      text-decoration: underline;
+    }
+
     /* Inset Map */
     #inset-map-container {
       position: absolute;
@@ -341,8 +358,13 @@
       style: 'mapbox://styles/mapbox/' + selectedStyleId,
       center: defaultCenter, // starting position [lng, lat]. Note that lat must be set between -90 and 90
       maxBounds: bounds,
-      zoom: defaultZoom // starting zoom
-    });
+      zoom: defaultZoom,  // starting zoom
+      attributionControl: false  // disable default attribution to create our own
+    }).addControl(  // Custom Attribution
+      new mapboxgl.AttributionControl({
+        customAttribution: `<a href="https://www.beyondtoxics.org/" class="beyond-toxics-link" target="_blank" title="Beyond Toxics" aria-label="Beyond Toxics">Beyond Toxics</a>`
+      })
+    );
 
     // Create Inset Map Function
     function insetMap(map, statePath, countyPath, width, height) {
@@ -879,6 +901,9 @@
     }
 
     // Year Range Slider
+    const sliderNoColor = '#C6C6C6';
+    const sliderBarColor = '#bfe172';
+
     const fromSlider = document.querySelector('#fromSlider');
     const toSlider = document.querySelector('#toSlider');
     const fromInput = document.querySelector('#fromInput');
@@ -907,7 +932,7 @@
         ${sliderColor} 100%)`;
     }
 
-    fillSlider(fromSlider, toSlider, '#C6C6C6', '#bfe172', toSlider);
+    fillSlider(fromSlider, toSlider, sliderNoColor, sliderBarColor, toSlider);
     setToggleAccessible(toSlider);
 
     function getParsed(currentFrom, currentTo) {
@@ -918,7 +943,7 @@
 
     function controlFromSlider(fromSlider, toSlider, fromInput) {
       const [from, to] = getParsed(fromSlider, toSlider);
-      fillSlider(fromSlider, toSlider, '#C6C6C6', '#bfe172', toSlider);
+      fillSlider(fromSlider, toSlider, sliderNoColor, sliderBarColor, toSlider);
       if (from > to) {
         fromSlider.value = to;
         fromInput.value = to;
@@ -930,7 +955,7 @@
 
     function controlToSlider(fromSlider, toSlider, toInput) {
       const [from, to] = getParsed(fromSlider, toSlider);
-      fillSlider(fromSlider, toSlider, '#C6C6C6', '#bfe172', toSlider);
+      fillSlider(fromSlider, toSlider, sliderNoColor, sliderBarColor, toSlider);
       setToggleAccessible(toSlider);
       if (from <= to) {
         toSlider.value = to;
@@ -944,7 +969,7 @@
 
     function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
       const [from, to] = getParsed(fromInput, toInput);
-      fillSlider(fromInput, toInput, '#C6C6C6', '#bfe172', controlSlider);
+      fillSlider(fromInput, toInput, sliderNoColor, sliderBarColor, controlSlider);
       if (from > to) {
         fromSlider.value = to;
         fromInput.value = to;
@@ -956,7 +981,7 @@
 
     function controlToInput(toSlider, fromInput, toInput, controlSlider) {
       const [from, to] = getParsed(fromInput, toInput);
-      fillSlider(fromInput, toInput, '#C6C6C6', '#bfe172', controlSlider);
+      fillSlider(fromInput, toInput, sliderNoColor, sliderBarColor, controlSlider);
       setToggleAccessible(toInput);
       if (from <= to) {
         toSlider.value = to;
