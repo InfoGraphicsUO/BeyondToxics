@@ -407,6 +407,9 @@
   </div>
 
   <script>
+    // Mobile Flag
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    console.debug('Is touch device:', isTouchDevice);
     // Map Default Extent config
     const bounds = [
       [-128.2951742043245, 41.27570884209203], // Southwest (lng,lat)
@@ -787,6 +790,9 @@
 
         // Switch highlighted polygon to passed feature ID
         function setHighlight(featureId) {
+          if (isTouchDevice) {  // if on mobile, ignore highlighting
+            return;
+          }
           if (hoveredPolygonId !== null && hoveredPolygonId !== featureId) {
             map.setFeatureState(
               {
@@ -810,7 +816,6 @@
           );
         }
 
-        // TODO: Sus checker?
         // Set selected state for clicked polygon
         function setSelected(featureId) {
           // Clear any previously selected polygon
@@ -929,36 +934,38 @@
 
       let tooltip;  // Hover tooltip
 
-      map.on('mousemove', 'pesticides_2022-fill_base', (e) => {
-        map.getCanvas().style.cursor = 'pointer';
+      if (!isTouchDevice) {  // Dont add hover functionality on mobile
+        map.on('mousemove', 'pesticides_2022-fill_base', (e) => {
+          map.getCanvas().style.cursor = 'pointer';
 
-        if (!tooltip) {
-          tooltip = new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false,
-          });
-        }
-        const coords = e.lngLat;
-        tooltip
-          .setLngLat(coords)
-          .setHTML('<div style="font-size:12px;">Click for more information</div>')
-          .addTo(map);
+          if (!tooltip) {
+            tooltip = new mapboxgl.Popup({
+              closeButton: false,
+              closeOnClick: false,
+            });
+          }
+          const coords = e.lngLat;
+          tooltip
+            .setLngLat(coords)
+            .setHTML('<div style="font-size:12px;">Click for more information</div>')
+            .addTo(map);
 
-        if (e.features.length > 0) {
-          if (hoveredPolygonId !== null) {
+          if (e.features.length > 0) {
+            if (hoveredPolygonId !== null) {
+              map.setFeatureState(
+                {source: 'custom-tileset', sourceLayer: 'FERNS_Pesticides_2022-6yzkfk', id: hoveredPolygonId},
+                {hover: false}
+              );
+            }
+            hoveredPolygonId = e.features[0].id;
+            console.debug('Hovered ID:', hoveredPolygonId);
             map.setFeatureState(
-              { source: 'custom-tileset', sourceLayer: 'FERNS_Pesticides_2022-6yzkfk', id: hoveredPolygonId },
-              { hover: false }
+              {source: 'custom-tileset', sourceLayer: 'FERNS_Pesticides_2022-6yzkfk', id: hoveredPolygonId},
+              {hover: true}
             );
           }
-          hoveredPolygonId = e.features[0].id;
-          console.debug('Hovered ID:', hoveredPolygonId);
-          map.setFeatureState(
-            { source: 'custom-tileset', sourceLayer: 'FERNS_Pesticides_2022-6yzkfk', id: hoveredPolygonId },
-            { hover: true }
-          );
-        }
-      });
+        });
+      }
 
       map.on('mouseleave', 'pesticides_2022-fill_base', () => {
         map.getCanvas().style.cursor = '';
