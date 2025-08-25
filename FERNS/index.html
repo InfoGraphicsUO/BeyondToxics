@@ -408,7 +408,10 @@
 
   <script>
     // Mobile Flag
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    function isMobileUser() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    const isTouchDevice = isMobileUser();
     console.debug('Is touch device:', isTouchDevice);
     // Map Default Extent config
     const bounds = [
