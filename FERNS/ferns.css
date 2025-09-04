@@ -1,0 +1,330 @@
+/* Main */
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+/* Custom Attribution Footer */
+.mapboxgl-ctrl-attrib {
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+}
+
+.mapboxgl-ctrl-attrib .beyond-toxics-link {
+    /*color: #0066cc;*/
+    font-weight: 700;
+    text-decoration: none;
+    /*transition: color 0.3s ease;*/
+}
+
+.mapboxgl-ctrl-attrib .beyond-toxics-link:hover {
+    /*color: #004999;*/
+    text-decoration: underline;
+}
+
+/* Inset Map */
+#inset-map-container {
+    position: absolute;
+    bottom: 20px;
+    right: 10px;
+    margin-bottom: 10px;
+}
+
+/*Tooltips*/
+.mapboxgl-popup-content {
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 10px;
+    color: #333;
+}
+
+.mapboxgl-popup-content p {
+    margin-bottom: 0;
+}
+
+.mapboxgl-popup-content .link-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mapboxgl-popup-content .link-group a {
+    text-decoration: none;
+    color: #0066cc;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.mapboxgl-popup-content .link-group a:hover {
+    color: #004999;
+    text-decoration: underline;
+}
+
+#polygon-selector {
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px #0000001a;
+    cursor: pointer;
+}
+
+#polygon-details {
+    margin-top: 8px;
+}
+
+/*Search Box*/
+mapbox-search-box, mapbox-search-box *,
+mapbox-search-box input, mapbox-search-box input *,
+mapbox-search-listbox, mapbox-search-listbox *
+{
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+}
+
+/* Year Range Filter */
+.range_container {
+    display: flex;
+    flex-direction: column;
+    width: 204px;
+    margin-top: 10px;
+    margin-right: 10px;
+    padding: 10px;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+    line-height: normal;
+    /*right: 0;*/
+    /*top: 0;*/
+    /*position: absolute;*/
+    background: #fff;
+    box-shadow: 0 0 0 2px #0000001a;
+    border-radius: 4px;
+}
+
+.sliders_control {
+    position: relative;
+    margin-top: 12px;
+    margin-bottom: 13px;
+}
+
+.form_control {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 5px;
+    font-size: 15px;
+    line-height: normal;
+    color: #635a5a;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: all;
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px #C6C6C6;
+    cursor: pointer;
+}
+
+input[type=range]::-moz-range-thumb {
+    -webkit-appearance: none;
+    pointer-events: all;
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px #C6C6C6;
+    cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+    background: #f7f7f7;
+}
+
+input[type=range]::-webkit-slider-thumb:active {
+    box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
+    -webkit-box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
+}
+
+input[type="number"] {
+    color: #8a8383;
+    width: auto;
+    height: auto;
+    font-size: 12px;;
+    border: none;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    opacity: 1;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 2px;
+    width: 100%;
+    position: absolute;
+    background-color: #C6C6C6;
+    pointer-events: none;
+}
+
+#fromSlider {
+    height: 0;
+    z-index: 1;
+}
+
+/* Reset Extent */
+.resetExtent {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px #0000001a;
+    height: 29px;
+    width: 29px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.resetExtent img {
+    height: 18px;
+    width: 18px;
+    object-fit: scale-down;
+    color: rgb(33, 37, 41);
+    line-height: 0;
+}
+
+/*Development panel to be removed for production*/
+.dev-overlay {
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    position: absolute;
+    bottom: 20px;
+    left: 50px;
+    width: 200px;
+    padding: 10px;
+}
+
+.dev-overlay input {
+    margin: 0;
+}
+
+.dev-overlay .dev-overlay-inner {
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.dev-overlay-inner h1 {
+    font-size: 15px;
+    font-weight: bolder;
+    margin-bottom: 0;
+    line-height: 18px;
+}
+
+.dev-overlay-inner fieldset {
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    margin: 0;
+    line-height: 18px;
+}
+
+.dev-overlay-inner label {
+    margin-right: 5px;
+}
+
+#basemaps h2 {
+    font-size: 12px;
+    font-weight: bolder;
+    margin: 4px 0;
+    line-height: normal;
+}
+
+#basemaps-inner {
+    display: flex;
+    flex-direction: column;
+    line-height: normal;
+}
+
+#basemaps-inner label {
+    display: inline-flex;
+    align-items: center;
+}
+
+@media (min-width: 601px) {
+    .range_container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    /* Inset Map */
+    #inset-map-container {
+    position: fixed;
+    bottom: 39px;
+    right: 10px;
+    width: 40vw;
+    min-width: 120px;
+    max-width: 204px;
+    height: calc(40vw * 0.75);
+    margin-bottom: 0;
+    }
+
+    #inset-map-container svg {
+    width: 100% !important;
+    height: 100% !important;
+    }
+
+    /* TODO: Search ? its hard so if possible we should move over things around to accommodate default sizing */
+
+    /* Year Range Filter */
+    .range_container {
+    position: fixed;
+    right: 0;
+    margin-top: 0;
+    margin-bottom: 10px;
+    bottom: 40vw;
+    z-index: 1001;
+    width: 40vw;
+    min-width: 120px;
+    max-width: 204px;
+    }
+
+    .dev-overlay {
+    font-size: 10px;
+    bottom: 39px;
+    left: 50px;
+    width: 139px;
+    height: 126px;
+    padding: 0;
+    }
+
+    .dev-overlay .dev-overlay-inner {
+    width: 139px;
+    height: 126px;
+    margin-bottom: 0;
+    }
+
+    .dev-overlay-inner h1 {
+    font-size: 12px;
+    font-weight: bolder;
+    margin-bottom: 0;
+    line-height: 14px;
+    }
+
+    .dev-overlay-inner fieldset {
+    font-size: 10px;
+    line-height: 12px;
+    }
+
+    .dev-overlay-inner input {
+    height: 11px;
+    width: 11px;
+    }
+
+    #basemaps h2 {
+    font-size: 12px;
+    font-weight: bold;
+    margin: 2px 0;
+    line-height: 14px;
+    }
+}
