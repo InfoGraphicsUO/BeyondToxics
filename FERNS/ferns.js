@@ -44,6 +44,9 @@ const map = new mapboxgl.Map({
     customAttribution: `<a href="https://www.beyondtoxics.org/" class="beyond-toxics-link" target="_blank" title="Beyond Toxics" aria-label="Beyond Toxics">Beyond Toxics</a>`
     })
 );
+// Disable map rotation using right click + drag
+map.dragRotate.disable();
+map.touchPitch.disable();
 
 // Create Inset Map Function
 function insetMap(map, statePath, countyPath, width, height) {
@@ -212,7 +215,9 @@ window.addEventListener('resize', debounce(() => {
 
 // [Bottom Left Mapbox Group]
 // Navigation Control (Zoom +/-)
-const nav = new mapboxgl.NavigationControl();
+const nav = new mapboxgl.NavigationControl({
+    showCompass: false
+});
 map.addControl(nav, 'bottom-left');
 
 // Reset Extent Class
