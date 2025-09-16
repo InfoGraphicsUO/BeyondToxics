@@ -13,12 +13,6 @@ const bounds = [
 const defaultCenter = [-123.04, 44.944]; // Salem
 const defaultZoom = 8;
 
-// Inset Map Settings
-const insetBackgroundPath = "oregon.geojson";
-const insetCountiesPath = "OR_COUNTY_SUPER.geojson";
-const insetWidth = 204;
-const insetHeight = 153;
-
 // Map polls basemap widget to get selected basemap style
 const basemapInputs = document.querySelectorAll("#basemaps-inner input");
 let selectedStyleId = "outdoors-v12"; // default basemap
@@ -53,181 +47,120 @@ const map = new mapboxgl.Map({
 map.dragRotate.disable();
 map.touchPitch.disable();
 
-// Create Inset Map Function
-function insetMap(map, statePath, countyPath, width, height) {
-  d3.select("#inset-map-container").selectAll("svg").remove(); // remove any existing insets
-  // helper function for reactive resizing
-  function getInsetSize() {
-    const container = document.getElementById("inset-map-container");
-    if (window.innerWidth <= 600 && container) {
-      const w = Math.max(container.offsetWidth, 120);
-      const h = Math.round(w * 0.75); // 4:3 aspect ratio
-      return [w, h];
-    }
-    return [width, height];
-  }
-
-  function getBoundingBox(map) {
-    if (!map) return undefined;
-
-    const canvas = map.getCanvas();
-    const canvasWidth = canvas.width || parseFloat(canvas.style.width);
-    const canvasHeight = canvas.height || parseFloat(canvas.style.height);
-    const vertices = [
-      // The four corners of the map
-      [0, 0], // top-left
-      [canvasWidth, 0], // top-right
-      [canvasWidth, canvasHeight], // bottom-right
-      [0, canvasHeight] // bottom-left
-    ];
-
-    // Convert pixel coordinates to geographic coordinates
-    const geographicCoordinates = vertices.map((pixelCoord) => map.unproject(pixelCoord));
-
-    // Find the min/max lat/lng of the current viewport
-    let west = Infinity,
-      south = Infinity,
-      east = -Infinity,
-      north = -Infinity;
-    geographicCoordinates.forEach((coord) => {
-      if (coord.lng < west) west = coord.lng;
-      if (coord.lng > east) east = coord.lng;
-      if (coord.lat < south) south = coord.lat;
-      if (coord.lat > north) north = coord.lat;
-    });
-
-    const minWidth = 0.1; // in degrees longitude
-    const minHeight = 0.075; // in degrees latitude
-
-    let currentWidth = east - west;
-    let currentHeight = north - south;
-
-    if (currentWidth < minWidth) {
-      const diff = minWidth - currentWidth;
-      west -= diff / 2;
-      east += diff / 2;
-    }
-    if (currentHeight < minHeight) {
-      const diff = minHeight - currentHeight;
-      south -= diff / 2;
-      north += diff / 2;
-    }
-
-    // Re-assign the expanded coordinates to the geographicCoordinates array for the rest of the function
-    const adjustedCoordinates = [
-      [west, south],
-      [east, north]
-    ];
-    const newGeographicCoordinates = [
-      { lng: adjustedCoordinates[0][0], lat: adjustedCoordinates[0][1] }, // Southwest
-      { lng: adjustedCoordinates[0][0], lat: adjustedCoordinates[1][1] }, // Northwest
-      { lng: adjustedCoordinates[1][0], lat: adjustedCoordinates[1][1] }, // Northeast
-      { lng: adjustedCoordinates[1][0], lat: adjustedCoordinates[0][1] } // Southeast
-    ];
-
-    // Close the polygon by repeating the first point
-    newGeographicCoordinates.push(newGeographicCoordinates[0]);
-
-    return {
-      type: "Feature",
-      geometry: {
-        type: "Polygon",
-        coordinates: [newGeographicCoordinates.map((coord) => [coord.lng, coord.lat])]
-      }
-    };
-  }
-
-  // Load Oregon State and Counties GeoJSONs
-  Promise.all([
-    fetch(statePath).then((response) => response.json()),
-    fetch(countyPath).then((response) => response.json())
-  ]).then(([oregonState, countiesGeojson]) => {
-    const [svgWidth, svgHeight] = getInsetSize();
-
-    // Set up D3 projection using the state boundary for proper fitting
-    const projection = d3
-      .geoConicConformal()
-      .parallels([43, 45.5]) // Standard parallels for Oregon
-      .rotate([120.5, 0]) // Center longitude (negative of Oregon's central meridian)
-      .center([0, 44]) // Center latitude of Oregon
-      .fitSize([svgWidth, svgHeight], oregonState);
-    const path = d3.geoPath(projection);
-
-    // Draw the Oregon state boundary first
-    const svg = d3
-      .select("#inset-map-container")
-      .append("svg")
-      .attr("width", svgWidth)
-      .attr("height", svgHeight);
-
-    // Draw state boundary
-    svg
-      .append("path")
-      .datum(oregonState)
-      .attr("d", path)
-      .attr("stroke", "black")
-      .attr("stroke-width", 1.0)
-      .attr("fill", "white")
-      .attr("fill-opacity", 0.6);
-
-    // Draw county boundaries on top
-    svg
-      .selectAll("path.county")
-      .data(countiesGeojson.features)
-      .enter()
-      .append("path")
-      .attr("class", "county")
-      .attr("d", path)
-      .attr("stroke", "black")
-      .attr("stroke-width", 0.3)
-      .attr("fill", "none");
-
-    // Function to update bounding box with throttling
-    let updateTimeout;
-    function updateInsetBox() {
-      clearTimeout(updateTimeout);
-      updateTimeout = setTimeout(() => {
-        const bounds = getBoundingBox(map);
-        console.log("Inset Map Bounds:", bounds);
-        if (bounds) {
-          svg.selectAll(".inset-box").remove();
-          svg
-            .append("path")
-            .datum(bounds)
-            .attr("class", "inset-box")
-            .attr("d", path)
-            .attr("stroke", "red")
-            .attr("fill", "red")
-            .attr("fill-opacity", 0.1);
-        }
-      }, 50); // Throttle to 50ms
-    }
-
-    // Initial draw
-    updateInsetBox();
-
-    // Update on map move with throttling
-    map.on("move", updateInsetBox);
-  });
-}
 // Inset Map
-insetMap(map, insetBackgroundPath, insetCountiesPath, insetWidth, insetHeight);
+const insetMap = new mapboxgl.Map({
+  container: 'insetMap',
+    style:{
+      version: 8,
+      sources: {},
+      layers: []
+    },
+    center: [-120.315389, 44.224141],
+    zoom: 4,
+    attributionControl: false,
+    interactive: false,
+});
 
-// Debug for resizing inset map on window resize
-function debounce(func, wait) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
-  };
+insetMap.on('load', () => {
+  addInsetLayers();
+  document.querySelectorAll('#insetMap .mapboxgl-ctrl-bottom-left').forEach(el => el.style.display = 'none');
+})
+
+function addInsetLayers(){
+  insetMap.addSource('counties', {
+    type: 'vector',
+    url: 'mapbox://michal-k.215x8uxa',
+  });
+
+  insetMap.addLayer({
+    id: 'fill',
+    type: 'fill',
+    source: 'counties',
+    "source-layer": "OR_Counties-3r42i4",
+    paint: {
+      'fill-color': 'white',
+    },
+    layout: {}
+  });
+
+  insetMap.addLayer({
+    id: 'lines',
+    type: 'line',
+    source: 'counties',
+    "source-layer": "OR_Counties-3r42i4",
+    paint: {
+      'line-color': 'darkgrey',
+      'line-width': 1
+    },
+    layout: {
+      'line-cap': 'round',
+      'line-join': 'round'
+    }
+  });
+
+  insetMap.addSource('mainMapBoundsSource', {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: []
+    }
+  });
+
+  insetMap.addLayer({
+    id: 'mainMapBoundsLayer',
+    type: 'line',
+    source: 'mainMapBoundsSource',
+    paint: {
+      'line-color': 'red',
+      'line-width': 2,
+    }
+  });
+
+  updateInsetMapBounds();
 }
-window.addEventListener(
-  "resize",
-  debounce(() => {
-    d3.select("#inset-map-container").selectAll("svg").remove();
-    insetMap(map, insetBackgroundPath, insetCountiesPath, insetWidth, insetHeight);
-  }, 150)
-); // 150ms timeout before resizing inset map
+
+function updateInsetMapBounds() {
+  const canvas = map.getCanvas();
+  const width = canvas.width;
+  const height = canvas.height;
+
+  // Sample points at the center of each edge
+  const topCenter = map.unproject([width / 2, 0]);
+  const bottomCenter = map.unproject([width / 2, height]);
+  const leftCenter = map.unproject([0, height / 2]);
+  const rightCenter = map.unproject([width, height / 2]);
+
+  const north = topCenter.lat;
+  const south = bottomCenter.lat;
+  const west = leftCenter.lng;
+  const east = rightCenter.lng;
+
+  const rectangle = {
+    type: 'Feature',
+    geometry: {
+      type: 'Polygon',
+      coordinates: [[
+        [west, south],
+        [east, south],
+        [east, north],
+        [west, north],
+        [west, south]
+      ]]
+    }
+  };
+
+  const source = insetMap.getSource('mainMapBoundsSource');
+  if (source) {
+    source.setData({
+      type: 'FeatureCollection',
+      features: [rectangle]
+    });
+  }
+}
+
+map.on('move', function(){
+  updateInsetMapBounds()
+});
 
 // [Bottom Left Mapbox Group]
 // Navigation Control (Zoom +/-)

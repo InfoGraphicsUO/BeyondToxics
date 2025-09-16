@@ -20,11 +20,13 @@ body { margin: 0; padding: 0; }
 }
 
 /* Inset Map */
-#inset-map-container {
+#insetMap {
     position: absolute;
     bottom: 20px;
     right: 10px;
     margin-bottom: 10px;
+    width: 200px;
+    height: 150px;
 }
 
 /*Tooltips*/
