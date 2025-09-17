@@ -75,25 +75,26 @@ insetMap.on('load', () => {
 	const canvas = insetMap.getCanvas();
 
 	// Hover styles
-	insetMap.on('mousemove', 'inset_rectangle_fill', () => {
-		canvas.style.cursor = 'grab';
-	});
+	const rectangleLayers = ['inset_rectangle_fill', 'inset_rectangle_line'];
+	rectangleLayers.forEach((layer) => {
+		insetMap.on('mousemove', layer, () => {
+			canvas.style.cursor = 'grab';
+		});
 
-	insetMap.on('mouseleave', 'inset_rectangle_fill', () => {
-		canvas.style.cursor = '';
-	});
+		insetMap.on('mouseleave', layer, () => {
+			canvas.style.cursor = '';
+		});
 
-	// Drag start (mouse)
-	insetMap.on('mousedown', 'inset_rectangle_fill', (e) => {
-		startDrag(e, canvas, 'mousemove', 'mouseup');
-	});
+		// Drag start (mouse)
+		insetMap.on('mousedown', layer, (e) => {
+			startDrag(e, canvas, 'mousemove', 'mouseup');
+		});
 
-	insetMap.on('touchstart', 'inset_rectangle_fill', (e) => {
-		if (e.points.length !== 1) return;
+		insetMap.on('touchstart', layer, (e) => {
+			if (e.points.length !== 1) return;
 
-    e.preventDefault();
-
-		startDrag(e, canvas, 'touchmove', 'touchend');
+			startDrag(e, canvas, 'touchmove', 'touchend');
+		});
 	});
 });
 
@@ -163,15 +164,14 @@ function onUp(e) {
 // Layers and sources for inset map
 function addInsetLayers() {
 	insetMap.addSource('counties', {
-		type: 'vector',
-		url: 'mapbox://michal-k.215x8uxa'
+		type: 'geojson',
+		data: 'OR_COUNTY.json'
 	});
 
 	insetMap.addLayer({
 		id: 'county_fill',
 		type: 'fill',
 		source: 'counties',
-		'source-layer': 'OR_Counties-3r42i4',
 		paint: {
 			'fill-color': 'white'
 		}
@@ -181,7 +181,6 @@ function addInsetLayers() {
 		id: 'county_lines',
 		type: 'line',
 		source: 'counties',
-		'source-layer': 'OR_Counties-3r42i4',
 		paint: {
 			'line-color': 'darkgrey',
 			'line-width': 1
@@ -201,22 +200,21 @@ function addInsetLayers() {
 	});
 
 	insetMap.addLayer({
+		id: 'inset_rectangle_fill',
+		type: 'fill',
+		source: 'mainMapBoundsSource',
+		paint: {
+			'fill-opacity': 0
+		}
+	});
+
+	insetMap.addLayer({
 		id: 'inset_rectangle_line',
 		type: 'line',
 		source: 'mainMapBoundsSource',
 		paint: {
 			'line-color': 'red',
 			'line-width': 2
-		}
-	});
-
-	insetMap.addLayer({
-		id: 'inset_rectangle_fill',
-		type: 'fill',
-		source: 'mainMapBoundsSource',
-		paint: {
-			'fill-color': '#ff0000',
-			'fill-opacity': 0.1
 		}
 	});
 
