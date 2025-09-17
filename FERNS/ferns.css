@@ -20,13 +20,20 @@ body { margin: 0; padding: 0; }
 }
 
 /* Inset Map */
-#insetMap {
+#inset-map-container {
     position: absolute;
     bottom: 20px;
     right: 10px;
     margin-bottom: 10px;
     width: 200px;
     height: 150px;
+    box-shadow: 0 0 0 2px #0000005a;
+    background-color: #79bcec5a;
+}
+
+#insetMap {
+    width: 100%;
+    height: 100%;
 }
 
 /*Tooltips*/
@@ -258,75 +265,58 @@ input[type="range"] {
     }
 }
 
-@media (max-width: 600px) {
-    /* Inset Map */
-    #inset-map-container {
-    position: fixed;
-    bottom: 39px;
-    right: 10px;
-    width: 40vw;
-    min-width: 120px;
-    max-width: 204px;
-    height: calc(40vw * 0.75);
-    margin-bottom: 0;
-    }
+/*@media (max-width: 600px) {*/
+/*    !* TODO: Search ? its hard so if possible we should move over things around to accommodate default sizing *!*/
 
-    #inset-map-container svg {
-    width: 100% !important;
-    height: 100% !important;
-    }
+/*    !* Year Range Filter *!*/
+/*    .range_container {*/
+/*    position: fixed;*/
+/*    right: 0;*/
+/*    margin-top: 0;*/
+/*    margin-bottom: 10px;*/
+/*    bottom: 40vw;*/
+/*    z-index: 1001;*/
+/*    width: 40vw;*/
+/*    min-width: 120px;*/
+/*    max-width: 204px;*/
+/*    }*/
 
-    /* TODO: Search ? its hard so if possible we should move over things around to accommodate default sizing */
+/*    .dev-overlay {*/
+/*    font-size: 10px;*/
+/*    bottom: 39px;*/
+/*    left: 50px;*/
+/*    width: 139px;*/
+/*    height: 126px;*/
+/*    padding: 0;*/
+/*    }*/
 
-    /* Year Range Filter */
-    .range_container {
-    position: fixed;
-    right: 0;
-    margin-top: 0;
-    margin-bottom: 10px;
-    bottom: 40vw;
-    z-index: 1001;
-    width: 40vw;
-    min-width: 120px;
-    max-width: 204px;
-    }
+/*    .dev-overlay .dev-overlay-inner {*/
+/*    width: 139px;*/
+/*    height: 126px;*/
+/*    margin-bottom: 0;*/
+/*    }*/
 
-    .dev-overlay {
-    font-size: 10px;
-    bottom: 39px;
-    left: 50px;
-    width: 139px;
-    height: 126px;
-    padding: 0;
-    }
+/*    .dev-overlay-inner h1 {*/
+/*    font-size: 12px;*/
+/*    font-weight: bolder;*/
+/*    margin-bottom: 0;*/
+/*    line-height: 14px;*/
+/*    }*/
 
-    .dev-overlay .dev-overlay-inner {
-    width: 139px;
-    height: 126px;
-    margin-bottom: 0;
-    }
+/*    .dev-overlay-inner fieldset {*/
+/*    font-size: 10px;*/
+/*    line-height: 12px;*/
+/*    }*/
 
-    .dev-overlay-inner h1 {
-    font-size: 12px;
-    font-weight: bolder;
-    margin-bottom: 0;
-    line-height: 14px;
-    }
+/*    .dev-overlay-inner input {*/
+/*    height: 11px;*/
+/*    width: 11px;*/
+/*    }*/
 
-    .dev-overlay-inner fieldset {
-    font-size: 10px;
-    line-height: 12px;
-    }
-
-    .dev-overlay-inner input {
-    height: 11px;
-    width: 11px;
-    }
-
-    #basemaps h2 {
-    font-size: 12px;
-    font-weight: bold;
-    margin: 2px 0;
-    line-height: 14px;
-    }
-}
+/*    #basemaps h2 {*/
+/*    font-size: 12px;*/
+/*    font-weight: bold;*/
+/*    margin: 2px 0;*/
+/*    line-height: 14px;*/
+/*    }*/
+/*}*/

@@ -49,117 +49,224 @@ map.touchPitch.disable();
 
 // Inset Map
 const insetMap = new mapboxgl.Map({
-  container: 'insetMap',
-    style:{
-      version: 8,
-      sources: {},
-      layers: []
-    },
-    center: [-120.315389, 44.224141],
-    zoom: 4,
-    attributionControl: false,
-    interactive: false,
+	container: 'insetMap',
+	style: {
+		version: 8,
+		sources: {},
+		layers: []
+	},
+	center: [-120.57906090033039, 44.16112354808914],
+	zoom: 4,
+	attributionControl: false,
+	interactive: false
 });
 
+let isDragging = false;
+let dragStartLngLat;
+let rectangleFeature;
+
+// When the inset map loads, add layers and set up event handlers
 insetMap.on('load', () => {
-  addInsetLayers();
-  document.querySelectorAll('#insetMap .mapboxgl-ctrl-bottom-left').forEach(el => el.style.display = 'none');
-})
+	addInsetLayers();
+	document
+		.querySelectorAll('#insetMap .mapboxgl-ctrl-bottom-left')
+		.forEach((el) => (el.style.display = 'none'));
 
-function addInsetLayers(){
-  insetMap.addSource('counties', {
-    type: 'vector',
-    url: 'mapbox://michal-k.215x8uxa',
-  });
+	const canvas = insetMap.getCanvas();
 
-  insetMap.addLayer({
-    id: 'fill',
-    type: 'fill',
-    source: 'counties',
-    "source-layer": "OR_Counties-3r42i4",
-    paint: {
-      'fill-color': 'white',
-    },
-    layout: {}
-  });
+	// Hover styles
+	insetMap.on('mousemove', 'inset_rectangle_fill', () => {
+		canvas.style.cursor = 'grab';
+	});
 
-  insetMap.addLayer({
-    id: 'lines',
-    type: 'line',
-    source: 'counties',
-    "source-layer": "OR_Counties-3r42i4",
-    paint: {
-      'line-color': 'darkgrey',
-      'line-width': 1
-    },
-    layout: {
-      'line-cap': 'round',
-      'line-join': 'round'
-    }
-  });
+	insetMap.on('mouseleave', 'inset_rectangle_fill', () => {
+		canvas.style.cursor = '';
+	});
 
-  insetMap.addSource('mainMapBoundsSource', {
-    type: 'geojson',
-    data: {
-      type: 'FeatureCollection',
-      features: []
-    }
-  });
+	// Drag start (mouse)
+	insetMap.on('mousedown', 'inset_rectangle_fill', (e) => {
+		startDrag(e, canvas, 'mousemove', 'mouseup');
+	});
 
-  insetMap.addLayer({
-    id: 'mainMapBoundsLayer',
-    type: 'line',
-    source: 'mainMapBoundsSource',
-    paint: {
-      'line-color': 'red',
-      'line-width': 2,
-    }
-  });
+	insetMap.on('touchstart', 'inset_rectangle_fill', (e) => {
+		if (e.points.length !== 1) return;
 
-  updateInsetMapBounds();
+    e.preventDefault();
+
+		startDrag(e, canvas, 'touchmove', 'touchend');
+	});
+});
+
+// Helpers
+function startDrag(e, canvas, moveEvent, endEvent) {
+	isDragging = true;
+	dragStartLngLat = e.lngLat;
+	rectangleFeature = insetMap.getSource('mainMapBoundsSource')._data.features[0];
+
+	canvas.style.cursor = 'grab';
+	insetMap.on(moveEvent, onMove);
+	insetMap.once(endEvent, onUp);
 }
 
+function onMove(e) {
+	if (!isDragging || !rectangleFeature) return;
+
+	const canvas = insetMap.getCanvas();
+	const current = e.lngLat;
+	const dx = current.lng - dragStartLngLat.lng;
+	const dy = current.lat - dragStartLngLat.lat;
+
+	// Shift rectangle
+	const newCoords = rectangleFeature.geometry.coordinates[0].map(([lng, lat]) => [
+		lng + dx,
+		lat + dy
+	]);
+
+	canvas.style.cursor = 'grabbing';
+
+	// Update inset rectangle
+	const newRectangle = {
+		type: 'Feature',
+		geometry: {
+			type: 'Polygon',
+			coordinates: [newCoords]
+		}
+	};
+	insetMap.getSource('mainMapBoundsSource').setData({
+		type: 'FeatureCollection',
+		features: [newRectangle]
+	});
+
+	// Update main map center
+	const sw = new mapboxgl.LngLat(
+		newRectangle.geometry.coordinates[0][0][0],
+		newRectangle.geometry.coordinates[0][0][1]
+	);
+	const ne = new mapboxgl.LngLat(
+		newRectangle.geometry.coordinates[0][2][0],
+		newRectangle.geometry.coordinates[0][2][1]
+	);
+
+	const bounds = new mapboxgl.LngLatBounds(sw, ne);
+	map.setCenter(bounds.getCenter());
+}
+
+function onUp(e) {
+	isDragging = false;
+	const canvas = insetMap.getCanvas();
+	canvas.style.cursor = 'grab';
+
+	insetMap.off('mousemove', onMove);
+	insetMap.off('touchmove', onMove);
+}
+
+// Layers and sources for inset map
+function addInsetLayers() {
+	insetMap.addSource('counties', {
+		type: 'vector',
+		url: 'mapbox://michal-k.215x8uxa'
+	});
+
+	insetMap.addLayer({
+		id: 'county_fill',
+		type: 'fill',
+		source: 'counties',
+		'source-layer': 'OR_Counties-3r42i4',
+		paint: {
+			'fill-color': 'white'
+		}
+	});
+
+	insetMap.addLayer({
+		id: 'county_lines',
+		type: 'line',
+		source: 'counties',
+		'source-layer': 'OR_Counties-3r42i4',
+		paint: {
+			'line-color': 'darkgrey',
+			'line-width': 1
+		},
+		layout: {
+			'line-cap': 'round',
+			'line-join': 'round'
+		}
+	});
+
+	insetMap.addSource('mainMapBoundsSource', {
+		type: 'geojson',
+		data: {
+			type: 'FeatureCollection',
+			features: []
+		}
+	});
+
+	insetMap.addLayer({
+		id: 'inset_rectangle_line',
+		type: 'line',
+		source: 'mainMapBoundsSource',
+		paint: {
+			'line-color': 'red',
+			'line-width': 2
+		}
+	});
+
+	insetMap.addLayer({
+		id: 'inset_rectangle_fill',
+		type: 'fill',
+		source: 'mainMapBoundsSource',
+		paint: {
+			'fill-color': '#ff0000',
+			'fill-opacity': 0.1
+		}
+	});
+
+	updateInsetMapBounds();
+}
+
+// Updates to inset rectangle
 function updateInsetMapBounds() {
-  const canvas = map.getCanvas();
-  const width = canvas.width;
-  const height = canvas.height;
+	const canvas = map.getCanvas();
+	const width = canvas.width;
+	const height = canvas.height;
 
-  // Sample points at the center of each edge
-  const topCenter = map.unproject([width / 2, 0]);
-  const bottomCenter = map.unproject([width / 2, height]);
-  const leftCenter = map.unproject([0, height / 2]);
-  const rightCenter = map.unproject([width, height / 2]);
+	// Sample points at the center of each edge
+	const topCenter = map.unproject([width / 2, 0]);
+	const bottomCenter = map.unproject([width / 2, height]);
+	const leftCenter = map.unproject([0, height / 2]);
+	const rightCenter = map.unproject([width, height / 2]);
 
-  const north = topCenter.lat;
-  const south = bottomCenter.lat;
-  const west = leftCenter.lng;
-  const east = rightCenter.lng;
+	const north = topCenter.lat;
+	const south = bottomCenter.lat;
+	const west = leftCenter.lng;
+	const east = rightCenter.lng;
 
-  const rectangle = {
-    type: 'Feature',
-    geometry: {
-      type: 'Polygon',
-      coordinates: [[
-        [west, south],
-        [east, south],
-        [east, north],
-        [west, north],
-        [west, south]
-      ]]
-    }
-  };
+	const rectangle = {
+		type: 'Feature',
+		geometry: {
+			type: 'Polygon',
+			coordinates: [
+				[
+					[west, south],
+					[east, south],
+					[east, north],
+					[west, north],
+					[west, south]
+				]
+			]
+		}
+	};
 
-  const source = insetMap.getSource('mainMapBoundsSource');
-  if (source) {
-    source.setData({
-      type: 'FeatureCollection',
-      features: [rectangle]
-    });
-  }
+	const source = insetMap.getSource('mainMapBoundsSource');
+	if (source) {
+		source.setData({
+			type: 'FeatureCollection',
+			features: [rectangle]
+		});
+	}
 }
 
-map.on('move', function(){
-  updateInsetMapBounds()
+map.on('move', function () {
+	updateInsetMapBounds();
 });
 
 // [Bottom Left Mapbox Group]
