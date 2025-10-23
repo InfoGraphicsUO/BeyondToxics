@@ -26,6 +26,7 @@ for (const basemap of basemapInputs) {
 const ACCESS_TOKEN =
   "pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q";
 mapboxgl.accessToken = ACCESS_TOKEN;
+const sourceLayer = "FERNS_Simplified-748ocs";
 
 // Main Map
 const map = new mapboxgl.Map({
@@ -338,14 +339,15 @@ window.selectedPolygonId = null; // Variable to store the currently selected pol
 function addSourceAndLayer() {
   map.addSource("custom-tileset", {
     type: "vector",
-    url: "mapbox://infographics.blqieafd"
+    // url: "mapbox://infographics.blqieafd" 2022 only
+    url: "mapbox://infographics.38lldpvm"
   });
 
   // Base fill (all polygons, semi-transparent)
   map.addLayer({
     id: "pesticides_2022-fill_base",
     source: "custom-tileset",
-    "source-layer": "FERNS_Pesticides_2022-6yzkfk",
+    "source-layer": sourceLayer,
     type: "fill",
     paint: {
       "fill-color": "orange",
@@ -357,7 +359,7 @@ function addSourceAndLayer() {
   map.addLayer({
     id: "pesticides_2022-stroke_base",
     source: "custom-tileset",
-    "source-layer": "FERNS_Pesticides_2022-6yzkfk",
+    "source-layer": sourceLayer,
     type: "line",
     layout: {},
     paint: {
@@ -370,7 +372,7 @@ function addSourceAndLayer() {
   map.addLayer({
     id: "pesticides_2022-stroke_selected",
     source: "custom-tileset",
-    "source-layer": "FERNS_Pesticides_2022-6yzkfk",
+    "source-layer": sourceLayer,
     type: "line",
     paint: {
       "line-color": [
@@ -391,7 +393,7 @@ function addSourceAndLayer() {
   map.addLayer({
     id: "pesticides_2022-fill_hover",
     source: "custom-tileset",
-    "source-layer": "FERNS_Pesticides_2022-6yzkfk",
+    "source-layer": sourceLayer,
     type: "fill",
     paint: {
       "fill-color": [
@@ -408,7 +410,7 @@ function addSourceAndLayer() {
   map.addLayer({
     id: "pesticides_2022-stroke_hover",
     source: "custom-tileset",
-    "source-layer": "FERNS_Pesticides_2022-6yzkfk",
+    "source-layer": sourceLayer,
     type: "line",
     paint: {
       "line-color": [
@@ -492,7 +494,7 @@ function addSourceAndLayer() {
         map.setFeatureState(
           {
             source: "custom-tileset",
-            sourceLayer: "FERNS_Pesticides_2022-6yzkfk",
+            sourceLayer: sourceLayer,
             id: hoveredPolygonId
           },
           { hover: false }
@@ -504,7 +506,7 @@ function addSourceAndLayer() {
       map.setFeatureState(
         {
           source: "custom-tileset",
-          sourceLayer: "FERNS_Pesticides_2022-6yzkfk",
+          sourceLayer: sourceLayer,
           id: hoveredPolygonId
         },
         { hover: true }
@@ -518,7 +520,7 @@ function addSourceAndLayer() {
         map.setFeatureState(
           {
             source: "custom-tileset",
-            sourceLayer: "FERNS_Pesticides_2022-6yzkfk",
+            sourceLayer: sourceLayer,
             id: window.selectedPolygonId
           },
           { selected: false }
@@ -530,7 +532,7 @@ function addSourceAndLayer() {
       map.setFeatureState(
         {
           source: "custom-tileset",
-          sourceLayer: "FERNS_Pesticides_2022-6yzkfk",
+          sourceLayer: sourceLayer,
           id: window.selectedPolygonId
         },
         { selected: true }
@@ -564,7 +566,7 @@ function addSourceAndLayer() {
           map.setFeatureState(
             {
               source: "custom-tileset",
-              sourceLayer: "FERNS_Pesticides_2022-6yzkfk",
+              sourceLayer: sourceLayer,
               id: hoveredTempId
             },
             { hover: false }
@@ -586,7 +588,7 @@ function addSourceAndLayer() {
           map.setFeatureState(
             {
               source: "custom-tileset",
-              sourceLayer: "FERNS_Pesticides_2022-6yzkfk",
+              sourceLayer: sourceLayer,
               id: hoveredTempId
             },
             { hover: false }
@@ -653,7 +655,7 @@ function addSourceAndLayer() {
           map.setFeatureState(
             {
               source: "custom-tileset",
-              sourceLayer: "FERNS_Pesticides_2022-6yzkfk",
+              sourceLayer: sourceLayer,
               id: hoveredPolygonId
             },
             { hover: false }
@@ -664,7 +666,7 @@ function addSourceAndLayer() {
         map.setFeatureState(
           {
             source: "custom-tileset",
-            sourceLayer: "FERNS_Pesticides_2022-6yzkfk",
+            sourceLayer: sourceLayer,
             id: hoveredPolygonId
           },
           { hover: true }
@@ -685,7 +687,7 @@ function addSourceAndLayer() {
       map.setFeatureState(
         {
           source: "custom-tileset",
-          sourceLayer: "FERNS_Pesticides_2022-6yzkfk",
+          sourceLayer: sourceLayer,
           id: hoveredPolygonId
         },
         { hover: false }
