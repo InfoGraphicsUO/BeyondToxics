@@ -24,23 +24,23 @@
   <div id="inset-map-container">
     <div id="insetMap"></div>
   </div>
-  <!-- Year Selection controller not currently functional -->
+  <!-- Year Selection controller -->
   <div class="range_container">
     <h1><strong>Year Selection</strong></h1>
     <!-- Slider Bars -->
     <div class="sliders_control">
-     <input id="fromSlider" type="range" value="2015" min="2014" max="2024"/>
-     <input id="toSlider" type="range" value="2022" min="2014" max="2024"/>
+     <input id="fromSlider" type="range" value="2014" min="2014" max="2024" step="1"/>
+     <input id="toSlider" type="range" value="2024" min="2014" max="2024" step="1"/>
     </div>
     <!-- Numeric Input Boxes -->
     <div class="form_control">
       <div class="form_control_container">
         <div class="form_control_container__time">Min</div>
-        <input class="form_control_container__time__input" type="number" id="fromInput" value="2015" min="2014" max="2024"/>
+        <input class="form_control_container__time__input" type="number" id="fromInput" value="2014" min="2014" max="2024" step="1" autocomplete="off"/>
       </div>
       <div class="form_control_container">
         <div class="form_control_container__time">Max</div>
-        <input class="form_control_container__time__input" type="number" id="toInput" value="2022" min="2014" max="2024"/>
+        <input class="form_control_container__time__input" type="number" id="toInput" value="2024" min="2014" max="2024" step="1" autocomplete="off"/>
       </div>
     </div>
   </div>

@@ -345,7 +345,7 @@ function addSourceAndLayer() {
 
   // Base fill (all polygons, semi-transparent)
   map.addLayer({
-    id: "pesticides_2022-fill_base",
+    id: "pesticides-fill_base",
     source: "custom-tileset",
     "source-layer": sourceLayer,
     type: "fill",
@@ -357,7 +357,7 @@ function addSourceAndLayer() {
 
   // Base stroke (all polygons, orange)
   map.addLayer({
-    id: "pesticides_2022-stroke_base",
+    id: "pesticides-stroke_base",
     source: "custom-tileset",
     "source-layer": sourceLayer,
     type: "line",
@@ -370,7 +370,7 @@ function addSourceAndLayer() {
 
   // Black stroke for selected polygon (below hover)
   map.addLayer({
-    id: "pesticides_2022-stroke_selected",
+    id: "pesticides-stroke_selected",
     source: "custom-tileset",
     "source-layer": sourceLayer,
     type: "line",
@@ -391,7 +391,7 @@ function addSourceAndLayer() {
 
   // Hovered polygon fill (fully opaque when hovered)
   map.addLayer({
-    id: "pesticides_2022-fill_hover",
+    id: "pesticides-fill_hover",
     source: "custom-tileset",
     "source-layer": sourceLayer,
     type: "fill",
@@ -408,7 +408,7 @@ function addSourceAndLayer() {
 
   // White stroke for hovered polygon (on top)
   map.addLayer({
-    id: "pesticides_2022-stroke_hover",
+    id: "pesticides-stroke_hover",
     source: "custom-tileset",
     "source-layer": sourceLayer,
     type: "line",
@@ -423,9 +423,9 @@ function addSourceAndLayer() {
     }
   });
 
-  map.on("click", "pesticides_2022-fill_base", (e) => {
+  map.on("click", "pesticides-fill_base", (e) => {
     const features = map.queryRenderedFeatures(e.point, {
-      layers: ["pesticides_2022-fill_base"]
+      layers: ["pesticides-fill_base"]
     });
 
     if (!features.length) return; // No features found, exit early
@@ -635,7 +635,7 @@ function addSourceAndLayer() {
 
   if (!isTouchDevice) {
     // Dont add hover functionality on mobile
-    map.on("mousemove", "pesticides_2022-fill_base", (e) => {
+    map.on("mousemove", "pesticides-fill_base", (e) => {
       map.getCanvas().style.cursor = "pointer";
 
       if (!tooltip) {
@@ -675,7 +675,7 @@ function addSourceAndLayer() {
     });
   }
 
-  map.on("mouseleave", "pesticides_2022-fill_base", () => {
+  map.on("mouseleave", "pesticides-fill_base", () => {
     map.getCanvas().style.cursor = "";
 
     if (tooltip) {
@@ -699,6 +699,7 @@ function addSourceAndLayer() {
 
 map.on("style.load", () => {
   addSourceAndLayer();
+  updateYearFilter();
 });
 
 // Debug/Dev Boundary Markers
@@ -750,9 +751,37 @@ const toSlider = document.querySelector("#toSlider");
 const fromInput = document.querySelector("#fromInput");
 const toInput = document.querySelector("#toInput");
 
+// update map filters based on year range
+function updateYearFilter() {
+	const [fromYear, toYear] = getParsed(fromSlider, toSlider);
+  
+  // Create filter expression: year >= fromYear AND year <= toYear
+  const filter = [
+    'all',
+    ['>=', ['get', 'Year'], fromYear],
+    ['<=', ['get', 'Year'], toYear]
+  ];
+  
+  // Apply filter to all polygon layers
+  const layersToFilter = [
+    'pesticides-fill_base',
+    'pesticides-stroke_base',
+    'pesticides-stroke_selected',
+    'pesticides-fill_hover',
+    'pesticides-stroke_hover'
+  ];
+  
+  layersToFilter.forEach(layerId => {
+    map.setFilter(layerId, filter);
+  });
+  
+  console.debug(`Year filter updated: ${fromYear} - ${toYear}`);
+}
+
+// Make sure one of the sliders is always accessible to being moved
 function setToggleAccessible(currentTarget) {
   const toSlider = document.querySelector("#toSlider");
-  if (Number(currentTarget.value) <= 0) {
+  if (Number(currentTarget.value) <= Number(fromSlider.min)) {
     toSlider.style.zIndex = "2";
   } else {
     toSlider.style.zIndex = "0";
@@ -791,6 +820,7 @@ function controlFromSlider(fromSlider, toSlider, fromInput) {
   } else {
     fromInput.value = from;
   }
+  updateYearFilter();
 }
 fromSlider.oninput = () => controlFromSlider(fromSlider, toSlider, fromInput);
 
@@ -805,6 +835,7 @@ function controlToSlider(fromSlider, toSlider, toInput) {
     toInput.value = from;
     toSlider.value = from;
   }
+  updateYearFilter();
 }
 toSlider.oninput = () => controlToSlider(fromSlider, toSlider, toInput);
 
@@ -817,6 +848,7 @@ function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
   } else {
     fromSlider.value = from;
   }
+  updateYearFilter();
 }
 fromInput.oninput = () => controlFromInput(fromSlider, fromInput, toInput, toSlider);
 
@@ -830,5 +862,6 @@ function controlToInput(toSlider, fromInput, toInput, controlSlider) {
   } else {
     toInput.value = from;
   }
+  updateYearFilter();
 }
 toInput.oninput = () => controlToInput(toSlider, fromInput, toInput, toSlider);

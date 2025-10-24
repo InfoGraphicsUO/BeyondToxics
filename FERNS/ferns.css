@@ -153,8 +153,10 @@ input[type="number"] {
     color: #8a8383;
     width: auto;
     height: auto;
-    font-size: 12px;;
-    border: none;
+    font-size: 12px;
+    border: 1px solid #8a8383;
+    border-radius: 6px;
+    /*background-color: #fff;*/
 }
 
 input[type=number]::-webkit-inner-spin-button,
@@ -164,7 +166,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 input[type="range"] {
     -webkit-appearance: none;
-    appearance: none;
+    /*appearance: none;*/
     height: 2px;
     width: 100%;
     position: absolute;
