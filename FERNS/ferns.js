@@ -496,7 +496,7 @@ function addSourceAndLayer() {
         return (
           value
             .replace(/^(\.\s*)+/, "") // Remove leading ".. ", ". .", etc in landowners
-            .replace(/,\s*None/gi, "") // Remove all ", None" (case-insensitive) in chemicals
+            .replace(/None,\s|,\sNone/g, "") // Remove all "None, " or ", None" (case-insensitive) in chemicals
             .trim() // Trim whitespace
             .replace(/,$/, "") || "No Data"
         ); // Remove trailing comma or return NA if cleaned str is empty
