@@ -28,10 +28,39 @@ const ACCESS_TOKEN =
 mapboxgl.accessToken = ACCESS_TOKEN;
 const sourceLayer = "FERNS_Simplified-748ocs";
 
+// Method filter variables
+let selectedMethods = new Set(['Aerial', 'Ground', 'Other', 'No Data']); // All selected by default
 // Chemical filter variables
 let chemicalsList = [];
 let selectedChemicals = new Set(); // Track selected chemicals
 let selectAllChecked = true; // Track "Select All" checkbox state
+
+// Reset all filters to default values on page load
+function resetFiltersToDefaults() {
+  // Reset year sliders and inputs to default values
+  document.getElementById('fromSlider').value = '2014';
+  document.getElementById('toSlider').value = '2024';
+  document.getElementById('fromInput').value = '2014';
+  document.getElementById('toInput').value = '2024';
+  
+  // Disable autocomplete on form elements to prevent browser caching
+  document.getElementById('fromInput').setAttribute('autocomplete', 'off');
+  document.getElementById('toInput').setAttribute('autocomplete', 'off');
+  
+  // Reset method checkboxes to all checked
+  document.getElementById('method-aerial').checked = true;
+  document.getElementById('method-ground').checked = true;
+  document.getElementById('method-other').checked = true;
+  document.getElementById('method-no-data').checked = true;
+  
+  // Reset method filter variables
+  selectedMethods = new Set(['Aerial', 'Ground', 'Other', 'No Data']);
+  
+  // Chemical filter will be reset when chemicals.json loads
+  selectAllChecked = true;
+  
+  console.debug("Filters reset to defaults");
+}
 
 // Main Map
 const map = new mapboxgl.Map({
@@ -53,90 +82,6 @@ const map = new mapboxgl.Map({
 map.dragRotate.disable();
 map.touchPitch.disable();
 
-// Chemical Filter Functionality
-// Load chemicals from JSON
-fetch('chemicals.json')
-  .then(response => response.json())
-  .then(data => {
-    chemicalsList = data;
-    populateChemicalFilter();
-    // Initially select all chemicals
-    selectedChemicals = new Set(chemicalsList);
-    updateFilters();
-  })
-  .catch(error => console.error('Error loading chemicals:', error));
-
-function populateChemicalFilter() {
-  const container = document.getElementById('chemical-list');
-  
-  chemicalsList.forEach(chemical => {
-    const label = document.createElement('label');
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.value = chemical;
-    checkbox.checked = true; // Start with all selected
-    checkbox.addEventListener('change', handleIndividualChemicalChange);
-    
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(chemical));
-    container.appendChild(label);
-  });
-  
-  // Add event listener for "Select All" checkbox
-  document.getElementById('select-all-checkbox').addEventListener('change', handleSelectAllChange);
-}
-
-function handleSelectAllChange(e) {
-  const selectAllCheckbox = e.target;
-  
-  if (selectAllCheckbox.checked) {
-    // Select All was checked - select all chemicals
-    selectAllChecked = true;
-    selectedChemicals = new Set(chemicalsList);
-    updateIndividualCheckboxes();
-  } else {
-    // Select All was unchecked - clear all selections
-    selectAllChecked = false;
-    selectedChemicals.clear();
-    updateIndividualCheckboxes();
-  }
-  
-  updateFilters();
-}
-
-function handleIndividualChemicalChange(e) {
-  const chemical = e.target.value;
-  
-  if (e.target.checked) {
-    selectedChemicals.add(chemical);
-  } else {
-    selectedChemicals.delete(chemical);
-  }
-  
-  // Check if all chemicals are now selected
-  if (selectedChemicals.size === chemicalsList.length) {
-    // All chemicals are selected - check "Select All"
-    selectAllChecked = true;
-    updateSelectAllCheckbox();
-  } else {
-    // Not all chemicals are selected - uncheck "Select All"
-    selectAllChecked = false;
-    updateSelectAllCheckbox();
-  }
-  
-  updateFilters();
-}
-
-function updateIndividualCheckboxes() {
-  document.querySelectorAll('#chemical-list input[type="checkbox"]').forEach(checkbox => {
-    checkbox.checked = selectedChemicals.has(checkbox.value);
-  });
-}
-
-function updateSelectAllCheckbox() {
-  document.getElementById('select-all-checkbox').checked = selectAllChecked;
-}
-
 // Inset Map
 const insetMap = new mapboxgl.Map({
 	container: 'insetMap',
@@ -157,6 +102,7 @@ let rectangleFeature;
 
 // When the inset map loads, add layers and set up event handlers
 insetMap.on('load', () => {
+	resetFiltersToDefaults();
 	addInsetLayers();
 	document
 		.querySelectorAll('#insetMap .mapboxgl-ctrl-bottom-left')
@@ -840,6 +786,112 @@ const toSlider = document.querySelector("#toSlider");
 const fromInput = document.querySelector("#fromInput");
 const toInput = document.querySelector("#toInput");
 
+// Method Filter Functionality
+function setupMethodFilter() {
+	document.getElementById('method-aerial').addEventListener('change', handleMethodChange);
+	document.getElementById('method-ground').addEventListener('change', handleMethodChange);
+	document.getElementById('method-other').addEventListener('change', handleMethodChange);
+	document.getElementById('method-no-data').addEventListener('change', handleMethodChange);
+}
+
+function handleMethodChange(e) {
+	const method = e.target.value;
+
+	if (e.target.checked) {
+		selectedMethods.add(method);
+	} else {
+		selectedMethods.delete(method);
+	}
+	updateFilters();
+}
+setupMethodFilter();
+
+// Chemical Filter Functionality
+// Load chemicals from JSON
+fetch('chemicals.json')
+  .then(response => response.json())
+  .then(data => {
+    chemicalsList = data;
+    populateChemicalFilter();
+    // Reset to defaults: select all chemicals and check "Select All"
+    selectedChemicals = new Set(chemicalsList);
+    selectAllChecked = true;
+    document.getElementById('select-all-checkbox').checked = selectAllChecked;
+    updateFilters();
+  })
+  .catch(error => console.error('Error loading chemicals:', error));
+
+function populateChemicalFilter() {
+  const container = document.getElementById('chemical-list');
+
+  chemicalsList.forEach(chemical => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = chemical;
+    checkbox.checked = true; // Start with all selected
+    checkbox.addEventListener('change', handleIndividualChemicalChange);
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(chemical));
+    container.appendChild(label);
+  });
+
+  // Add event listener for "Select All" checkbox
+  document.getElementById('select-all-checkbox').addEventListener('change', handleSelectAllChange);
+}
+
+function handleSelectAllChange(e) {
+  const selectAllCheckbox = e.target;
+
+  if (selectAllCheckbox.checked) {
+    // Select All was checked - select all chemicals
+    selectAllChecked = true;
+    selectedChemicals = new Set(chemicalsList);
+    updateIndividualCheckboxes();
+  } else {
+    // Select All was unchecked - clear all selections
+    selectAllChecked = false;
+    selectedChemicals.clear();
+    updateIndividualCheckboxes();
+  }
+
+  updateFilters();
+}
+
+function handleIndividualChemicalChange(e) {
+  const chemical = e.target.value;
+
+  if (e.target.checked) {
+    selectedChemicals.add(chemical);
+  } else {
+    selectedChemicals.delete(chemical);
+  }
+
+  // Check if all chemicals are now selected
+  if (selectedChemicals.size === chemicalsList.length) {
+    // All chemicals are selected - check "Select All"
+    selectAllChecked = true;
+    updateSelectAllCheckbox();
+  } else {
+    // Not all chemicals are selected - uncheck "Select All"
+    selectAllChecked = false;
+    updateSelectAllCheckbox();
+  }
+
+  updateFilters();
+}
+
+function updateIndividualCheckboxes() {
+  document.querySelectorAll('#chemical-list input[type="checkbox"]').forEach(checkbox => {
+    checkbox.checked = selectedChemicals.has(checkbox.value);
+  });
+}
+
+function updateSelectAllCheckbox() {
+  document.getElementById('select-all-checkbox').checked = selectAllChecked;
+}
+
 // update map filters based on year range and selected chemicals
 function updateFilters() {
 	const [fromYear, toYear] = getParsed(fromSlider, toSlider);
@@ -897,9 +949,44 @@ function updateFilters() {
   // If "Select All" is checked OR all chemicals are individually selected, don't add a chemical filter (show all)
   // If no chemicals are selected and "Select All" is unchecked, add a filter that matches nothing
   else if (!selectAllChecked && selectedChemicals.size === 0) {
-    filterExpression.push(['==', ['get', 'Chemicals'], '__NEVER_MATCH__']); // Always false - matches nothing
+    filterExpression.push(['==', ['get', 'Chemicals'], '__NEVER_MATCH__']);
   }
   // If "Select All" is checked, don't add any chemical filter (show all chemicals)
+
+	// Method filter
+	if (selectedMethods.size > 0 && selectedMethods.size < 4) {
+		let methodFilter = ['any'];
+
+		selectedMethods.forEach(method => {
+			if (method === 'Aerial') {
+				methodFilter.push(['in', 'Aerial', ['get', 'Methods']]);
+			} else if (method === 'Ground') {
+				methodFilter.push(['in', 'Ground', ['get', 'Methods']]);
+			} else if (method === 'Other') {
+				methodFilter.push([
+					'all',
+					['!', ['in', 'Aerial', ['get', 'Methods']]],
+					['!', ['in', 'Ground', ['get', 'Methods']]],
+					['!=', ['get', 'Methods'], ''],
+					['!=', ['get', 'Methods'], null],
+					['has', 'Methods']
+				]);
+			} else if (method === 'No Data') {
+				methodFilter.push([
+					'any',
+					['==', ['get', 'Methods'], ''],
+					['==', ['get', 'Methods'], null],
+					['!', ['has', 'Methods']]
+				]);
+			}
+		});
+
+		filterExpression.push(methodFilter);
+	}
+	// If no methods selected, add a filter that matches nothing
+	else if (selectedMethods.size === 0) {
+		filterExpression.push(['==', ['get', 'Methods'], '__NEVER_MATCH__']);
+	}
   
   // Apply filter to all polygon layers
   const layersToFilter = [
@@ -916,7 +1003,7 @@ function updateFilters() {
     }
   });
   
-  console.debug(`Filters updated: Years ${fromYear}-${toYear}, Chemicals: ${selectedChemicals.size}/${chemicalsList.length}, SelectAll: ${selectAllChecked}`);
+  console.debug(`Filters updated: Years ${fromYear}-${toYear}, Chemicals: ${selectedChemicals.size}/${chemicalsList.length}, Methods: ${Array.from(selectedMethods).join(', ')}, SelectAll: ${selectAllChecked}`);
 }
 
 // Make sure one of the sliders is always accessible to being moved

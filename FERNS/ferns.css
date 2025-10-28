@@ -21,14 +21,11 @@ body { margin: 0; padding: 0; }
 
 /* Inset Map */
 #inset-map-container {
-    position: absolute;
-    bottom: 20px;
-    right: 10px;
-    margin-bottom: 10px;
-    width: 200px;
+    width: 204px;
     height: 150px;
     box-shadow: 0 0 0 2px #0000005a;
     background-color: #79bcec5a;
+    flex-shrink: 0; /* Don't shrink */
 }
 
 #insetMap {
@@ -84,22 +81,31 @@ mapbox-search-listbox, mapbox-search-listbox *
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
 }
 
+/* Main Filters Container */
+.filters-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 20px;
+    width: 224px; /* 204px + 20px padding */
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+}
+
 /* Year Range Filter */
 .range_container {
     display: flex;
     flex-direction: column;
     width: 204px;
-    margin-top: 10px;
-    margin-right: 10px;
     padding: 10px;
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
     line-height: normal;
-    /*right: 0;*/
-    /*top: 0;*/
-    /*position: absolute;*/
     background: #fff;
     box-shadow: 0 0 0 2px #0000001a;
     border-radius: 4px;
+    flex-shrink: 0; /* Don't shrink */
 }
 
 .sliders_control {
@@ -179,47 +185,72 @@ input[type="range"] {
     z-index: 1;
 }
 
-.chemical_container {
+.method_container {
     display: flex;
     flex-direction: column;
     width: 204px;
-    max-height: 300px;
-    margin-top: 10px;
-    margin-right: 10px;
     padding: 10px;
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
     line-height: normal;
     background: #fff;
     box-shadow: 0 0 0 2px #0000001a;
     border-radius: 4px;
+    flex-shrink: 0; /* Don't shrink */
+}
+
+.method-checkboxes {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.method-checkboxes label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px 0;
+}
+
+.chemical_container {
+    display: flex;
+    flex-direction: column;
+    width: 204px;
+    padding: 10px;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+    line-height: normal;
+    background: #fff;
+    box-shadow: 0 0 0 2px #0000001a;
+    border-radius: 4px;
+    flex: 1; /* Grow to fill available space */
+    min-height: 100px; /* Minimum height */
+    overflow: hidden;
 }
 
 #chemical-list {
     display: flex;
     flex-direction: column;
-    gap: 5px;
     overflow-y: auto;
 }
 
 #chemical-list label {
     display: flex;
     align-items: center;
-    gap: 5px;
     cursor: pointer;
     font-size: 12px;
     padding: 2px 0;
 }
 
 .select-all-container {
-    margin-bottom: 5px;
-    padding-bottom: 5px;
+    margin-bottom: 2px;
+    padding-bottom: 2px;
     border-bottom: 1px solid #e0e0e0;
 }
 
 .select-all-container label {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 2px;
     cursor: pointer;
     font-size: 13px;
     font-weight: normal;
@@ -304,87 +335,3 @@ input[type="range"] {
     display: inline-flex;
     align-items: center;
 }
-
-@media (min-width: 601px) {
-    .range_container {
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
-
-    .chemical_container {
-        position: absolute;
-        right: 0;
-        top: 130px; /* Position below year filter */
-    }
-}
-
-/*@media (max-width: 600px) {*/
-/*    .range_container {*/
-/*        position: static;*/
-/*        margin: 10px;*/
-/*        margin-bottom: 0;*/
-/*    }*/
-/*    */
-/*    .chemical_container {*/
-/*        position: static;*/
-/*        margin: 10px;*/
-/*        margin-top: 0;*/
-/*    }*/
-/*}*/
-
-/*@media (max-width: 600px) {*/
-/*    !* TODO: Search ? its hard so if possible we should move over things around to accommodate default sizing *!*/
-
-/*    !* Year Range Filter *!*/
-/*    .range_container {*/
-/*    position: fixed;*/
-/*    right: 0;*/
-/*    margin-top: 0;*/
-/*    margin-bottom: 10px;*/
-/*    bottom: 40vw;*/
-/*    z-index: 1001;*/
-/*    width: 40vw;*/
-/*    min-width: 120px;*/
-/*    max-width: 204px;*/
-/*    }*/
-
-/*    .dev-overlay {*/
-/*    font-size: 10px;*/
-/*    bottom: 39px;*/
-/*    left: 50px;*/
-/*    width: 139px;*/
-/*    height: 126px;*/
-/*    padding: 0;*/
-/*    }*/
-
-/*    .dev-overlay .dev-overlay-inner {*/
-/*    width: 139px;*/
-/*    height: 126px;*/
-/*    margin-bottom: 0;*/
-/*    }*/
-
-/*    .dev-overlay-inner h1 {*/
-/*    font-size: 12px;*/
-/*    font-weight: bolder;*/
-/*    margin-bottom: 0;*/
-/*    line-height: 14px;*/
-/*    }*/
-
-/*    .dev-overlay-inner fieldset {*/
-/*    font-size: 10px;*/
-/*    line-height: 12px;*/
-/*    }*/
-
-/*    .dev-overlay-inner input {*/
-/*    height: 11px;*/
-/*    width: 11px;*/
-/*    }*/
-
-/*    #basemaps h2 {*/
-/*    font-size: 12px;*/
-/*    font-weight: bold;*/
-/*    margin: 2px 0;*/
-/*    line-height: 14px;*/
-/*    }*/
-/*}*/

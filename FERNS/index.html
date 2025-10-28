@@ -21,42 +21,71 @@
 <body>
   <!-- Main and Inset Maps -->
   <div id="map"></div>
-  <div id="inset-map-container">
-    <div id="insetMap"></div>
-  </div>
-  <!-- Year Selection controller -->
-  <div class="range_container">
-    <h1><strong>Year Selection</strong></h1>
-    <!-- Slider Bars -->
-    <div class="sliders_control">
-     <input id="fromSlider" type="range" value="2014" min="2014" max="2024" step="1"/>
-     <input id="toSlider" type="range" value="2024" min="2014" max="2024" step="1"/>
-    </div>
-    <!-- Numeric Input Boxes -->
-    <div class="form_control">
-      <div class="form_control_container">
-        <div class="form_control_container__time">Min</div>
-        <input class="form_control_container__time__input" type="number" id="fromInput" value="2014" min="2014" max="2024" step="1" autocomplete="off"/>
+  <!-- Right Side Controls Container -->
+  <div class="filters-container">
+    <!-- Year Selection controller -->
+    <div class="range_container">
+      <h1><strong>Year Selection</strong></h1>
+      <!-- Slider Bars -->
+      <div class="sliders_control">
+       <input id="fromSlider" type="range" value="2014" min="2014" max="2024" step="1"/>
+       <input id="toSlider" type="range" value="2024" min="2014" max="2024" step="1"/>
       </div>
-      <div class="form_control_container">
-        <div class="form_control_container__time">Max</div>
-        <input class="form_control_container__time__input" type="number" id="toInput" value="2024" min="2014" max="2024" step="1" autocomplete="off"/>
+      <!-- Numeric Input Boxes -->
+      <div class="form_control">
+        <div class="form_control_container">
+          <div class="form_control_container__time">Min</div>
+          <input class="form_control_container__time__input" type="number" id="fromInput" value="2014" min="2014" max="2024" step="1" autocomplete="off"/>
+        </div>
+        <div class="form_control_container">
+          <div class="form_control_container__time">Max</div>
+          <input class="form_control_container__time__input" type="number" id="toInput" value="2024" min="2014" max="2024" step="1" autocomplete="off"/>
+        </div>
       </div>
     </div>
+
+    <!-- Method Filter -->
+    <div class="method_container">
+      <h1><strong>Method Filter</strong></h1>
+      <div class="method-checkboxes">
+        <label>
+          <input type="checkbox" id="method-aerial" value="Aerial" checked>
+          Aerial
+        </label>
+        <label>
+          <input type="checkbox" id="method-ground" value="Ground" checked>
+          Ground
+        </label>
+        <label>
+          <input type="checkbox" id="method-other" value="Other" checked>
+          Other
+        </label>
+        <label>
+          <input type="checkbox" id="method-no-data" value="No Data" checked>
+          No Data
+        </label>
+      </div>
+    </div>
+
+    <!-- Chemical Filter -->
+    <div class="chemical_container">
+      <h1><strong>Chemical Filter</strong></h1>
+      <div class="select-all-container">
+        <label for="select-all-checkbox">
+          <input type="checkbox" id="select-all-checkbox" checked>
+          <strong>Select All</strong>
+        </label>
+      </div>
+      <div id="chemical-list">
+        <!-- Checkboxes will be dynamically populated -->
+      </div>
+    </div>
+
+    <!-- Inset Map Container -->
+    <div id="inset-map-container">
+      <div id="insetMap"></div>
+    </div>
   </div>
-  <!-- Chemical Filter -->
-   <div class="chemical_container">
-    <h1><strong>Chemical Filter</strong></h1>
-    <div class="select-all-container">
-      <label for="select-all-checkbox">
-        <input type="checkbox" id="select-all-checkbox" checked>
-        <strong>Select All</strong>
-      </label>
-    </div>
-    <div id="chemical-list">
-      <!-- Checkboxes will be dynamically populated -->
-    </div>
-   </div>
   <!-- Dev Panel -->
   <div class="dev-overlay">
     <div class="dev-overlay-inner">
