@@ -31,6 +31,7 @@ const sourceLayer = "FERNS_Simplified-748ocs";
 // Chemical filter variables
 let chemicalsList = [];
 let selectedChemicals = new Set(); // Track selected chemicals
+let selectAllChecked = true; // Track "Select All" checkbox state
 
 // Main Map
 const map = new mapboxgl.Map({
@@ -74,41 +75,66 @@ function populateChemicalFilter() {
     checkbox.type = 'checkbox';
     checkbox.value = chemical;
     checkbox.checked = true; // Start with all selected
-    checkbox.addEventListener('change', handleChemicalChange);
+    checkbox.addEventListener('change', handleIndividualChemicalChange);
     
     label.appendChild(checkbox);
     label.appendChild(document.createTextNode(chemical));
     container.appendChild(label);
   });
   
-  // Add event listeners for select/clear all buttons
-  document.getElementById('select-all-chemicals').addEventListener('click', () => {
-    selectedChemicals = new Set(chemicalsList);
-    updateCheckboxes();
-    updateFilters();
-  });
-  
-  document.getElementById('clear-all-chemicals').addEventListener('click', () => {
-    selectedChemicals.clear();
-    updateCheckboxes();
-    updateFilters();
-  });
+  // Add event listener for "Select All" checkbox
+  document.getElementById('select-all-checkbox').addEventListener('change', handleSelectAllChange);
 }
 
-function handleChemicalChange(e) {
+function handleSelectAllChange(e) {
+  const selectAllCheckbox = e.target;
+  
+  if (selectAllCheckbox.checked) {
+    // Select All was checked - select all chemicals
+    selectAllChecked = true;
+    selectedChemicals = new Set(chemicalsList);
+    updateIndividualCheckboxes();
+  } else {
+    // Select All was unchecked - clear all selections
+    selectAllChecked = false;
+    selectedChemicals.clear();
+    updateIndividualCheckboxes();
+  }
+  
+  updateFilters();
+}
+
+function handleIndividualChemicalChange(e) {
   const chemical = e.target.value;
+  
   if (e.target.checked) {
     selectedChemicals.add(chemical);
   } else {
     selectedChemicals.delete(chemical);
   }
+  
+  // Check if all chemicals are now selected
+  if (selectedChemicals.size === chemicalsList.length) {
+    // All chemicals are selected - check "Select All"
+    selectAllChecked = true;
+    updateSelectAllCheckbox();
+  } else {
+    // Not all chemicals are selected - uncheck "Select All"
+    selectAllChecked = false;
+    updateSelectAllCheckbox();
+  }
+  
   updateFilters();
 }
 
-function updateCheckboxes() {
+function updateIndividualCheckboxes() {
   document.querySelectorAll('#chemical-list input[type="checkbox"]').forEach(checkbox => {
     checkbox.checked = selectedChemicals.has(checkbox.value);
   });
+}
+
+function updateSelectAllCheckbox() {
+  document.getElementById('select-all-checkbox').checked = selectAllChecked;
 }
 
 // Inset Map
@@ -816,7 +842,7 @@ const toInput = document.querySelector("#toInput");
 
 // update map filters based on year range and selected chemicals
 function updateFilters() {
-  const [fromYear, toYear] = getParsed(fromSlider, toSlider);
+	const [fromYear, toYear] = getParsed(fromSlider, toSlider);
   
   // Build the filter expression
   let filterExpression = ['all'];
@@ -826,7 +852,7 @@ function updateFilters() {
   filterExpression.push(['<=', ['get', 'Year'], toYear]);
   
   // Add chemical filter
-  if (selectedChemicals.size > 0 && selectedChemicals.size < chemicalsList.length) {
+  if (!selectAllChecked && selectedChemicals.size > 0) {
     // Create an 'any' expression that checks if ANY selected chemical appears in the Chemicals property
     let chemicalFilter = ['any'];
     
@@ -868,11 +894,12 @@ function updateFilters() {
     
     filterExpression.push(chemicalFilter);
   }
-  // If all chemicals are selected, don't add a chemical filter (show all)
-  // If no chemicals are selected, add a filter that matches nothing
-  else if (selectedChemicals.size === 0) {
+  // If "Select All" is checked OR all chemicals are individually selected, don't add a chemical filter (show all)
+  // If no chemicals are selected and "Select All" is unchecked, add a filter that matches nothing
+  else if (!selectAllChecked && selectedChemicals.size === 0) {
     filterExpression.push(['==', ['get', 'Chemicals'], '__NEVER_MATCH__']); // Always false - matches nothing
   }
+  // If "Select All" is checked, don't add any chemical filter (show all chemicals)
   
   // Apply filter to all polygon layers
   const layersToFilter = [
@@ -889,7 +916,7 @@ function updateFilters() {
     }
   });
   
-  console.debug(`Filters updated: Years ${fromYear}-${toYear}, Chemicals: ${selectedChemicals.size}/${chemicalsList.length}`);
+  console.debug(`Filters updated: Years ${fromYear}-${toYear}, Chemicals: ${selectedChemicals.size}/${chemicalsList.length}, SelectAll: ${selectAllChecked}`);
 }
 
 // Make sure one of the sliders is always accessible to being moved

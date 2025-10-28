@@ -210,25 +210,19 @@ input[type="range"] {
     padding: 2px 0;
 }
 
-.filter-actions {
+.select-all-container {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.select-all-container label {
     display: flex;
+    align-items: center;
     gap: 5px;
-    margin-top: 10px;
-}
-
-.filter-actions button {
-    padding: 5px 10px;
-    font-size: 11px;
-    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
-    background: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 3px;
     cursor: pointer;
-    flex: 1;
-}
-
-.filter-actions button:hover {
-    background: #e0e0e0;
+    font-size: 13px;
+    font-weight: normal;
 }
 
 /* Reset Extent */
