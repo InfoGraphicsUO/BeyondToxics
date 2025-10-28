@@ -179,6 +179,58 @@ input[type="range"] {
     z-index: 1;
 }
 
+.chemical_container {
+    display: flex;
+    flex-direction: column;
+    width: 204px;
+    max-height: 300px;
+    margin-top: 10px;
+    margin-right: 10px;
+    padding: 10px;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+    line-height: normal;
+    background: #fff;
+    box-shadow: 0 0 0 2px #0000001a;
+    border-radius: 4px;
+}
+
+#chemical-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+}
+
+#chemical-list label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px 0;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.filter-actions button {
+    padding: 5px 10px;
+    font-size: 11px;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.filter-actions button:hover {
+    background: #e0e0e0;
+}
+
 /* Reset Extent */
 .resetExtent {
     background: #fff;
@@ -261,11 +313,31 @@ input[type="range"] {
 
 @media (min-width: 601px) {
     .range_container {
-    position: absolute;
-    right: 0;
-    top: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .chemical_container {
+        position: absolute;
+        right: 0;
+        top: 130px; /* Position below year filter */
     }
 }
+
+/*@media (max-width: 600px) {*/
+/*    .range_container {*/
+/*        position: static;*/
+/*        margin: 10px;*/
+/*        margin-bottom: 0;*/
+/*    }*/
+/*    */
+/*    .chemical_container {*/
+/*        position: static;*/
+/*        margin: 10px;*/
+/*        margin-top: 0;*/
+/*    }*/
+/*}*/
 
 /*@media (max-width: 600px) {*/
 /*    !* TODO: Search ? its hard so if possible we should move over things around to accommodate default sizing *!*/

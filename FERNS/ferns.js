@@ -28,6 +28,10 @@ const ACCESS_TOKEN =
 mapboxgl.accessToken = ACCESS_TOKEN;
 const sourceLayer = "FERNS_Simplified-748ocs";
 
+// Chemical filter variables
+let chemicalsList = [];
+let selectedChemicals = new Set(); // Track selected chemicals
+
 // Main Map
 const map = new mapboxgl.Map({
   container: "map", // container ID
@@ -47,6 +51,65 @@ const map = new mapboxgl.Map({
 // Disable map rotation using right click + drag
 map.dragRotate.disable();
 map.touchPitch.disable();
+
+// Chemical Filter Functionality
+// Load chemicals from JSON
+fetch('chemicals.json')
+  .then(response => response.json())
+  .then(data => {
+    chemicalsList = data;
+    populateChemicalFilter();
+    // Initially select all chemicals
+    selectedChemicals = new Set(chemicalsList);
+    updateFilters();
+  })
+  .catch(error => console.error('Error loading chemicals:', error));
+
+function populateChemicalFilter() {
+  const container = document.getElementById('chemical-list');
+  
+  chemicalsList.forEach(chemical => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = chemical;
+    checkbox.checked = true; // Start with all selected
+    checkbox.addEventListener('change', handleChemicalChange);
+    
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(chemical));
+    container.appendChild(label);
+  });
+  
+  // Add event listeners for select/clear all buttons
+  document.getElementById('select-all-chemicals').addEventListener('click', () => {
+    selectedChemicals = new Set(chemicalsList);
+    updateCheckboxes();
+    updateFilters();
+  });
+  
+  document.getElementById('clear-all-chemicals').addEventListener('click', () => {
+    selectedChemicals.clear();
+    updateCheckboxes();
+    updateFilters();
+  });
+}
+
+function handleChemicalChange(e) {
+  const chemical = e.target.value;
+  if (e.target.checked) {
+    selectedChemicals.add(chemical);
+  } else {
+    selectedChemicals.delete(chemical);
+  }
+  updateFilters();
+}
+
+function updateCheckboxes() {
+  document.querySelectorAll('#chemical-list input[type="checkbox"]').forEach(checkbox => {
+    checkbox.checked = selectedChemicals.has(checkbox.value);
+  });
+}
 
 // Inset Map
 const insetMap = new mapboxgl.Map({
@@ -699,7 +762,7 @@ function addSourceAndLayer() {
 
 map.on("style.load", () => {
   addSourceAndLayer();
-  updateYearFilter();
+  updateFilters();
 });
 
 // Debug/Dev Boundary Markers
@@ -751,16 +814,65 @@ const toSlider = document.querySelector("#toSlider");
 const fromInput = document.querySelector("#fromInput");
 const toInput = document.querySelector("#toInput");
 
-// update map filters based on year range
-function updateYearFilter() {
-	const [fromYear, toYear] = getParsed(fromSlider, toSlider);
+// update map filters based on year range and selected chemicals
+function updateFilters() {
+  const [fromYear, toYear] = getParsed(fromSlider, toSlider);
   
-  // Create filter expression: year >= fromYear AND year <= toYear
-  const filter = [
-    'all',
-    ['>=', ['get', 'Year'], fromYear],
-    ['<=', ['get', 'Year'], toYear]
-  ];
+  // Build the filter expression
+  let filterExpression = ['all'];
+  
+  // Add year filter
+  filterExpression.push(['>=', ['get', 'Year'], fromYear]);
+  filterExpression.push(['<=', ['get', 'Year'], toYear]);
+  
+  // Add chemical filter
+  if (selectedChemicals.size > 0 && selectedChemicals.size < chemicalsList.length) {
+    // Create an 'any' expression that checks if ANY selected chemical appears in the Chemicals property
+    let chemicalFilter = ['any'];
+    
+    selectedChemicals.forEach(chemical => {
+      if (chemical === 'No Data') {
+        // Handle "No Data" case - check for empty, null, or missing fields
+        chemicalFilter.push([
+          'any',
+          ['==', ['get', 'Chemicals'], ''],
+          ['==', ['get', 'Chemicals'], null],
+          ['!', ['has', 'Chemicals']] // Check if field doesn't exist
+        ]);
+      } else {
+        // Pre-calculate values in JavaScript to avoid complex Mapbox expressions
+        const chemicalStart = chemical + ', ';
+        const chemicalEnd = ', ' + chemical;
+        const chemicalMiddle = ', ' + chemical + ', ';
+        const minLength = chemical.length + 2;
+        
+        chemicalFilter.push([
+          'any',
+          // Exact match (entire field is just this chemical)
+          ['==', ['get', 'Chemicals'], chemical],
+          // Match at beginning of list: "chemical, ..."
+          ['all',
+            ['>', ['length', ['get', 'Chemicals']], minLength - 1],
+            ['==', ['slice', ['get', 'Chemicals'], 0, minLength], chemicalStart]
+          ],
+          // Match at end of list: "..., chemical"
+          ['all',
+            ['>', ['length', ['get', 'Chemicals']], minLength - 1],
+            ['==', ['slice', ['get', 'Chemicals'], -minLength], chemicalEnd]
+          ],
+          // Match in middle of list: "..., chemical, ..."
+          ['in', chemicalMiddle, ['get', 'Chemicals']]
+        ]);
+      }
+    });
+    
+    filterExpression.push(chemicalFilter);
+  }
+  // If all chemicals are selected, don't add a chemical filter (show all)
+  // If no chemicals are selected, add a filter that matches nothing
+  else if (selectedChemicals.size === 0) {
+    filterExpression.push(['==', ['get', 'Chemicals'], '__NEVER_MATCH__']); // Always false - matches nothing
+  }
   
   // Apply filter to all polygon layers
   const layersToFilter = [
@@ -772,10 +884,12 @@ function updateYearFilter() {
   ];
   
   layersToFilter.forEach(layerId => {
-    map.setFilter(layerId, filter);
+    if (map.getLayer(layerId)) {
+      map.setFilter(layerId, filterExpression);
+    }
   });
   
-  console.debug(`Year filter updated: ${fromYear} - ${toYear}`);
+  console.debug(`Filters updated: Years ${fromYear}-${toYear}, Chemicals: ${selectedChemicals.size}/${chemicalsList.length}`);
 }
 
 // Make sure one of the sliders is always accessible to being moved
@@ -820,7 +934,7 @@ function controlFromSlider(fromSlider, toSlider, fromInput) {
   } else {
     fromInput.value = from;
   }
-  updateYearFilter();
+  updateFilters();
 }
 fromSlider.oninput = () => controlFromSlider(fromSlider, toSlider, fromInput);
 
@@ -835,7 +949,7 @@ function controlToSlider(fromSlider, toSlider, toInput) {
     toInput.value = from;
     toSlider.value = from;
   }
-  updateYearFilter();
+  updateFilters();
 }
 toSlider.oninput = () => controlToSlider(fromSlider, toSlider, toInput);
 
@@ -848,7 +962,7 @@ function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
   } else {
     fromSlider.value = from;
   }
-  updateYearFilter();
+  updateFilters();
 }
 fromInput.oninput = () => controlFromInput(fromSlider, fromInput, toInput, toSlider);
 
@@ -862,6 +976,6 @@ function controlToInput(toSlider, fromInput, toInput, controlSlider) {
   } else {
     toInput.value = from;
   }
-  updateYearFilter();
+  updateFilters();
 }
 toInput.oninput = () => controlToInput(toSlider, fromInput, toInput, toSlider);
