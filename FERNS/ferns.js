@@ -188,7 +188,7 @@ function onMove(e) {
 	map.setCenter(bounds.getCenter());
 }
 
-function onUp(e) {
+function onUp() {
 	isDragging = false;
 	const canvas = insetMap.getCanvas();
 	canvas.style.cursor = 'grab';
@@ -839,22 +839,71 @@ function populateChemicalFilter() {
 
   // Add event listener for "Select All" checkbox
   document.getElementById('select-all-checkbox').addEventListener('change', handleSelectAllChange);
+  
+  // Add event listener for search input
+  document.getElementById('chemical-search').addEventListener('input', handleChemicalSearch);
+}
+
+function handleChemicalSearch(e) {
+  const searchTerm = e.target.value.toLowerCase();
+  const labels = document.querySelectorAll('#chemical-list label');
+  
+  labels.forEach(label => {
+    const chemicalName = label.textContent.toLowerCase();
+    if (chemicalName.includes(searchTerm)) {
+      label.style.display = 'flex';
+    } else {
+      label.style.display = 'none';
+    }
+  });
+  
+  // Update "Select All" checkbox state based on visible chemicals
+  updateSelectAllCheckboxForVisible();
+}
+
+// Helper function to get all visible chemical checkboxes
+function getVisibleChemicalCheckboxes() {
+  const checkboxes = [];
+  const labels = document.querySelectorAll('#chemical-list label');
+  
+  labels.forEach(label => {
+    if (label.style.display !== 'none') {
+      const checkbox = label.querySelector('input[type="checkbox"]');
+      if (checkbox) {
+        checkboxes.push(checkbox);
+      }
+    }
+  });
+  
+  return checkboxes;
+}
+
+// Update "Select All" checkbox based on whether all visible chemicals are selected
+function updateSelectAllCheckboxForVisible() {
+  const visibleCheckboxes = getVisibleChemicalCheckboxes();
+	document.getElementById('select-all-checkbox').checked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(checkbox => checkbox.checked);
 }
 
 function handleSelectAllChange(e) {
   const selectAllCheckbox = e.target;
 
   if (selectAllCheckbox.checked) {
-    // Select All was checked - select all chemicals
-    selectAllChecked = true;
-    selectedChemicals = new Set(chemicalsList);
-    updateIndividualCheckboxes();
+    // Select only visible chemicals (All if nothing is typed into search)
+    const visibleCheckboxes = getVisibleChemicalCheckboxes();
+    visibleCheckboxes.forEach(checkbox => {
+      selectedChemicals.add(checkbox.value);
+      checkbox.checked = true;
+    });
   } else {
-    // Select All was unchecked - clear all selections
-    selectAllChecked = false;
+    // Select All was unchecked - deselect ALL chemicals
     selectedChemicals.clear();
-    updateIndividualCheckboxes();
+    document.querySelectorAll('#chemical-list input[type="checkbox"]').forEach(checkbox => {
+      checkbox.checked = false;
+    });
   }
+
+  // Update selectAllChecked based on whether all chemicals (not just visible) are selected
+  selectAllChecked = selectedChemicals.size === chemicalsList.length;
 
   updateFilters();
 }
@@ -868,28 +917,13 @@ function handleIndividualChemicalChange(e) {
     selectedChemicals.delete(chemical);
   }
 
-  // Check if all chemicals are now selected
-  if (selectedChemicals.size === chemicalsList.length) {
-    // All chemicals are selected - check "Select All"
-    selectAllChecked = true;
-    updateSelectAllCheckbox();
-  } else {
-    // Not all chemicals are selected - uncheck "Select All"
-    selectAllChecked = false;
-    updateSelectAllCheckbox();
-  }
+  // Update "Select All" checkbox based on visible chemicals
+  updateSelectAllCheckboxForVisible();
+  
+  // Update the global selectAllChecked flag based on all chemicals
+  selectAllChecked = selectedChemicals.size === chemicalsList.length;
 
   updateFilters();
-}
-
-function updateIndividualCheckboxes() {
-  document.querySelectorAll('#chemical-list input[type="checkbox"]').forEach(checkbox => {
-    checkbox.checked = selectedChemicals.has(checkbox.value);
-  });
-}
-
-function updateSelectAllCheckbox() {
-  document.getElementById('select-all-checkbox').checked = selectAllChecked;
 }
 
 // update map filters based on year range and selected chemicals
