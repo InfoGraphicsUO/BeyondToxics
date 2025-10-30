@@ -372,7 +372,7 @@ window.addEventListener("load", () => {
 let hoveredPolygonId = null; // Variable to store the currently hovered polygon ID
 window.selectedPolygonId = null; // Variable to store the currently selected polygon ID
 function addSourceAndLayer() {
-  map.addSource("custom-tileset", {
+  map.addSource("FERNS-tileset", {
     type: "vector",
     // url: "mapbox://infographics.blqieafd" 2022 only
     url: "mapbox://infographics.38lldpvm"
@@ -381,7 +381,7 @@ function addSourceAndLayer() {
   // Base fill (all polygons, semi-transparent)
   map.addLayer({
     id: "pesticides-fill_base",
-    source: "custom-tileset",
+    source: "FERNS-tileset",
     "source-layer": sourceLayer,
     type: "fill",
     paint: {
@@ -393,7 +393,7 @@ function addSourceAndLayer() {
   // Base stroke (all polygons, orange)
   map.addLayer({
     id: "pesticides-stroke_base",
-    source: "custom-tileset",
+    source: "FERNS-tileset",
     "source-layer": sourceLayer,
     type: "line",
     layout: {},
@@ -406,7 +406,7 @@ function addSourceAndLayer() {
   // Black stroke for selected polygon (below hover)
   map.addLayer({
     id: "pesticides-stroke_selected",
-    source: "custom-tileset",
+    source: "FERNS-tileset",
     "source-layer": sourceLayer,
     type: "line",
     paint: {
@@ -427,7 +427,7 @@ function addSourceAndLayer() {
   // Hovered polygon fill (fully opaque when hovered)
   map.addLayer({
     id: "pesticides-fill_hover",
-    source: "custom-tileset",
+    source: "FERNS-tileset",
     "source-layer": sourceLayer,
     type: "fill",
     paint: {
@@ -444,7 +444,7 @@ function addSourceAndLayer() {
   // White stroke for hovered polygon (on top)
   map.addLayer({
     id: "pesticides-stroke_hover",
-    source: "custom-tileset",
+    source: "FERNS-tileset",
     "source-layer": sourceLayer,
     type: "line",
     paint: {
@@ -528,7 +528,7 @@ function addSourceAndLayer() {
       if (hoveredPolygonId !== null && hoveredPolygonId !== featureId) {
         map.setFeatureState(
           {
-            source: "custom-tileset",
+            source: "FERNS-tileset",
             sourceLayer: sourceLayer,
             id: hoveredPolygonId
           },
@@ -540,7 +540,7 @@ function addSourceAndLayer() {
 
       map.setFeatureState(
         {
-          source: "custom-tileset",
+          source: "FERNS-tileset",
           sourceLayer: sourceLayer,
           id: hoveredPolygonId
         },
@@ -554,7 +554,7 @@ function addSourceAndLayer() {
       if (window.selectedPolygonId !== null && window.selectedPolygonId !== featureId) {
         map.setFeatureState(
           {
-            source: "custom-tileset",
+            source: "FERNS-tileset",
             sourceLayer: sourceLayer,
             id: window.selectedPolygonId
           },
@@ -566,7 +566,7 @@ function addSourceAndLayer() {
 
       map.setFeatureState(
         {
-          source: "custom-tileset",
+          source: "FERNS-tileset",
           sourceLayer: sourceLayer,
           id: window.selectedPolygonId
         },
@@ -600,7 +600,7 @@ function addSourceAndLayer() {
           // If there is a previously hovered polygon, remove its highlight
           map.setFeatureState(
             {
-              source: "custom-tileset",
+              source: "FERNS-tileset",
               sourceLayer: sourceLayer,
               id: hoveredTempId
             },
@@ -622,7 +622,7 @@ function addSourceAndLayer() {
         if (hoveredTempId !== null) {
           map.setFeatureState(
             {
-              source: "custom-tileset",
+              source: "FERNS-tileset",
               sourceLayer: sourceLayer,
               id: hoveredTempId
             },
@@ -689,7 +689,7 @@ function addSourceAndLayer() {
         if (hoveredPolygonId !== null) {
           map.setFeatureState(
             {
-              source: "custom-tileset",
+              source: "FERNS-tileset",
               sourceLayer: sourceLayer,
               id: hoveredPolygonId
             },
@@ -700,7 +700,7 @@ function addSourceAndLayer() {
         console.debug("Hovered ID:", hoveredPolygonId);
         map.setFeatureState(
           {
-            source: "custom-tileset",
+            source: "FERNS-tileset",
             sourceLayer: sourceLayer,
             id: hoveredPolygonId
           },
@@ -721,7 +721,7 @@ function addSourceAndLayer() {
     if (hoveredPolygonId !== null) {
       map.setFeatureState(
         {
-          source: "custom-tileset",
+          source: "FERNS-tileset",
           sourceLayer: sourceLayer,
           id: hoveredPolygonId
         },
