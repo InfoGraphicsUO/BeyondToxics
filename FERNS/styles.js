@@ -1,5 +1,10 @@
 underLayer = 'road_secondary_tertiary_fallback' // SET THIS LAYER
 
+const lineLayout = {
+    'line-cap': 'round',
+    'line-join': 'round'
+}
+
 //blm
 blmFillColor = '#eeee9a'
 blmFillOpacity = .5
