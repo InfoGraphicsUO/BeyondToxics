@@ -372,6 +372,122 @@ window.addEventListener("load", () => {
 let hoveredPolygonId = null; // Variable to store the currently hovered polygon ID
 window.selectedPolygonId = null; // Variable to store the currently selected polygon ID
 function addSourceAndLayer() {
+	// Get the first symbol layer to place new layers beneath it (TODO: Improve this. cant see where federal layers end bc they're under the roads e.g USFWS west of Salem)
+	const layers = map.getStyle().layers;
+	let underLayer;
+	for (const layer of layers) {
+		if (layer.type === 'symbol') {
+			underLayer = layer.id;
+			break;
+		}
+	}
+	const federalNPS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+OWN_Type%3D%27FED%27+AND+Own_Name%3D%27NPS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+	const federalUSFS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Type%3D%27FED%27+AND+Own_Name%3D%27USFS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+	const federalUSFWS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Type%3D%27FED%27+AND+Own_Name%3D%27FWS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+	const federalBLM = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Type%3D%27FED%27+AND+Own_Name%3D%27BLM%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+
+	map.addSource('BLM', {
+		type: 'geojson',
+		data: federalBLM  // Mapbox will handle the request
+	});
+
+	map.addSource('NPS', {
+		type: 'geojson',
+		data: federalNPS  // Mapbox will handle the request
+	});
+
+	map.addSource('USFWS', {
+		type: 'geojson',
+		data: federalUSFWS  // Mapbox will handle the request
+	});
+
+	map.addSource('USFS', {
+		type: 'geojson',
+		data: federalUSFS  // Mapbox will handle the request
+	});
+
+	map.addLayer({
+		id: 'BLM-fill',
+		source: 'BLM',
+		type: 'fill',
+		paint: blmPaint,
+		layout: {},
+		visibility: 'none'
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFS-fill',
+		source: 'USFS',
+		type: 'fill',
+		paint: usfsPaint,
+		layout: {},
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFS-line',
+		source: 'USFS',
+		type: 'line',
+		paint: usfsLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFS-line-inner',
+		source: 'USFS',
+		type: 'line',
+		paint: usfsInnerLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+		map.addLayer({
+		id: 'USFWS-fill',
+		source: 'USFWS',
+		type: 'fill',
+		paint: usfwsPaint,
+		layout: {},
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFWS-line',
+		source: 'USFWS',
+		type: 'line',
+		paint: usfwsLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFWS-line-inner',
+		source: 'USFWS',
+		type: 'line',
+		paint: usfwsInnerLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+	map.addLayer({
+		id: 'NPS-fill',
+		source: 'NPS',
+		type: 'fill',
+		paint: npsPaint,
+		layout: {}
+	}, underLayer)
+
+	map.addLayer({
+		id: 'NPS-line',
+		source: 'NPS',
+		type: 'line',
+		paint: npsLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+	map.addLayer({
+		id: 'NPS-line-inner',
+		source: 'NPS',
+		type: 'line',
+		paint: npsInnerLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+
   map.addSource("FERNS-tileset", {
     type: "vector",
     // url: "mapbox://infographics.blqieafd" 2022 only

@@ -1,8 +1,6 @@
-underLayer = 'road_secondary_tertiary_fallback' // SET THIS LAYER
-
 const lineLayout = {
-    'line-cap': 'round',
-    'line-join': 'round'
+	'line-cap': 'round',
+	'line-join': 'round'
 }
 
 //blm
@@ -25,195 +23,112 @@ usfwsInnerLineColor = `rgb(97, 136, 194)`; // MUST use RGB string, not HEX for c
 
 // BLM styles
 blmPaint = {
-    'fill-color': blmFillColor,
-    'fill-opacity': blmFillOpacity
+	'fill-color': blmFillColor,
+	'fill-opacity': blmFillOpacity
 }
 
 //note no line layer for BLM layer added to map at this time.
 
 // US Forest Service (USFS) styles
 usfsPaint = {
-    'fill-color': usfsFillColor,
-    'fill-opacity': usfsFillOpacity
+	'fill-color': usfsFillColor,
+	'fill-opacity': usfsFillOpacity
 }
 
 
 usfsLinePaint = {
-    'line-width': [
-        'interpolate',
-        // ['exponential', 1],
-        ["linear"],
-        ['zoom'],
-        0, 0,
-        4, 0,
-        7, 1,
-        8, 1.5,
-        13, 6
-    ],
-    'line-color': usfsLineColor,
+	'line-width': [
+		'interpolate',
+		// ['exponential', 1],
+		["linear"],
+		['zoom'],
+		0, 0,
+		4, 0,
+		7, 1,
+		8, 1.5,
+		13, 6
+	],
+	'line-color': usfsLineColor,
 }
 
 
 usfsInnerLinePaint = {
-    'line-width': [
-        'interpolate',
-        // ['exponential', 1],
-        ["linear"],
-        ['zoom'],
-        0, 0,
-        4, 0,
-        7, 3.5,
-        8, 4,
-        13, 6.5
-    ],
-    'line-offset': [
-        'interpolate',
-        // ['exponential', 1],
-        ["linear"],
-        ['zoom'],
-        0, 0,
-        4, 0,
-        7, 2,
-        8, 3,
-        13, 6
-    ],
-    'line-color': usfsInnerLineColor,
-    'line-opacity': 0.3
+	'line-width': [
+		'interpolate',
+		// ['exponential', 1],
+		["linear"],
+		['zoom'],
+		0, 0,
+		4, 0,
+		7, 3.5,
+		8, 4,
+		13, 6.5
+	],
+	'line-offset': [
+		'interpolate',
+		// ['exponential', 1],
+		["linear"],
+		['zoom'],
+		0, 0,
+		4, 0,
+		7, 2,
+		8, 3,
+		13, 6
+	],
+	'line-color': usfsInnerLineColor,
+	'line-opacity': 0.3
 }
 
 // US Fish and Wildlife (USFWS) styles - Refuges
 usfwsPaint = {
-    'fill-color': usfwsFillColor,
-    'fill-opacity': usfwsFillOpacity
+	'fill-color': usfwsFillColor,
+	'fill-opacity': usfwsFillOpacity
 }
 
 usfwsLinePaint = {
-    'line-width': [
-        'interpolate',
-        // ['exponential', 1],
-        ["linear"],
-        ['zoom'],
-        0, 0,
-        4, 0,
-        7, 1,
-        8, 1.5,
-        12, 2
-    ],
-    'line-color': usfwsLineColor,
+	'line-width': [
+		'interpolate',
+		// ['exponential', 1],
+		["linear"],
+		['zoom'],
+		0, 0,
+		4, 0,
+		7, 1,
+		8, 1.5,
+		12, 2
+	],
+	'line-color': usfwsLineColor,
 }
 
 
 usfwsInnerLinePaint = {
-    'line-width': [
-        'interpolate',
-        // ['exponential', 1],
-        ["linear"],
-        ['zoom'],
-        0, 0,
-        4, 0,
-        7, 2,
-        8, 4,
-        13, 5
-    ],
-    'line-offset': [
-        'interpolate',
-        // ['exponential', 1],
-        ["linear"],
-        ['zoom'],
-        0, 0,
-        4, 0,
-        7, 1.5,
-        8, 2,
-        13, 4
-    ],
-    'line-color': usfwsInnerLineColor,
-    'line-opacity': 0.3
+	'line-width': [
+		'interpolate',
+		// ['exponential', 1],
+		["linear"],
+		['zoom'],
+		0, 0,
+		4, 0,
+		7, 2,
+		8, 4,
+		13, 5
+	],
+	'line-offset': [
+		'interpolate',
+		// ['exponential', 1],
+		["linear"],
+		['zoom'],
+		0, 0,
+		4, 0,
+		7, 1.5,
+		8, 2,
+		13, 4
+	],
+	'line-color': usfwsInnerLineColor,
+	'line-opacity': 0.3
 }
 
 
-
-map.addLayer({
-        id: 'blmLayer',
-        source: 'blmSource',
-        'source-layer': 'blmfgb',
-        type: 'fill',
-        minzoom: ownershipminzoom,
-        paint: blmPaint,
-        layout: {
-
-        },
-        visibility: 'none'
-    }, underLayer)
-
-    map.addLayer({
-        id: 'usfwsLayer',
-        source: 'usfwsSource',
-        'source-layer': 'usfwsfgb',
-        type: 'fill',
-        minzoom: 7,
-        paint: usfwsPaint,
-        layout: {
-
-        },
-
-
-    }, underLayer)
-
-    map.addLayer({
-        id: 'usfwsLineLayer',
-        source: 'usfwsSource',
-        'source-layer': 'usfwsfgb',
-        type: 'line',
-        minzoom: 7,
-        paint: usfwsLinePaint,
-        layout: lineLayout
-    }, underLayer)
-
-    map.addLayer({
-        id: 'usfwsInnerLineLayer',
-        source: 'usfwsSource',
-        'source-layer': 'usfwsfgb',
-        type: 'line',
-        minzoom: 7,
-        paint: usfwsInnerLinePaint,
-        layout: lineLayout
-    }, underLayer)
-
-
-    map.addLayer({
-        id: 'usfsLayer',
-        source: 'usfsSource',
-        'source-layer': 'usfsfgb',
-        type: 'fill',
-        minzoom: 7,
-        paint: usfsPaint,
-        layout: {
-
-        },
-    }, underLayer)
-
-    map.addLayer({
-        id: 'usfsLayerLine',
-        source: 'usfsSource',
-        'source-layer': 'usfsfgb',
-        type: 'line',
-        minzoom: 7,
-        paint: usfsLinePaint,
-        layout: lineLayout
-    }, underLayer)
-
-    map.addLayer({
-        id: 'usfsLayerInnerLine',
-        source: 'usfsSource',
-        'source-layer': 'usfsfgb',
-        type: 'line',
-        minzoom: 7,
-        paint: usfsInnerLinePaint,
-        layout: lineLayout
-    }, underLayer)
-
-
-    
 //nps
 npsLineColor = '#9A8B70'
 npsFillColor = 'transparent'
@@ -223,48 +138,48 @@ npsInnerLineColor = `rgb(154, 139, 112)` // MUST use RGB string, not HEX for cur
 
 // NPS styles
 npsPaint = {
-    'fill-color': npsFillColor,
-    'fill-opacity': npsFillOpacity
+	'fill-color': npsFillColor,
+	'fill-opacity': npsFillOpacity
 }
 npsLinePaint = {
-    'line-width': [
-        'interpolate',
-        // ['exponential', 1],
-        ["linear"],
-        ['zoom'],
-        0, 0,
-        4, 0,
-        7, 1,
-        8, 1.5,
-        13, 6
-    ],
-    'line-color': npsLineColor,
+	'line-width': [
+		'interpolate',
+		// ['exponential', 1],
+		["linear"],
+		['zoom'],
+		0, 0,
+		4, 0,
+		7, 1,
+		8, 1.5,
+		13, 6
+	],
+	'line-color': npsLineColor,
 }
 
 npsInnerLinePaint = {
-    'line-width': [
-        'interpolate',
-        // ['exponential', 1],
-        ["linear"],
-        ['zoom'],
-        0, 0,
-        4, 0,
-        7, 3.5,
-        8, 4,
-        13, 6.5
-    ],
-    'line-offset': [
-        'interpolate',
-        // ['exponential', 1],
-        ["linear"],
-        ['zoom'],
-        0, 0,
-        4, 0,
-        7, 2,
-        8, 2,
-        10, 4,
-        13, 6
-    ],
-    'line-color': npsInnerLineColor,
-    'line-opacity': 0.3
+	'line-width': [
+		'interpolate',
+		// ['exponential', 1],
+		["linear"],
+		['zoom'],
+		0, 0,
+		4, 0,
+		7, 3.5,
+		8, 4,
+		13, 6.5
+	],
+	'line-offset': [
+		'interpolate',
+		// ['exponential', 1],
+		["linear"],
+		['zoom'],
+		0, 0,
+		4, 0,
+		7, 2,
+		8, 2,
+		10, 4,
+		13, 6
+	],
+	'line-color': npsInnerLineColor,
+	'line-opacity': 0.3
 }
