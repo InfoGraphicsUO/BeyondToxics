@@ -212,3 +212,59 @@ map.addLayer({
         layout: lineLayout
     }, underLayer)
 
+
+    
+//nps
+npsLineColor = '#9A8B70'
+npsFillColor = 'transparent'
+npsFillOpacity = 1
+npsInnerLineColor = `rgb(154, 139, 112)` // MUST use RGB string, not HEX for current method of setting transparency in legend
+
+
+// NPS styles
+npsPaint = {
+    'fill-color': npsFillColor,
+    'fill-opacity': npsFillOpacity
+}
+npsLinePaint = {
+    'line-width': [
+        'interpolate',
+        // ['exponential', 1],
+        ["linear"],
+        ['zoom'],
+        0, 0,
+        4, 0,
+        7, 1,
+        8, 1.5,
+        13, 6
+    ],
+    'line-color': npsLineColor,
+}
+
+npsInnerLinePaint = {
+    'line-width': [
+        'interpolate',
+        // ['exponential', 1],
+        ["linear"],
+        ['zoom'],
+        0, 0,
+        4, 0,
+        7, 3.5,
+        8, 4,
+        13, 6.5
+    ],
+    'line-offset': [
+        'interpolate',
+        // ['exponential', 1],
+        ["linear"],
+        ['zoom'],
+        0, 0,
+        4, 0,
+        7, 2,
+        8, 2,
+        10, 4,
+        13, 6
+    ],
+    'line-color': npsInnerLineColor,
+    'line-opacity': 0.3
+}
