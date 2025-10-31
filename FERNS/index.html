@@ -81,43 +81,45 @@
         <!-- Checkboxes will be dynamically populated -->
       </div>
     </div>
-
-    <!-- Inset Map Container -->
-    <div id="inset-map-container">
-      <div id="insetMap"></div>
-    </div>
   </div>
-  <!-- Dev Panel -->
-  <div class="dev-overlay">
-    <div class="dev-overlay-inner">
-      <h1>Development Options</h1>
-      <!-- Show Boundary Markers -->
-      <fieldset>
-        <label for="showBoundsMarkers">Show Boundary Markers</label>
-        <input type="checkbox" id="showBoundsMarkers" checked>
-      </fieldset>
-      <!-- Basemap Picker -->
-      <div id="basemaps">
-        <h2>Basemap</h2>
-        <div id="basemaps-inner">
-          <div>
-            <input id="light-v11" type="radio" name="rtoggle" value="light" checked="checked">
-            <label for="light-v11">light</label>
-          </div>
-          <div>
-            <input id="dark-v11" type="radio" name="rtoggle" value="dark">
-            <label for="dark-v11">dark</label>
-          </div>
-          <div>
-            <input id="standard" type="radio" name="rtoggle" value="streets">
-            <label for="standard">streets</label>
-          </div>
-          <div>
-            <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors">
-            <label for="outdoors-v12">outdoors</label>
+  <div id="bottom-left-container">
+    <!-- Dev Panel -->
+    <div class="dev-overlay">
+      <div class="dev-overlay-inner">
+        <h1>Development Options</h1>
+        <!-- Show Boundary Markers -->
+        <fieldset>
+          <label for="showBoundsMarkers">Show Boundary Markers</label>
+          <input type="checkbox" id="showBoundsMarkers" checked>
+        </fieldset>
+        <!-- Basemap Picker -->
+        <div id="basemaps">
+          <h2>Basemap</h2>
+          <div id="basemaps-inner">
+            <div>
+              <input id="light-v11" type="radio" name="rtoggle" value="light" checked="checked">
+              <label for="light-v11">light</label>
+            </div>
+            <div>
+              <input id="dark-v11" type="radio" name="rtoggle" value="dark">
+              <label for="dark-v11">dark</label>
+            </div>
+            <div>
+              <input id="standard" type="radio" name="rtoggle" value="streets">
+              <label for="standard">streets</label>
+            </div>
+            <div>
+              <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors">
+              <label for="outdoors-v12">outdoors</label>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+    <!-- Inset Map Container -->
+    <!-- TODO: Put this in mapboxgl-ctrl-bottom-left? -->
+    <div id="inset-map-container">
+      <div id="insetMap"></div>
     </div>
   </div>
 </body>

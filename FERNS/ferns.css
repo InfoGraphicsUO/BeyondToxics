@@ -19,9 +19,21 @@ body { margin: 0; padding: 0; }
     text-decoration: underline;
 }
 
+/* Bottom Left Container */
+#bottom-left-container {
+    position: absolute;
+    left: 50px;
+    bottom: 30px;
+    width: 224px; /* 204px + 20px padding */
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+}
+
 /* Inset Map */
 #inset-map-container {
-    width: 204px;
+    width: 200px;
     height: 150px;
     box-shadow: 0 0 0 2px #0000005a;
     background-color: #79bcec5a;
@@ -31,6 +43,61 @@ body { margin: 0; padding: 0; }
 #insetMap {
     width: 100%;
     height: 100%;
+}
+
+/*Development panel to be removed for production*/
+.dev-overlay {
+    width: 200px;
+}
+
+.dev-overlay input {
+    margin: 0;
+}
+
+.dev-overlay .dev-overlay-inner {
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    padding: 10px;
+}
+
+.dev-overlay-inner h1 {
+    font-size: 15px;
+    font-weight: bolder;
+    margin-bottom: 0;
+    line-height: 18px;
+}
+
+.dev-overlay-inner fieldset {
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    margin: 0;
+    line-height: 18px;
+}
+
+.dev-overlay-inner label {
+    margin-right: 5px;
+}
+
+#basemaps h2 {
+    font-size: 12px;
+    font-weight: bolder;
+    margin: 4px 0;
+    line-height: normal;
+}
+
+#basemaps-inner {
+    display: flex;
+    flex-direction: column;
+    line-height: normal;
+}
+
+#basemaps-inner label {
+    display: inline-flex;
+    align-items: center;
 }
 
 /*Tooltips*/
@@ -271,64 +338,4 @@ input[type="range"] {
     object-fit: scale-down;
     color: rgb(33, 37, 41);
     line-height: 0;
-}
-
-/*Development panel to be removed for production*/
-.dev-overlay {
-    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    position: absolute;
-    bottom: 20px;
-    left: 50px;
-    width: 200px;
-    padding: 10px;
-}
-
-.dev-overlay input {
-    margin: 0;
-}
-
-.dev-overlay .dev-overlay-inner {
-    background-color: #fff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.dev-overlay-inner h1 {
-    font-size: 15px;
-    font-weight: bolder;
-    margin-bottom: 0;
-    line-height: 18px;
-}
-
-.dev-overlay-inner fieldset {
-    display: flex;
-    justify-content: space-between;
-    border: none;
-    margin: 0;
-    line-height: 18px;
-}
-
-.dev-overlay-inner label {
-    margin-right: 5px;
-}
-
-#basemaps h2 {
-    font-size: 12px;
-    font-weight: bolder;
-    margin: 4px 0;
-    line-height: normal;
-}
-
-#basemaps-inner {
-    display: flex;
-    flex-direction: column;
-    line-height: normal;
-}
-
-#basemaps-inner label {
-    display: inline-flex;
-    align-items: center;
 }
