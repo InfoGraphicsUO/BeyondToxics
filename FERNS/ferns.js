@@ -69,7 +69,7 @@ const map = new mapboxgl.Map({
   center: defaultCenter, // starting position [lng, lat]. Note that lat must be set between -90 and 90
   maxBounds: bounds,
   zoom: defaultZoom, // starting zoom
-  maxZoom: 13,
+  maxZoom: 16,
   attributionControl: false // disable default attribution to create our own
 }).addControl(
   // Custom Attribution
@@ -880,6 +880,41 @@ function showBoundsMarkers() {
 }
 
 document.getElementById("showBoundsMarkers").addEventListener("change", showBoundsMarkers);
+
+// Federal Lands Toggle (NPS, USFS, USFWS)
+function toggleFederalLands() {
+  const isChecked = document.getElementById("flexSwitchCheckChecked").checked;
+  const visibility = isChecked ? "visible" : "none";
+  
+  const federalLayers = [
+    'USFS-fill', 'USFS-line', 'USFS-line-inner',
+    'USFWS-fill', 'USFWS-line', 'USFWS-line-inner',
+    'NPS-fill', 'NPS-line', 'NPS-line-inner'
+  ];
+  
+  federalLayers.forEach(layerId => {
+    if (map.getLayer(layerId)) {
+      map.setLayoutProperty(layerId, 'visibility', visibility);
+    }
+  });
+}
+
+// BLM Toggle
+function toggleBLM() {
+  const isChecked = document.getElementById("blmSwitchCheckChecked").checked;
+  const visibility = isChecked ? "visible" : "none";
+  
+  const blmLayers = ['BLM-fill'];
+  
+  blmLayers.forEach(layerId => {
+    if (map.getLayer(layerId)) {
+      map.setLayoutProperty(layerId, 'visibility', visibility);
+    }
+  });
+}
+
+document.getElementById("flexSwitchCheckChecked").addEventListener("change", toggleFederalLands);
+document.getElementById("blmSwitchCheckChecked").addEventListener("change", toggleBLM);
 
 // Basemap Picker
 const layerList = document.getElementById("basemaps");

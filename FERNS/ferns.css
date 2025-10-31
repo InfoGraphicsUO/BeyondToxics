@@ -33,7 +33,7 @@ body { margin: 0; padding: 0; }
 
 /* Inset Map */
 #inset-map-container {
-    width: 200px;
+    width: 210px;
     height: 150px;
     box-shadow: 0 0 0 2px #0000005a;
     background-color: #79bcec5a;
@@ -47,7 +47,7 @@ body { margin: 0; padding: 0; }
 
 /*Development panel to be removed for production*/
 .dev-overlay {
-    width: 200px;
+    width: 210px;
 }
 
 .dev-overlay input {
@@ -82,11 +82,38 @@ body { margin: 0; padding: 0; }
     margin-right: 5px;
 }
 
-#basemaps h2 {
+#basemaps h2, #land-ownership h2 {
     font-size: 12px;
     font-weight: bolder;
     margin: 4px 0;
     line-height: normal;
+}
+
+#lands-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#lands-inner .form-check {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    margin: 0;
+    min-height: 0;
+}
+
+#lands-inner .form-check-input {
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+#lands-inner .form-check-label {
+    margin: 0;
+    cursor: default;
+    line-height: 1;
 }
 
 #basemaps-inner {
@@ -98,6 +125,17 @@ body { margin: 0; padding: 0; }
 #basemaps-inner label {
     display: inline-flex;
     align-items: center;
+}
+
+.dev-overlay-inner hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 0.25em 0;
+    padding: 0;
+    line-height: 24px;
+    opacity: 100%;
 }
 
 /*Tooltips*/
@@ -159,6 +197,13 @@ mapbox-search-listbox, mapbox-search-listbox *
     flex-direction: column;
     padding: 10px;
     gap: 10px;
+}
+
+.filters-container h1 {
+    font-weight: 400 !important;
+    font-size: 16px;
+    line-height: normal;
+    margin: 0;
 }
 
 /* Year Range Filter & Method Filter Containers */
@@ -265,6 +310,10 @@ input[type="range"] {
     padding: 2px 0;
 }
 
+.method-checkboxes input, #chemical-list label input, .select-all-container label input {
+    margin: 3px 3px 3px 4px;
+}
+
 .chemical_container {
     display: flex;
     flex-direction: column;
@@ -299,6 +348,7 @@ input[type="range"] {
 
 #chemical-list label {
     display: flex;
+    width: fit-content;
     align-items: center;
     cursor: pointer;
     font-size: 12px;
@@ -306,7 +356,7 @@ input[type="range"] {
 }
 
 .select-all-container {
-    margin-bottom: 2px;
+    margin-bottom: 5px;
     padding-bottom: 2px;
     border-bottom: 1px solid #e0e0e0;
 }
