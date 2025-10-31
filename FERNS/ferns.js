@@ -15,7 +15,7 @@ const defaultZoom = 8;
 
 // Map polls basemap widget to get selected basemap style
 const basemapInputs = document.querySelectorAll("#basemaps-inner input");
-let selectedStyleId = "outdoors-v12"; // default basemap
+let selectedStyleId = "light-v11"; // default basemap
 for (const basemap of basemapInputs) {
   if (basemap.checked) {
     selectedStyleId = basemap.id;
@@ -376,9 +376,8 @@ function addSourceAndLayer() {
 	const layers = map.getStyle().layers;
 	let underLayer;
 	for (const layer of layers) {
-		if (layer.type === 'symbol') {
+		if (layer.type === 'line') {
 			underLayer = layer.id;
-			break;
 		}
 	}
 	const federalNPS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+OWN_Type%3D%27FED%27+AND+Own_Name%3D%27NPS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
@@ -388,22 +387,22 @@ function addSourceAndLayer() {
 
 	map.addSource('BLM', {
 		type: 'geojson',
-		data: federalBLM  // Mapbox will handle the request
+		data: federalBLM
 	});
 
 	map.addSource('NPS', {
 		type: 'geojson',
-		data: federalNPS  // Mapbox will handle the request
+		data: federalNPS
 	});
 
 	map.addSource('USFWS', {
 		type: 'geojson',
-		data: federalUSFWS  // Mapbox will handle the request
+		data: federalUSFWS
 	});
 
 	map.addSource('USFS', {
 		type: 'geojson',
-		data: federalUSFS  // Mapbox will handle the request
+		data: federalUSFS
 	});
 
 	map.addLayer({
