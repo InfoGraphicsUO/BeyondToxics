@@ -22,13 +22,24 @@ body { margin: 0; padding: 0; }
 /* Bottom Left Container */
 #bottom-left-container {
     position: absolute;
-    left: 50px;
-    bottom: 30px;
-    width: 224px; /* 204px + 20px padding */
+    bottom: 25px;
+    width: 210px;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    margin: 10px;
     gap: 10px;
+}
+
+/* Standalone Controls (Zoom and Reset Extent) */
+.standalone-controls {
+    position: absolute;
+    left: 220px;
+    bottom: 24px;
+    margin: 0 0 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1;
 }
 
 /* Inset Map */
@@ -47,7 +58,7 @@ body { margin: 0; padding: 0; }
 
 /*Development panel to be removed for production*/
 .dev-overlay {
-    width: 210px;
+    width: 212px;
 }
 
 .dev-overlay input {

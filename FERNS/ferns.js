@@ -303,54 +303,55 @@ map.on('move', function () {
 	updateInsetMapBounds();
 });
 
-// [Bottom Left Mapbox Group]
-// Navigation Control (Zoom +/-)
-const nav = new mapboxgl.NavigationControl({
-  showCompass: false
-});
-map.addControl(nav, "bottom-left");
-
-// Reset Extent Class
-class ResetExtentControl {
-  onAdd(map) {
-    this.map = map; // add to map instance
-    // Create new container
-    this.container = document.createElement("div");
-    this.container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
-
-    // Create button within container
-    this.button = document.createElement("button");
-    this.button.className = "resetExtent";
-    this.button.type = "button";
-    this.button.title = "Reset Extent";
-    // Add icon to inside button
-    this.button.innerHTML =
-      '<img src="../icons/Expand_Icon_L.svg" alt="Reset view button" height="18px" width="18px">';
-
-    // Add click event listener to button
-    this.button.addEventListener("click", () => {
-      this.map.flyTo({
-        center: defaultCenter,
-        zoom: defaultZoom,
-        bearing: 0,
-        pitch: 0,
-        essential: true
-      });
-    });
-
-    // Append button to container
-    this.container.appendChild(this.button);
-    return this.container;
-  }
-
-  onRemove() {
-    // Remove the container from the map
-    this.container.parentNode.removeChild(this.container);
-    this.map = undefined;
-  }
+// Taking the mapbox controls out of mapbox control container to make them standalone
+// Helper function to create a control button
+function createControlButton(className, title, onClick) {
+  const button = document.createElement('button');
+  button.className = className;
+  button.type = 'button';
+  button.title = title;
+  button.setAttribute('aria-label', title);
+  button.addEventListener('click', onClick);
+  return button;
 }
-// Add Reset Extent Control to map
-map.addControl(new ResetExtentControl(), "bottom-left");
+
+// Helper function to create a control group
+function createControlGroup() {
+  const group = document.createElement('div');
+  group.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+  return group;
+}
+
+// Create standalone controls container
+const standaloneControlsContainer = document.createElement('div');
+standaloneControlsContainer.id = 'standalone-controls';
+standaloneControlsContainer.className = 'standalone-controls';
+
+// Navigation Control (Zoom +/-)
+const navControlGroup = createControlGroup();
+const zoomInButton = createControlButton('mapboxgl-ctrl-icon mapboxgl-ctrl-zoom-in', 'Zoom in', () => map.zoomIn());
+const zoomOutButton = createControlButton('mapboxgl-ctrl-icon mapboxgl-ctrl-zoom-out', 'Zoom out', () => map.zoomOut());
+zoomInButton.innerHTML = '<span class="mapboxgl-ctrl-icon" aria-hidden="true"></span>';
+zoomOutButton.innerHTML = '<span class="mapboxgl-ctrl-icon" aria-hidden="true"></span>';
+navControlGroup.append(zoomInButton, zoomOutButton);
+
+// Reset Extent Button
+const resetExtentGroup = createControlGroup();
+const resetButton = createControlButton('resetExtent', 'Reset Extent', () => {
+  map.flyTo({
+    center: defaultCenter,
+    zoom: defaultZoom,
+    bearing: 0,
+    pitch: 0,
+    essential: true
+  });
+});
+resetButton.innerHTML = '<img src="../icons/Expand_Icon_L.svg" alt="Reset view button" height="18px" width="18px">';
+resetExtentGroup.appendChild(resetButton);
+
+// Add controls to container and append to document
+standaloneControlsContainer.append(resetExtentGroup, navControlGroup);
+document.body.appendChild(standaloneControlsContainer);
 
 // Search Box
 window.addEventListener("load", () => {
