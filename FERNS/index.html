@@ -87,45 +87,56 @@
     <!-- Dev Panel -->
     <div class="dev-overlay">
       <div class="dev-overlay-inner">
-        <h1>Development Options</h1>
-        <!-- Show Boundary Markers -->
-        <fieldset>
-          <label for="showBoundsMarkers">Show Boundary Markers</label>
-          <input type="checkbox" id="showBoundsMarkers" checked>
-        </fieldset>
-        <!-- Basemap Picker -->
-        <div id="basemaps">
-          <h2>Basemap</h2>
-          <div id="basemaps-inner">
-            <div>
-              <input id="light-v11" type="radio" name="rtoggle" value="light" checked="checked">
-              <label for="light-v11">light</label>
-            </div>
-            <div>
-              <input id="dark-v11" type="radio" name="rtoggle" value="dark">
-              <label for="dark-v11">dark</label>
-            </div>
-            <div>
-              <input id="standard" type="radio" name="rtoggle" value="streets">
-              <label for="standard">streets</label>
-            </div>
-            <div>
-              <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors">
-              <label for="outdoors-v12">outdoors</label>
-            </div>
-          </div>
-        </div>
-        <hr>
+<!--        <h1>Development Options</h1>-->
+<!--        &lt;!&ndash; Show Boundary Markers &ndash;&gt;-->
+<!--        <fieldset>-->
+<!--          <label for="showBoundsMarkers">Show Boundary Markers</label>-->
+<!--          <input type="checkbox" id="showBoundsMarkers" checked>-->
+<!--        </fieldset>-->
+<!--        &lt;!&ndash; Basemap Picker &ndash;&gt;-->
+<!--        <div id="basemaps">-->
+<!--          <h2>Basemap</h2>-->
+<!--          <div id="basemaps-inner">-->
+<!--            <div>-->
+<!--              <input id="light-v11" type="radio" name="rtoggle" value="light" checked="checked">-->
+<!--              <label for="light-v11">light</label>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--              <input id="dark-v11" type="radio" name="rtoggle" value="dark">-->
+<!--              <label for="dark-v11">dark</label>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--              <input id="standard" type="radio" name="rtoggle" value="streets">-->
+<!--              <label for="standard">streets</label>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--              <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors">-->
+<!--              <label for="outdoors-v12">outdoors</label>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <hr>-->
         <div id="land-ownership">
-          <h2>Land Ownership</h2>
+<!--          <h2>Land Ownership</h2>-->
           <div id="lands-inner">
             <div class="form-check form-switch" id="federal-lands-switch">
               <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
-              <label class="form-check-label">Federal (NPS, USFS, USFWS)</label>
+              <label class="form-check-label">Federally managed land</label>
+            </div>
+            <div class="LandOwnership">
+              <div class="legendColorBox LandOwnership NPS" style="background-color: transparent; border-color: rgb(154, 139, 112); opacity: 1; box-shadow: rgba(154, 139, 112, 0.3) 0 0 0 3px inset;"></div>
+              <div class="LegendLineLabel">NPS</div>
+              <br>
+              <div class="legendColorBox LandOwnership USFS" style="background-color: transparent; border-color: rgb(131, 162, 120); opacity: 1; box-shadow: rgba(131, 162, 120, 0.3) 0 0 0 3px inset;"></div>
+              <div class="LegendLineLabel">USFS forest</div>
+              <br>
+              <div class="legendColorBox LandOwnership USFWS" style="background-color: transparent; border-color: rgb(80, 123, 187); opacity: 0.5; box-shadow: rgba(131, 162, 120, 0.3) 0 0 0 3px inset;"></div>
+              <div class="LegendLineLabel">USFWS refuge</div>
             </div>
             <div class="form-check form-switch" id="blm-lands-switch">
               <input class="form-check-input" type="checkbox" role="switch" id="blmSwitchCheckChecked" checked>
-              <label class="form-check-label">BLM</label>
+              <div class="legendColorBox LandOwnership BLM" style="background-color: rgb(238, 238, 154); border-color: transparent; opacity: 0.5;"></div>
+              <div class="LegendLineLabel">BLM</div>
             </div>
           </div>
         </div>

@@ -116,6 +116,33 @@ body { margin: 0; padding: 0; }
     line-height: 1;
 }
 
+.legendColorBox {
+    width: 1rem;
+    height: 1rem;
+    display: inline-block;
+    border-radius: 0.25rem;
+}
+
+.legendColorBox.LandOwnership {
+    border-width: 2px;
+    border-style: solid;
+    margin-left: 2.25rem;
+    margin-right: 0.25rem;
+    border-radius: 0;
+    border-color: transparent;
+}
+
+.LegendLineLabel {
+    display: inline-block;
+    position: relative;
+    bottom: 0.15rem;
+    user-select: none;
+}
+
+.BLM {
+    margin-left: 0 !important;
+}
+
 #basemaps-inner {
     display: flex;
     flex-direction: column;
