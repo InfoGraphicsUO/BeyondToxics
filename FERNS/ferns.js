@@ -13,18 +13,7 @@ const bounds = [
 const defaultCenter = [-123.04, 44.944]; // Salem
 const defaultZoom = 8;
 
-// Map polls basemap widget to get selected basemap style
-// const basemapInputs = document.querySelectorAll("#basemaps-inner input");
-let selectedStyleId = "light-v11"; // default basemap
-// for (const basemap of basemapInputs) {
-// 	if (basemap.checked) {
-// 		selectedStyleId = basemap.id;
-// 		break;
-// 	}
-// }
-
-const ACCESS_TOKEN =
-  "pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q";
+const ACCESS_TOKEN = "pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q";
 mapboxgl.accessToken = ACCESS_TOKEN;
 const sourceLayer = "FERNS_Simplified-748ocs";
 
@@ -65,7 +54,7 @@ function resetFiltersToDefaults() {
 // Main Map
 const map = new mapboxgl.Map({
   container: "map", // container ID
-  style: "mapbox://styles/mapbox/" + selectedStyleId,
+  style: "mapbox://styles/infographics/cmhl11j9c00h301r6bwbbc6hg",
   center: defaultCenter, // starting position [lng, lat]. Note that lat must be set between -90 and 90
   maxBounds: bounds,
   zoom: defaultZoom, // starting zoom
@@ -855,35 +844,6 @@ map.on("style.load", () => {
   toggleBLM();
 });
 
-// Debug/Dev Boundary Markers
-// const markersw = new mapboxgl.Marker() // Southwest corner
-//   .setLngLat(bounds[0])
-//   .addTo(map);
-// const markerne = new mapboxgl.Marker() // Northeast corner
-//   .setLngLat(bounds[1])
-//   .addTo(map);
-
-// let markersVisible = true;
-// // due to session caching: if unchecked on page load, hide markers first
-// if (!document.getElementById("showBoundsMarkers").checked) {
-//   markersVisible = false;
-//   markersw.getElement().style.display = "none";
-//   markerne.getElement().style.display = "none";
-// }
-//
-// function showBoundsMarkers() {
-//   if (markersVisible) {
-//     markersw.getElement().style.display = "none";
-//     markerne.getElement().style.display = "none";
-//   } else {
-//     markersw.getElement().style.display = "";
-//     markerne.getElement().style.display = "";
-//   }
-//   markersVisible = !markersVisible;
-// }
-//
-// document.getElementById("showBoundsMarkers").addEventListener("change", showBoundsMarkers);
-
 // Federal Lands Toggle (NPS, USFS, USFWS)
 function toggleFederalLands() {
   const isChecked = document.getElementById("flexSwitchCheckChecked").checked;
@@ -918,17 +878,6 @@ function toggleBLM() {
 
 document.getElementById("flexSwitchCheckChecked").addEventListener("change", toggleFederalLands);
 document.getElementById("blmSwitchCheckChecked").addEventListener("change", toggleBLM);
-
-// Basemap Picker
-// const layerList = document.getElementById("basemaps");
-// const inputs = layerList.getElementsByTagName("input");
-//
-// for (const input of inputs) {
-//   input.onclick = (layer) => {
-//     const layerId = layer.target.id;
-//     map.setStyle("mapbox://styles/mapbox/" + layerId);
-//   };
-// }
 
 // Year Range Slider
 const sliderNoColor = "#C6C6C6";
