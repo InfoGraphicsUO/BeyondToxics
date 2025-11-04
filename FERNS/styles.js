@@ -17,8 +17,9 @@ usfsInnerLineColor = `rgb(131, 162, 120)`; // MUST use RGB string, not HEX for c
 //usfws
 usfwsFillColor = 'transparent'
 usfwsFillOpacity = 0.5
-usfwsLineColor = '#507BBB'
-usfwsInnerLineColor = `rgb(97, 136, 194)`; // MUST use RGB string, not HEX for current method of setting transparency in legend
+// desaturated by 50% from #507bbb, rgb(97, 136, 194)
+usfwsLineColor = '#6b80a0'
+usfwsInnerLineColor = `rgb(121, 141, 170)`; // MUST use RGB string, not HEX for current method of setting transparency in legend
 
 
 // BLM styles
