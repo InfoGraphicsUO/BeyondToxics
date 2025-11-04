@@ -2,6 +2,15 @@
 body { margin: 0; padding: 0; }
 #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
+/* Custom Scale Control Positioning */
+.mapboxgl-ctrl-scale {
+    position: absolute !important;
+    bottom: 9px !important;
+    left: 110px !important;
+    margin: 0 !important;
+    height: 20px !important;
+}
+
 /* Custom Attribution Footer */
 .mapboxgl-ctrl-attrib {
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
@@ -22,7 +31,7 @@ body { margin: 0; padding: 0; }
 /* Bottom Left Container */
 #bottom-left-container {
     position: absolute;
-    bottom: 25px;
+    bottom: 31px;
     width: 210px;
     display: flex;
     flex-direction: column;
@@ -34,7 +43,7 @@ body { margin: 0; padding: 0; }
 .standalone-controls {
     position: absolute;
     left: 220px;
-    bottom: 24px;
+    bottom: 30px;
     margin: 0 0 10px 10px;
     display: flex;
     flex-direction: column;

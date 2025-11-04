@@ -342,6 +342,11 @@ resetExtentGroup.appendChild(resetButton);
 standaloneControlsContainer.append(resetExtentGroup, navControlGroup);
 document.body.appendChild(standaloneControlsContainer);
 
+map.addControl(new mapboxgl.ScaleControl({
+	maxWidth: 100,
+	unit: 'imperial'
+}));
+
 // Search Box
 window.addEventListener("load", () => {
   const searchBox = new MapboxSearchBox();
