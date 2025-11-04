@@ -14,14 +14,14 @@ const defaultCenter = [-123.04, 44.944]; // Salem
 const defaultZoom = 8;
 
 // Map polls basemap widget to get selected basemap style
-const basemapInputs = document.querySelectorAll("#basemaps-inner input");
+// const basemapInputs = document.querySelectorAll("#basemaps-inner input");
 let selectedStyleId = "light-v11"; // default basemap
-for (const basemap of basemapInputs) {
-  if (basemap.checked) {
-    selectedStyleId = basemap.id;
-    break;
-  }
-}
+// for (const basemap of basemapInputs) {
+// 	if (basemap.checked) {
+// 		selectedStyleId = basemap.id;
+// 		break;
+// 	}
+// }
 
 const ACCESS_TOKEN =
   "pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q";
@@ -410,8 +410,7 @@ function addSourceAndLayer() {
 		source: 'BLM',
 		type: 'fill',
 		paint: blmPaint,
-		layout: {},
-		visibility: 'none'
+		layout: {}
 	}, underLayer)
 
 	map.addLayer({
@@ -850,36 +849,39 @@ function addSourceAndLayer() {
 map.on("style.load", () => {
   addSourceAndLayer();
   updateFilters();
+  // Set initial visibility of federal land layers based on checkbox state
+  toggleFederalLands();
+  toggleBLM();
 });
 
 // Debug/Dev Boundary Markers
-const markersw = new mapboxgl.Marker() // Southwest corner
-  .setLngLat(bounds[0])
-  .addTo(map);
-const markerne = new mapboxgl.Marker() // Northeast corner
-  .setLngLat(bounds[1])
-  .addTo(map);
+// const markersw = new mapboxgl.Marker() // Southwest corner
+//   .setLngLat(bounds[0])
+//   .addTo(map);
+// const markerne = new mapboxgl.Marker() // Northeast corner
+//   .setLngLat(bounds[1])
+//   .addTo(map);
 
-let markersVisible = true;
-// due to session caching: if unchecked on page load, hide markers first
-if (!document.getElementById("showBoundsMarkers").checked) {
-  markersVisible = false;
-  markersw.getElement().style.display = "none";
-  markerne.getElement().style.display = "none";
-}
-
-function showBoundsMarkers() {
-  if (markersVisible) {
-    markersw.getElement().style.display = "none";
-    markerne.getElement().style.display = "none";
-  } else {
-    markersw.getElement().style.display = "";
-    markerne.getElement().style.display = "";
-  }
-  markersVisible = !markersVisible;
-}
-
-document.getElementById("showBoundsMarkers").addEventListener("change", showBoundsMarkers);
+// let markersVisible = true;
+// // due to session caching: if unchecked on page load, hide markers first
+// if (!document.getElementById("showBoundsMarkers").checked) {
+//   markersVisible = false;
+//   markersw.getElement().style.display = "none";
+//   markerne.getElement().style.display = "none";
+// }
+//
+// function showBoundsMarkers() {
+//   if (markersVisible) {
+//     markersw.getElement().style.display = "none";
+//     markerne.getElement().style.display = "none";
+//   } else {
+//     markersw.getElement().style.display = "";
+//     markerne.getElement().style.display = "";
+//   }
+//   markersVisible = !markersVisible;
+// }
+//
+// document.getElementById("showBoundsMarkers").addEventListener("change", showBoundsMarkers);
 
 // Federal Lands Toggle (NPS, USFS, USFWS)
 function toggleFederalLands() {
@@ -917,15 +919,15 @@ document.getElementById("flexSwitchCheckChecked").addEventListener("change", tog
 document.getElementById("blmSwitchCheckChecked").addEventListener("change", toggleBLM);
 
 // Basemap Picker
-const layerList = document.getElementById("basemaps");
-const inputs = layerList.getElementsByTagName("input");
-
-for (const input of inputs) {
-  input.onclick = (layer) => {
-    const layerId = layer.target.id;
-    map.setStyle("mapbox://styles/mapbox/" + layerId);
-  };
-}
+// const layerList = document.getElementById("basemaps");
+// const inputs = layerList.getElementsByTagName("input");
+//
+// for (const input of inputs) {
+//   input.onclick = (layer) => {
+//     const layerId = layer.target.id;
+//     map.setStyle("mapbox://styles/mapbox/" + layerId);
+//   };
+// }
 
 // Year Range Slider
 const sliderNoColor = "#C6C6C6";
