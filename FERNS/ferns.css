@@ -163,17 +163,6 @@ body { margin: 0; padding: 0; }
     margin: 0 2px 0 0 !important;
 }
 
-#basemaps-inner {
-    display: flex;
-    flex-direction: column;
-    line-height: normal;
-}
-
-#basemaps-inner label {
-    display: inline-flex;
-    align-items: center;
-}
-
 .dev-overlay-inner hr {
     display: block;
     height: 1px;
@@ -264,7 +253,7 @@ mapbox-search-listbox, mapbox-search-listbox *
     background: #fff;
     box-shadow: 0 0 0 2px #0000001a;
     border-radius: 4px;
-    flex-shrink: 0; /* Don't shrink */
+    flex-shrink: 0;
 }
 
 .sliders_control {
@@ -343,10 +332,17 @@ input[type="range"] {
     z-index: 1;
 }
 
+.method-content-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
 .method-checkboxes {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    flex: 1;
 }
 
 .method-checkboxes label {
@@ -355,10 +351,53 @@ input[type="range"] {
     cursor: pointer;
     font-size: 12px;
     padding: 2px 0;
+    width: fit-content;
+}
+
+.method-legend-item {
+    border-radius: 2px;
+    flex-shrink: 0;
+    visibility: hidden;
+}
+
+.method-legend-item.visible {
+    visibility: visible;
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    margin-right: 4px;
 }
 
 .method-checkboxes input, #chemical-list label input, .select-all-container label input {
     margin: 3px 3px 3px 4px;
+}
+
+.method-symbology-switch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.method-symbology-switch .form-check {
+    display: flex;
+}
+
+.method-symbology-switch .form-check-input {
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    height: 12px;
+    width: 24px;
+}
+
+.method-symbology-switch .form-check-label {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    font-size: 10px;
+    cursor: pointer;
+    gap: 4px;
 }
 
 .chemical_container {

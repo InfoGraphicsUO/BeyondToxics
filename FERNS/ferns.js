@@ -20,6 +20,7 @@ const sourceLayer = "FERNS_Simplified-748ocs";
 
 // Method filter variables
 let selectedMethods = new Set(['Aerial', 'Ground', 'Other', 'No Data']); // All selected by default
+let methodSymbologyEnabled = false; // Track symbology switch state (default: OFF)
 // Chemical filter variables
 let chemicalsList = [];
 let selectedChemicals = new Set(); // Track selected chemicals
@@ -45,6 +46,15 @@ function resetFiltersToDefaults() {
   
   // Reset method filter variables
   selectedMethods = new Set(['Aerial', 'Ground', 'Other', 'No Data']);
+  
+  // Reset symbology switch to OFF
+  document.getElementById('methodSymbologySwitch').checked = false;
+  methodSymbologyEnabled = false;
+  
+  // Hide color indicators
+  document.querySelectorAll('.method-color-indicator').forEach(indicator => {
+    indicator.classList.remove('visible');
+  });
   
   // Chemical filter will be reset when chemicals.json loads
   selectAllChecked = true;
@@ -364,6 +374,35 @@ window.addEventListener("load", () => {
   map.addControl(searchBox, "top-left");
 });
 
+// Get color expression for method-based symbology
+function getMethodColor() {
+  if (!methodSymbologyEnabled) {
+    return "orange"; // Default color when symbology is off
+  }
+  
+  // When symbology is enabled, color by method
+  // Priority: Aerial > Ground > Other > No Data
+  return [
+    "case",
+    // Check for Aerial (highest priority)
+    ["in", "Aerial", ["get", "Methods"]],
+    "#FF6B35", // Orange-red for Aerial
+    // Check for Ground
+    ["in", "Ground", ["get", "Methods"]],
+    "#9B59B6", // Purple for Ground
+    // Check for Other (has data but not Aerial or Ground)
+    [
+      "all",
+      ["!=", ["get", "Methods"], ""],
+      ["!=", ["get", "Methods"], null],
+      ["has", "Methods"]
+    ],
+    "#6C757D", // Grey for Other
+    // No Data (empty, null, or missing)
+    "#495057" // Dark grey for No Data
+  ];
+}
+
 // Load vector tileset
 let hoveredPolygonId = null; // Variable to store the currently hovered polygon ID
 window.selectedPolygonId = null; // Variable to store the currently selected polygon ID
@@ -495,12 +534,12 @@ function addSourceAndLayer() {
     "source-layer": sourceLayer,
     type: "fill",
     paint: {
-      "fill-color": "orange",
+      "fill-color": getMethodColor(),
       "fill-opacity": 0.5
     }
   });
 
-  // Base stroke (all polygons, orange)
+  // Base stroke (all polygons, colored by method)
   map.addLayer({
     id: "pesticides-stroke_base",
     source: "FERNS-tileset",
@@ -508,7 +547,7 @@ function addSourceAndLayer() {
     type: "line",
     layout: {},
     paint: {
-      "line-color": "orange",
+      "line-color": getMethodColor(),
       "line-width": 2
     }
   });
@@ -544,7 +583,7 @@ function addSourceAndLayer() {
       "fill-color": [
         "case",
         ["boolean", ["feature-state", "hover"], false],
-        "orange",
+        getMethodColor(),
         "transparent"
       ],
       "fill-opacity": 1
@@ -884,6 +923,44 @@ function toggleBLM() {
 
 document.getElementById("flexSwitchCheckChecked").addEventListener("change", toggleFederalLands);
 document.getElementById("blmSwitchCheckChecked").addEventListener("change", toggleBLM);
+
+// Method Symbology Toggle
+function toggleMethodSymbology() {
+  methodSymbologyEnabled = document.getElementById("methodSymbologySwitch").checked;
+  
+  // Show/hide color indicators
+  document.querySelectorAll('.method-color-indicator').forEach(indicator => {
+    if (methodSymbologyEnabled) {
+      indicator.classList.add('visible');
+    } else {
+      indicator.classList.remove('visible');
+    }
+  });
+  
+  // Update paint properties for all relevant layers
+  const colorExpression = getMethodColor();
+  
+  if (map.getLayer('pesticides-fill_base')) {
+    map.setPaintProperty('pesticides-fill_base', 'fill-color', colorExpression);
+  }
+  
+  if (map.getLayer('pesticides-stroke_base')) {
+    map.setPaintProperty('pesticides-stroke_base', 'line-color', colorExpression);
+  }
+  
+  if (map.getLayer('pesticides-fill_hover')) {
+    map.setPaintProperty('pesticides-fill_hover', 'fill-color', [
+      "case",
+      ["boolean", ["feature-state", "hover"], false],
+      colorExpression,
+      "transparent"
+    ]);
+  }
+  
+  console.debug("Method symbology toggled:", methodSymbologyEnabled);
+}
+
+document.getElementById("methodSymbologySwitch").addEventListener("change", toggleMethodSymbology);
 
 // Year Range Slider
 const sliderNoColor = "#C6C6C6";

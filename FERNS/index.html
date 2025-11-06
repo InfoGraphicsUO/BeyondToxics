@@ -48,23 +48,37 @@
     <!-- Method Filter -->
     <div class="method_container">
       <h1><strong>Method of Application</strong></h1>
-      <div class="method-checkboxes">
-        <label>
-          <input type="checkbox" id="method-aerial" value="Aerial" checked>
-          Aerial
-        </label>
-        <label>
-          <input type="checkbox" id="method-ground" value="Ground" checked>
-          Ground
-        </label>
-        <label>
-          <input type="checkbox" id="method-other" value="Other" checked>
-          Other
-        </label>
-        <label>
-          <input type="checkbox" id="method-no-data" value="No Data" checked>
-          No Data
-        </label>
+      <div class="method-content-wrapper">
+        <div class="method-checkboxes">
+          <label>
+            <input type="checkbox" id="method-aerial" value="Aerial" checked>
+            <span class="method-legend-item" data-method="aerial" style="background-color: #FF6B35;"></span>
+            Aerial
+          </label>
+          <label>
+            <input type="checkbox" id="method-ground" value="Ground" checked>
+            <span class="method-legend-item" data-method="ground" style="background-color: #9B59B6;"></span>
+            Ground
+          </label>
+          <label>
+            <input type="checkbox" id="method-other" value="Other" checked>
+            <span class="method-legend-item" data-method="other" style="background-color: #6C757D;"></span>
+            Other
+          </label>
+          <label>
+            <input type="checkbox" id="method-no-data" value="No Data" checked>
+            <span class="method-legend-item" data-method="no-data" style="background-color: #495057;"></span>
+            No Data
+          </label>
+        </div>
+        <div class="method-symbology-switch">
+          <div class="form-check form-switch">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" role="switch" id="methodSymbologySwitch">
+              Symbology
+            </label>
+          </div>
+        </div>
       </div>
     </div>
 
