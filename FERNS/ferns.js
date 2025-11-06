@@ -15,6 +15,7 @@ const defaultZoom = 8;
 
 const ACCESS_TOKEN = "pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q";
 mapboxgl.accessToken = ACCESS_TOKEN;
+const basemap_style = "mapbox://styles/infographics/cmhl11j9c00h301r6bwbbc6hg";
 const sourceLayer = "FERNS_Simplified-748ocs";
 
 // Method filter variables
@@ -54,7 +55,7 @@ function resetFiltersToDefaults() {
 // Main Map
 const map = new mapboxgl.Map({
   container: "map", // container ID
-  style: "mapbox://styles/infographics/cmhl11j9c00h301r6bwbbc6hg",
+  style: basemap_style,
   center: defaultCenter, // starting position [lng, lat]. Note that lat must be set between -90 and 90
   maxBounds: bounds,
   zoom: defaultZoom, // starting zoom
