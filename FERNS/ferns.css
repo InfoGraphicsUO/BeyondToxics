@@ -164,11 +164,11 @@ mapbox-search-listbox, mapbox-search-listbox *
 }
 
 /* Main Filters Container */
-.filters-container {
+.right-side-container {
     position: absolute;
     right: 0;
     top: 0;
-    bottom: 20px;
+    bottom: 31px;
     width: 224px; /* 204px + 20px padding */
     display: flex;
     flex-direction: column;
@@ -176,7 +176,7 @@ mapbox-search-listbox, mapbox-search-listbox *
     gap: 10px;
 }
 
-.filters-container h1 {
+.right-side-container h1 {
     font-weight: 400 !important;
     font-size: 16px;
     line-height: normal;
