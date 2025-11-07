@@ -415,19 +415,19 @@ function addSourceAndLayer() {
 			underLayer = layer.id;
 		}
 	}
-	const federalNPS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+OWN_Type%3D%27FED%27+AND+Own_Name%3D%27NPS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+	const federalBLM = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Type%3D%27FED%27+AND+Own_Name%3D%27BLM%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
 	const federalUSFS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Type%3D%27FED%27+AND+Own_Name%3D%27USFS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
 	const federalUSFWS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Type%3D%27FED%27+AND+Own_Name%3D%27FWS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
-	const federalBLM = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Type%3D%27FED%27+AND+Own_Name%3D%27BLM%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+	const federalNPS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+OWN_Type%3D%27FED%27+AND+Own_Name%3D%27NPS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
 
 	map.addSource('BLM', {
 		type: 'geojson',
 		data: federalBLM
 	});
 
-	map.addSource('NPS', {
+	map.addSource('USFS', {
 		type: 'geojson',
-		data: federalNPS
+		data: federalUSFS
 	});
 
 	map.addSource('USFWS', {
@@ -435,9 +435,9 @@ function addSourceAndLayer() {
 		data: federalUSFWS
 	});
 
-	map.addSource('USFS', {
+	map.addSource('NPS', {
 		type: 'geojson',
-		data: federalUSFS
+		data: federalNPS
 	});
 
 	map.addLayer({
@@ -886,7 +886,6 @@ map.on("style.load", () => {
   updateFilters();
   // Set initial visibility of federal land layers based on checkbox state
   toggleFederalLands();
-  toggleBLM();
 });
 
 // Federal Lands Toggle (NPS, USFS, USFWS)
@@ -895,9 +894,10 @@ function toggleFederalLands() {
   const visibility = isChecked ? "visible" : "none";
   
   const federalLayers = [
+		'BLM-fill',
     'USFS-fill', 'USFS-line', 'USFS-line-inner',
     'USFWS-fill', 'USFWS-line', 'USFWS-line-inner',
-    'NPS-fill', 'NPS-line', 'NPS-line-inner'
+    'NPS-fill', 'NPS-line', 'NPS-line-inner',
   ];
   
   federalLayers.forEach(layerId => {
@@ -906,23 +906,7 @@ function toggleFederalLands() {
     }
   });
 }
-
-// BLM Toggle
-function toggleBLM() {
-  const isChecked = document.getElementById("blmSwitchCheckChecked").checked;
-  const visibility = isChecked ? "visible" : "none";
-  
-  const blmLayers = ['BLM-fill'];
-  
-  blmLayers.forEach(layerId => {
-    if (map.getLayer(layerId)) {
-      map.setLayoutProperty(layerId, 'visibility', visibility);
-    }
-  });
-}
-
 document.getElementById("flexSwitchCheckChecked").addEventListener("change", toggleFederalLands);
-document.getElementById("blmSwitchCheckChecked").addEventListener("change", toggleBLM);
 
 // Method Symbology Toggle
 function toggleMethodSymbology() {

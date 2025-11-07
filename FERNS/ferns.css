@@ -159,10 +159,6 @@ body { margin: 0; padding: 0; }
     user-select: none;
 }
 
-.BLM {
-    margin: 0 2px 0 0 !important;
-}
-
 .dev-overlay-inner hr {
     display: block;
     height: 1px;
