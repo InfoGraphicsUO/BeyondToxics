@@ -54,7 +54,7 @@ body { margin: 0; padding: 0; }
     height: 150px;
     box-shadow: 0 0 0 2px #0000005a;
     background-color: #79bcec5a;
-    flex-shrink: 0; /* Don't shrink */
+    flex-shrink: 0;
 }
 
 #insetMap {
@@ -62,16 +62,9 @@ body { margin: 0; padding: 0; }
     height: 100%;
 }
 
-/*Development panel to be removed for production*/
-.dev-overlay {
+/* Legend */
+.federal-legend {
     width: 212px;
-}
-
-.dev-overlay input {
-    margin: 0;
-}
-
-.dev-overlay .dev-overlay-inner {
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
     font-size: 12px;
     background-color: #fff;
@@ -80,39 +73,13 @@ body { margin: 0; padding: 0; }
     padding: 10px;
 }
 
-.dev-overlay-inner h1 {
-    font-size: 15px;
-    font-weight: bolder;
-    margin-bottom: 0;
-    line-height: 18px;
-}
-
-.dev-overlay-inner fieldset {
-    display: flex;
-    justify-content: space-between;
-    border: none;
-    margin: 0;
-    line-height: 18px;
-}
-
-.dev-overlay-inner label {
-    margin-right: 5px;
-}
-
-#basemaps h2, #land-ownership h2 {
-    font-size: 12px;
-    font-weight: bolder;
-    margin: 4px 0;
-    line-height: normal;
-}
-
-#lands-inner {
+.federal-legend-inner {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-#lands-inner .form-check {
+.form-check {
     display: flex;
     align-items: first baseline;
     gap: 6px;
@@ -121,50 +88,31 @@ body { margin: 0; padding: 0; }
     min-height: 0;
 }
 
-#lands-inner .form-check-input {
+.federal-legend-inner .form-check-input {
     margin: 0;
     cursor: pointer;
     flex-shrink: 0;
 }
 
-#lands-inner .form-check-label {
-    margin: 0;
-    cursor: default;
-    line-height: 1;
+#federal-lands-switch .legend-item-label {
+    font-size: 12px;
+    font-weight: 600;
 }
 
-.legendColorBox {
+.legend-item-symbol {
     width: 1rem;
     height: 1rem;
     display: inline-block;
-    border-radius: 0.25rem;
-}
-
-.legendColorBox.LandOwnership {
     border-width: 2px;
     border-style: solid;
-    margin-left: 1.9rem;
     margin-right: 0.25rem;
-    border-radius: 0;
     border-color: transparent;
 }
 
-.LegendLineLabel {
+.legend-item-label {
     display: inline-block;
     position: relative;
     bottom: 0.15rem;
-    user-select: none;
-}
-
-.dev-overlay-inner hr {
-    display: block;
-    height: 1px;
-    border: 0;
-    border-top: 1px solid #ccc;
-    margin: 0.25em 0;
-    padding: 0;
-    line-height: 24px;
-    opacity: 100%;
 }
 
 /*Tooltips*/

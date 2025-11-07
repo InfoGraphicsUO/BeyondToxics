@@ -98,29 +98,25 @@
     </div>
   </div>
   <div id="bottom-left-container">
-    <!-- Dev Panel -->
-    <div class="dev-overlay">
-      <div class="dev-overlay-inner">
-        <div id="land-ownership">
-          <div id="lands-inner">
-            <div class="form-check form-switch" id="federal-lands-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
-              <div class="LegendLineLabel">Federally managed land</div>
-            </div>
-            <div class="LandOwnership">
-              <div class="legendColorBox LandOwnership BLM" style="background-color: rgb(227, 227, 87); border-color: transparent; opacity: 0.5;"></div>
-              <div class="LegendLineLabel">BLM</div>
-              <br>
-              <div class="legendColorBox LandOwnership USFS" style="background-color: transparent; border-color: rgb(131, 162, 120); opacity: 1; box-shadow: rgba(131, 162, 120, 0.3) 0 0 0 3px inset;"></div>
-              <div class="LegendLineLabel">USFS Forest</div>
-              <br>
-              <div class="legendColorBox LandOwnership USFWS" style="background-color: transparent; border-color: rgb(107, 128, 160); opacity: 0.5; box-shadow: rgba(121, 141, 170, 0.3) 0 0 0 3px inset;"></div>
-              <div class="LegendLineLabel">USFWS Refuge</div>
-              <br>
-              <div class="legendColorBox LandOwnership NPS" style="background-color: transparent; border-color: rgb(154, 139, 112); opacity: 1; box-shadow: rgba(154, 139, 112, 0.3) 0 0 0 3px inset;"></div>
-              <div class="LegendLineLabel">National Park Service</div>
-            </div>
-          </div>
+    <!-- Legend of Federal Lands -->
+    <div class="federal-legend">
+      <div class="federal-legend-inner">
+        <div class="form-check form-switch" id="federal-lands-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
+          <div class="legend-item-label">Federally Managed Land</div>
+        </div>
+        <div class="legend-items">
+          <div class="legend-item-symbol BLM" style="background-color: rgb(227, 227, 87); border-color: transparent; opacity: 0.5;"></div>
+          <div class="legend-item-label">BLM</div>
+          <br>
+          <div class="legend-item-symbol USFS" style="background-color: transparent; border-color: rgb(131, 162, 120); opacity: 1; box-shadow: rgba(131, 162, 120, 0.3) 0 0 0 3px inset;"></div>
+          <div class="legend-item-label">USFS Forest</div>
+          <br>
+          <div class="legend-item-symbol USFWS" style="background-color: transparent; border-color: rgb(107, 128, 160); opacity: 0.5; box-shadow: rgba(121, 141, 170, 0.3) 0 0 0 3px inset;"></div>
+          <div class="legend-item-label">USFWS Refuge</div>
+          <br>
+          <div class="legend-item-symbol NPS" style="background-color: transparent; border-color: rgb(154, 139, 112); opacity: 1; box-shadow: rgba(154, 139, 112, 0.3) 0 0 0 3px inset;"></div>
+          <div class="legend-item-label">National Park Service</div>
         </div>
       </div>
     </div>
