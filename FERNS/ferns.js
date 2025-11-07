@@ -52,7 +52,7 @@ function resetFiltersToDefaults() {
   methodSymbologyEnabled = false;
   
   // Hide color indicators
-  document.querySelectorAll('.method-color-indicator').forEach(indicator => {
+  document.querySelectorAll('.method-legend-item').forEach(indicator => {
     indicator.classList.remove('visible');
   });
   
@@ -929,7 +929,7 @@ function toggleMethodSymbology() {
   methodSymbologyEnabled = document.getElementById("methodSymbologySwitch").checked;
   
   // Show/hide color indicators
-  document.querySelectorAll('.method-color-indicator').forEach(indicator => {
+  document.querySelectorAll('.method-legend-item').forEach(indicator => {
     if (methodSymbologyEnabled) {
       indicator.classList.add('visible');
     } else {
