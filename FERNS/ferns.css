@@ -16,15 +16,12 @@ body { margin: 0; padding: 0; }
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
 }
 
-.mapboxgl-ctrl-attrib .beyond-toxics-link {
-    /*color: #0066cc;*/
+.mapboxgl-ctrl-attrib .attribution-link {
     font-weight: 700;
     text-decoration: none;
-    /*transition: color 0.3s ease;*/
 }
 
-.mapboxgl-ctrl-attrib .beyond-toxics-link:hover {
-    /*color: #004999;*/
+.mapboxgl-ctrl-attrib .attribution-link:hover {
     text-decoration: underline;
 }
 

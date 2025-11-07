@@ -74,7 +74,7 @@ const map = new mapboxgl.Map({
 }).addControl(
   // Custom Attribution
   new mapboxgl.AttributionControl({
-    customAttribution: `<a href="https://www.beyondtoxics.org/" class="beyond-toxics-link" target="_blank" title="Beyond Toxics" aria-label="Beyond Toxics">Beyond Toxics</a>`
+    customAttribution: `<a href="https://infographics.uoregon.edu/" class="attribution-link" target="_blank" title="InfoGraphics Lab" aria-label="InfoGraphics Lab">InfoGraphics Lab</a> | <a href="https://www.beyondtoxics.org/" class="attribution-link" target="_blank" title="Beyond Toxics" aria-label="Beyond Toxics">Beyond Toxics</a>`
   })
 );
 
