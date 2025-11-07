@@ -619,9 +619,9 @@ function addSourceAndLayer() {
     // Container for the entire popup content
     const container = document.createElement("div");
     container.innerHTML = `
-        <label><strong>Select Polygon:</strong></label>
-        <div id="polygon-selector"></div>
-        <div id="polygon-details"></div>
+			<label style="margin-bottom: 2px;"><strong>Select Pesticide Permit:</strong></label>
+			<div id="polygon-selector"></div>
+			<div id="polygon-details"></div>
     `;
 
     const select = container.querySelector("#polygon-selector"); // Dropdown for polygon selection
@@ -659,9 +659,9 @@ function addSourceAndLayer() {
           f.StartDate
         )} - ${formatDate(f.EndDate)}</p>
         <div id="links">
-            <p><strong>Links:</strong><br>
+            <p><strong>View Original NOAP:</strong><br>
             <div class="link-group">
-                <a href="${f.PDFLink}" target="_blank">PDF</a>
+							<a href="${f.PDFLink}" target="_blank">Permit PDF</a>
             </div>
             </p>
         </div>
