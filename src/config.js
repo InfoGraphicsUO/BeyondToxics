@@ -1,7 +1,7 @@
 // Map Default Extent config
 export const bounds = [
-    [-128.2951742043245, 41.27570884209203], // Southwest (lng,lat)
-    [-113.36579758866097, 46.46271965782327] // Northeast (lng,lat)
+  [-128.2951742043245, 41.27570884209203], // Southwest (lng,lat)
+  [-113.36579758866097, 46.46271965782327] // Northeast (lng,lat)
 ];
 export const defaultCenter = [-123.04, 44.944]; // Salem
 export const defaultZoom = 8;

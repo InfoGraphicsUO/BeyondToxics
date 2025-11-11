@@ -22,21 +22,21 @@ function toggleMethodSymbology() {
 }
 
 function handleMethodChange(e) {
-	const method = e.target.value;
+  const method = e.target.value;
 
-	if (e.target.checked) {
-		appState.selectedMethods.add(method);
-	} else {
-		appState.selectedMethods.delete(method);
-	}
-	updateFilters();
+  if (e.target.checked) {
+    appState.selectedMethods.add(method);
+  } else {
+    appState.selectedMethods.delete(method);
+  }
+  updateFilters();
 }
 
 // Method Filter Functionality
 export function setupMethodFilter() {
-	document.getElementById('method-aerial').addEventListener('change', handleMethodChange);
-	document.getElementById('method-ground').addEventListener('change', handleMethodChange);
+  document.getElementById('method-aerial').addEventListener('change', handleMethodChange);
+  document.getElementById('method-ground').addEventListener('change', handleMethodChange);
   document.getElementById('method-other').addEventListener('change', handleMethodChange);
-	document.getElementById('method-no-data').addEventListener('change', handleMethodChange);
+  document.getElementById('method-no-data').addEventListener('change', handleMethodChange);
   document.getElementById("methodSymbologySwitch").addEventListener("change", toggleMethodSymbology);
 }

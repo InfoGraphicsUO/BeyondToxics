@@ -24,14 +24,14 @@ map.touchPitch.disable();
 
 // Inset Map
 export const insetMap = new mapboxgl.Map({
-	container: 'insetMap',
-	style: {
-		version: 8,
-		sources: {},
-		layers: []
-	},
-	center: [-120.57906090033039, 44.16112354808914],
-	zoom: 4,
-	attributionControl: false,
-	interactive: false
+  container: 'insetMap',
+  style: {
+    version: 8,
+    sources: {},
+    layers: []
+  },
+  center: [-120.57906090033039, 44.16112354808914],
+  zoom: 4,
+  attributionControl: false,
+  interactive: false
 });

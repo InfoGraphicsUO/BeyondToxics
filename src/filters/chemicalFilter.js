@@ -108,16 +108,16 @@ function handleIndividualChemicalChange(e) {
 
 // Load chemicals from JSON
 export function loadChemicalFilter() {
-    fetch('public/chemicals.json')
-     .then(response => response.json())
-     .then(data => {
-        appState.chemicalsList = data;
-        populateChemicalFilter();
-        // Reset to defaults: select all chemicals and check "Select All"
-        appState.selectedChemicals = new Set(appState.chemicalsList);
-        appState.selectAllChecked = true;
-        document.getElementById('select-all-checkbox').checked = appState.selectAllChecked;
-        updateFilters();
-      })
-     .catch(error => console.error('Error loading chemicals:', error));
+  fetch('public/chemicals.json')
+    .then(response => response.json())
+    .then(data => {
+      appState.chemicalsList = data;
+      populateChemicalFilter();
+      // Reset to defaults: select all chemicals and check "Select All"
+      appState.selectedChemicals = new Set(appState.chemicalsList);
+      appState.selectAllChecked = true;
+      document.getElementById('select-all-checkbox').checked = appState.selectAllChecked;
+      updateFilters();
+    })
+    .catch(error => console.error('Error loading chemicals:', error));
 }

@@ -158,8 +158,7 @@ body { margin: 0; padding: 0; }
 /*Search Box*/
 mapbox-search-box, mapbox-search-box *,
 mapbox-search-box input, mapbox-search-box input *,
-mapbox-search-listbox, mapbox-search-listbox *
-{
+mapbox-search-listbox, mapbox-search-listbox * {
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
 }
 

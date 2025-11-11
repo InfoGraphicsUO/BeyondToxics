@@ -147,245 +147,213 @@ export function addPesticideLayers() {
 }
 
 function setupClickPopup() {
-    map.on("click", "pesticides-fill_base", (e) => {
-        const features = map.queryRenderedFeatures(e.point, {
-          layers: ["pesticides-fill_base"]
-        });
+  map.on("click", "pesticides-fill_base", (e) => {
+    const features = map.queryRenderedFeatures(e.point, {
+      layers: ["pesticides-fill_base"]
+    });
 
-        if (!features.length) return; // No features found, exit early
+    if (!features.length) return; // No features found, exit early
 
-        const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
+    const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
 
-        // Container for the entire popup content
-        const container = document.createElement("div");
-        container.innerHTML = `
-        		<label style="margin-bottom: 2px;"><strong>Select Pesticide Permit:</strong></label>
-        		<div id="polygon-selector"></div>
-        		<div id="polygon-details"></div>
-        `;
+    // Container for the entire popup content
+    const container = document.createElement("div");
+    container.innerHTML = `
+      <label style="margin-bottom: 2px;"><strong>Select Pesticide Permit:</strong></label>
+      <div id="polygon-selector"></div>
+      <div id="polygon-details"></div>
+    `;
 
-        const select = container.querySelector("#polygon-selector"); // Dropdown for polygon selection
-        const details = container.querySelector("#polygon-details"); // Details section for selected polygon
+    const select = container.querySelector("#polygon-selector"); // Dropdown for polygon selection
+    const details = container.querySelector("#polygon-details"); // Details section for selected polygon
 
-        function showDetails(feature) {
-          const f = feature.properties; // Shorthand for properties
+    function showDetails(feature) {
+      const f = feature.properties; // Shorthand for properties
 
-          // Details of the selected polygon
-          details.innerHTML = `
-            <p><strong>Method of Presticide Application:</strong> ${displayValue(f.Methods)}</p>
-            <p><strong>Chemicals Applied:</strong> ${displayValue(f.Chemicals)}</p>
-            <p><strong>Time Range of Application:</strong> ${formatDate(f.StartDate)} - ${formatDate(f.EndDate)}</p>
-            <div id="links">
-               <p><strong>View Original NOAP:</strong><br>
-                <div class="link-group">
-        					<a href="${f.PDFLink}" target="_blank">Permit PDF</a>
-                </div>
-                </p>
+      // Details of the selected polygon
+      details.innerHTML = `
+        <p><strong>Method of Presticide Application:</strong> ${displayValue(f.Methods)}</p>
+        <p><strong>Chemicals Applied:</strong> ${displayValue(f.Chemicals)}</p>
+        <p><strong>Time Range of Application:</strong> ${formatDate(f.StartDate)} - ${formatDate(f.EndDate)}</p>
+        <div id="links">
+          <p><strong>View Original NOAP:</strong><br>
+            <div class="link-group">
+              <a href="${f.PDFLink}" target="_blank">Permit PDF</a>
             </div>
-            `;
+          </p>
+        </div>
+      `;
+    }
+
+    // Switch highlighted polygon to passed feature ID
+    function setHighlight(featureId) {
+      if (isTouchDevice) {
+        // if on mobile, ignore highlighting
+        return;
+      }
+      if (appState.hoveredPolygonId !== null && appState.hoveredPolygonId !== featureId) {
+        map.setFeatureState(
+          {
+            source: "FERNS-tileset",
+            sourceLayer: sourceLayer,
+            id: appState.hoveredPolygonId
+          },
+          { hover: false }
+        );
+      }
+
+      appState.hoveredPolygonId = featureId;
+
+      map.setFeatureState(
+        {
+          source: "FERNS-tileset",
+          sourceLayer: sourceLayer,
+          id: appState.hoveredPolygonId
+        },
+        { hover: true }
+      );
+    }
+
+    // Set selected state for clicked polygon
+    function setSelected(featureId) {
+      // Clear any previously selected polygon
+      if (appState.selectedPolygonId !== null && appState.selectedPolygonId !== featureId) {
+        map.setFeatureState(
+          {
+            source: "FERNS-tileset",
+            sourceLayer: sourceLayer,
+            id: appState.selectedPolygonId
+          },
+          { selected: false }
+        );
+      }
+
+      appState.selectedPolygonId = featureId;
+
+      map.setFeatureState(
+        {
+          source: "FERNS-tileset",
+          sourceLayer: sourceLayer,
+          id: appState.selectedPolygonId
+        },
+        { selected: true }
+      );
+    }
+
+    let selectedIdx = 0;  // Index of selected polygon in list of polygons
+    let hoveredTempId = null;  // Temporary ID for hovered polygon
+
+    // For each polygon feature,
+    features.forEach((feat, i) => {
+      const item = document.createElement("div"); // Create a new item in the list
+      item.textContent = feat.properties.NoapIdenti; // Identifier for the polygon
+      item.style.padding = "4px 8px";
+      item.style.cursor = "pointer";
+      if (i !== features.length - 1) {
+        // Add bottom border to all but last item
+        item.style.borderBottom = "2px solid #0000001a";
+      }
+
+      // Hover
+      item.addEventListener("mouseenter", () => {
+        // Dont change highlight of selected polygon
+        if (i !== selectedIdx) {
+          item.style.backgroundColor = "#eee"; // Light gray background on hover (not as dark as background for selected)
         }
 
-        // Switch highlighted polygon to passed feature ID
-        function setHighlight(featureId) {
-          if (isTouchDevice) {
-            // if on mobile, ignore highlighting
-            return;
-          }
-          if (appState.hoveredPolygonId !== null && appState.hoveredPolygonId !== featureId) {
-            map.setFeatureState(
-              {
-                source: "FERNS-tileset",
-                sourceLayer: sourceLayer,
-                id: appState.hoveredPolygonId
-              },
-              { hover: false }
-            );
-          }
-
-          appState.hoveredPolygonId = featureId;
-
+        // Set feature state to highlight hovered polygon
+        if (hoveredTempId !== null && hoveredTempId !== feat.id) {
+          // If there is a previously hovered polygon, remove its highlight
           map.setFeatureState(
             {
               source: "FERNS-tileset",
               sourceLayer: sourceLayer,
-              id: appState.hoveredPolygonId
+              id: hoveredTempId
             },
-            { hover: true }
+            { hover: false }
           );
         }
 
-        // Set selected state for clicked polygon
-        function setSelected(featureId) {
-          // Clear any previously selected polygon
-          if (appState.selectedPolygonId !== null && appState.selectedPolygonId !== featureId) {
-            map.setFeatureState(
-              {
-                source: "FERNS-tileset",
-                sourceLayer: sourceLayer,
-                id: appState.selectedPolygonId
-              },
-              { selected: false }
-            );
-          }
+        hoveredTempId = feat.id;
 
-          appState.selectedPolygonId = featureId;
-
-          map.setFeatureState(
-            {
-              source: "FERNS-tileset",
-              sourceLayer: sourceLayer,
-              id: appState.selectedPolygonId
-            },
-            { selected: true }
-          );
-        }
-
-        let selectedIdx = 0;  // Index of selected polygon in list of polygons
-        let hoveredTempId = null;  // Temporary ID for hovered polygon
-
-        // For each polygon feature,
-        features.forEach((feat, i) => {
-          const item = document.createElement("div"); // Create a new item in the list
-          item.textContent = feat.properties.NoapIdenti; // Identifier for the polygon
-          item.style.padding = "4px 8px";
-          item.style.cursor = "pointer";
-          if (i !== features.length - 1) {
-            // Add bottom border to all but last item
-            item.style.borderBottom = "2px solid #0000001a";
-          }
-
-          // Hover
-          item.addEventListener("mouseenter", () => {
-            // Dont change highlight of selected polygon
-            if (i !== selectedIdx) {
-              item.style.backgroundColor = "#eee"; // Light gray background on hover (not as dark as background for selected)
-            }
-
-            // Set feature state to highlight hovered polygon
-            if (hoveredTempId !== null && hoveredTempId !== feat.id) {
-              // If there is a previously hovered polygon, remove its highlight
-              map.setFeatureState(
-                {
-                  source: "FERNS-tileset",
-                  sourceLayer: sourceLayer,
-                  id: hoveredTempId
-                },
-                { hover: false }
-              );
-            }
-
-            hoveredTempId = feat.id;
-
-            setHighlight(hoveredTempId);
-          });
-
-          // Stop hover
-          item.addEventListener("mouseleave", () => {
-            if (i !== selectedIdx) {
-              item.style.backgroundColor = "";
-            }
-
-            if (hoveredTempId!== null) {
-              map.setFeatureState(
-                {
-                  source: "FERNS-tileset",
-                  sourceLayer: sourceLayer,
-                  id: hoveredTempId
-                },
-                { hover: false }
-              );
-            }
-
-            hoveredTempId = null;
-          });
-
-          item.addEventListener("click", () => {
-            selectedIdx = i;
-            showDetails(feat);
-            setHighlight(feat.id);
-            setSelected(feat.id);
-
-            Array.from(select.children).forEach((child) => {
-              child.style.backgroundColor = "";
-              child.style.fontWeight = "";
-            });
-            item.style.backgroundColor = "#ddd";
-            item.style.fontWeight = "bold";
-          });
-
-          if (i === 0) {
-            item.style.backgroundColor = "#ddd";
-            item.style.fontWeight = "bold";
-          }
-
-          select.appendChild(item);
-        });
-
-        popup.on("close", () => {
-          setSelected(null);
-        });
-
-        showDetails(features[selectedIdx]);
-        setHighlight(features[selectedIdx].id);
-        setSelected(features[selectedIdx].id);
-
-        popup.setDOMContent(container).addTo(map);
+        setHighlight(hoveredTempId);
       });
+
+      // Stop hover
+      item.addEventListener("mouseleave", () => {
+        if (i !== selectedIdx) {
+          item.style.backgroundColor = "";
+        }
+
+        if (hoveredTempId !== null) {
+          map.setFeatureState(
+            {
+              source: "FERNS-tileset",
+              sourceLayer: sourceLayer,
+              id: hoveredTempId
+            },
+            { hover: false }
+          );
+        }
+
+        hoveredTempId = null;
+      });
+
+      item.addEventListener("click", () => {
+        selectedIdx = i;
+        showDetails(feat);
+        setHighlight(feat.id);
+        setSelected(feat.id);
+
+        Array.from(select.children).forEach((child) => {
+          child.style.backgroundColor = "";
+          child.style.fontWeight = "";
+        });
+        item.style.backgroundColor = "#ddd";
+        item.style.fontWeight = "bold";
+      });
+
+      if (i === 0) {
+        item.style.backgroundColor = "#ddd";
+        item.style.fontWeight = "bold";
+      }
+
+      select.appendChild(item);
+    });
+
+    popup.on("close", () => {
+      setSelected(null);
+    });
+
+    showDetails(features[selectedIdx]);
+    setHighlight(features[selectedIdx].id);
+    setSelected(features[selectedIdx].id);
+
+    popup.setDOMContent(container).addTo(map);
+  });
 }
 
 function setupHoverTooltip() {
-    let tooltip; // Hover tooltip
+  let tooltip; // Hover tooltip
 
-    if (!isTouchDevice) {
-        // Dont add hover functionality on mobile
-        map.on("mousemove", "pesticides-fill_base", (e) => {
-          map.getCanvas().style.cursor = "pointer";
+  if (!isTouchDevice) {
+    // Dont add hover functionality on mobile
+    map.on("mousemove", "pesticides-fill_base", (e) => {
+      map.getCanvas().style.cursor = "pointer";
 
-          if (!tooltip) {
-            tooltip = new mapboxgl.Popup({
-              closeButton: false,
-              closeOnClick: false
-            });
-          }
-          const coords = e.lngLat;
-          tooltip
-           .setLngLat(coords)
-           .setHTML('<div style="font-size:12px;">Click for more information</div>')
-           .addTo(map);
-
-          if (e.features.length > 0) {
-            if (appState.hoveredPolygonId !== null) {
-              map.setFeatureState(
-                {
-                  source: "FERNS-tileset",
-                  sourceLayer: sourceLayer,
-                  id: appState.hoveredPolygonId
-                },
-                { hover: false }
-              );
-            }
-            appState.hoveredPolygonId = e.features[0].id;
-            console.debug("Hovered ID:", appState.hoveredPolygonId);
-            map.setFeatureState(
-              {
-                source: "FERNS-tileset",
-                sourceLayer: sourceLayer,
-                id: appState.hoveredPolygonId
-              },
-              { hover: true }
-            );
-          }
+      if (!tooltip) {
+        tooltip = new mapboxgl.Popup({
+          closeButton: false,
+          closeOnClick: false
         });
       }
+      const coords = e.lngLat;
+      tooltip
+        .setLngLat(coords)
+        .setHTML('<div style="font-size:12px;">Click for more information</div>')
+        .addTo(map);
 
-      map.on("mouseleave", "pesticides-fill_base", () => {
-        map.getCanvas().style.cursor = "";
-
-        if (tooltip) {
-          tooltip.remove();
-          tooltip = null;
-        }
-
+      if (e.features.length > 0) {
         if (appState.hoveredPolygonId !== null) {
           map.setFeatureState(
             {
@@ -396,6 +364,38 @@ function setupHoverTooltip() {
             { hover: false }
           );
         }
-        appState.hoveredPolygonId = null;
-      });
+        appState.hoveredPolygonId = e.features[0].id;
+        console.debug("Hovered ID:", appState.hoveredPolygonId);
+        map.setFeatureState(
+          {
+            source: "FERNS-tileset",
+            sourceLayer: sourceLayer,
+            id: appState.hoveredPolygonId
+          },
+          { hover: true }
+        );
+      }
+    });
+  }
+
+  map.on("mouseleave", "pesticides-fill_base", () => {
+    map.getCanvas().style.cursor = "";
+
+    if (tooltip) {
+      tooltip.remove();
+      tooltip = null;
+    }
+
+    if (appState.hoveredPolygonId !== null) {
+      map.setFeatureState(
+        {
+          source: "FERNS-tileset",
+          sourceLayer: sourceLayer,
+          id: appState.hoveredPolygonId
+        },
+        { hover: false }
+      );
+    }
+    appState.hoveredPolygonId = null;
+  });
 }

@@ -34,8 +34,8 @@ export function resetFiltersToDefaults() {
 
 // update map filters based on year range and selected chemicals
 export function updateFilters() {
-	// Get year values from noUiSlider
-	let fromYear, toYear;
+  // Get year values from noUiSlider
+  let fromYear, toYear;
   if (appState.yearSlider) {
     const values = appState.yearSlider.get();
     fromYear = parseInt(values[0], 10);
@@ -103,39 +103,39 @@ export function updateFilters() {
   }
   // If "Select All" is checked, don't add any chemical filter (show all chemicals)
 
-	// Method filter
-	if (appState.selectedMethods.size > 0 && appState.selectedMethods.size < 4) {
-		let methodFilter = ['any'];
+  // Method filter
+  if (appState.selectedMethods.size > 0 && appState.selectedMethods.size < 4) {
+    let methodFilter = ['any'];
 
     appState.selectedMethods.forEach(method => {
-			if (method === 'Aerial') {
-				methodFilter.push(['in', 'Aerial', ['get', 'Methods']]);
-			} else if (method === 'Ground') {
-				methodFilter.push(['in', 'Ground', ['get', 'Methods']]);
-			} else if (method === 'Other') {
-				methodFilter.push([
-					'all',
-					['!', ['in', 'Aerial', ['get', 'Methods']]],
-					['!', ['in', 'Ground', ['get', 'Methods']]],
-					['!=', ['get', 'Methods'], ''],
-					['!=', ['get', 'Methods'], null],
-					['has', 'Methods']
+      if (method === 'Aerial') {
+        methodFilter.push(['in', 'Aerial', ['get', 'Methods']]);
+      } else if (method === 'Ground') {
+        methodFilter.push(['in', 'Ground', ['get', 'Methods']]);
+      } else if (method === 'Other') {
+        methodFilter.push([
+          'all',
+          ['!', ['in', 'Aerial', ['get', 'Methods']]],
+          ['!', ['in', 'Ground', ['get', 'Methods']]],
+          ['!=', ['get', 'Methods'], ''],
+          ['!=', ['get', 'Methods'], null],
+          ['has', 'Methods']
         ]);
-			} else if (method === 'No Data') {
-				methodFilter.push([
-					'any',
-					['==', ['get', 'Methods'], ''],
-					['==', ['get', 'Methods'], null],
-					['!', ['has', 'Methods']]
+      } else if (method === 'No Data') {
+        methodFilter.push([
+          'any',
+          ['==', ['get', 'Methods'], ''],
+          ['==', ['get', 'Methods'], null],
+          ['!', ['has', 'Methods']]
         ]);
-			}
-		});
+      }
+    });
 
     filterExpression.push(methodFilter);
-	}
-	// If no methods selected, add a filter that matches nothing
-	else if (appState.selectedMethods.size === 0) {
-		filterExpression.push(['==', ['get', 'Methods'], '__NEVER_MATCH__']);
+  }
+  // If no methods selected, add a filter that matches nothing
+  else if (appState.selectedMethods.size === 0) {
+    filterExpression.push(['==', ['get', 'Methods'], '__NEVER_MATCH__']);
   }
 
   // Apply filter to all polygon layers
