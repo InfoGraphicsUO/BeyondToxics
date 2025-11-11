@@ -26,17 +26,15 @@ let chemicalsList = [];
 let selectedChemicals = new Set(); // Track selected chemicals
 let selectAllChecked = true; // Track "Select All" checkbox state
 
+// Year slider variable (will be initialized after DOM is ready)
+let yearSlider = null;
+
 // Reset all filters to default values on page load
 function resetFiltersToDefaults() {
-  // Reset year sliders and inputs to default values
-  document.getElementById('fromSlider').value = '2014';
-  document.getElementById('toSlider').value = '2024';
-  document.getElementById('fromInput').value = '2014';
-  document.getElementById('toInput').value = '2024';
-  
-  // Disable autocomplete on form elements to prevent browser caching
-  document.getElementById('fromInput').setAttribute('autocomplete', 'off');
-  document.getElementById('toInput').setAttribute('autocomplete', 'off');
+  // Reset year slider to default values
+  if (yearSlider) {
+    yearSlider.set([2014, 2024]);
+  }
   
   // Reset method checkboxes to all checked
   document.getElementById('method-aerial').checked = true;
@@ -102,6 +100,10 @@ let rectangleFeature;
 
 // When the inset map loads, add layers and set up event handlers
 insetMap.on('load', () => {
+	// Initialize year slider if not already done
+	if (!yearSlider) {
+		initializeYearSlider();
+	}
 	resetFiltersToDefaults();
 	addInsetLayers();
 	document
@@ -908,6 +910,43 @@ function toggleFederalLands() {
 }
 document.getElementById("flexSwitchCheckChecked").addEventListener("change", toggleFederalLands);
 
+// Initialize year slider for year range
+function initializeYearSlider() {
+  const sliderElement = document.getElementById('yearSlider');
+
+  if (!sliderElement) {
+    console.error('Year slider element not found');
+    return;
+  }
+
+  noUiSlider.create(sliderElement, {
+    start: [2014, 2024],
+    connect: true,
+    tooltips: [true, true],
+    range: {
+      'min': 2014,
+      'max': 2024
+    },
+    step: 1,
+    format: {
+      to: function(value) {
+        return Math.round(value);
+      },
+      from: function(value) {
+        return Number(value);
+      }
+    }
+  });
+
+  yearSlider = sliderElement.noUiSlider;
+
+  // Update filters when slider values change
+  yearSlider.on('update', function(values) {
+    updateFilters();
+  });
+}
+initializeYearSlider();
+
 // Method Symbology Toggle
 function toggleMethodSymbology() {
   methodSymbologyEnabled = document.getElementById("methodSymbologySwitch").checked;
@@ -945,15 +984,6 @@ function toggleMethodSymbology() {
 }
 
 document.getElementById("methodSymbologySwitch").addEventListener("change", toggleMethodSymbology);
-
-// Year Range Slider
-const sliderNoColor = "#C6C6C6";
-const sliderBarColor = "#bfe172";
-
-const fromSlider = document.querySelector("#fromSlider");
-const toSlider = document.querySelector("#toSlider");
-const fromInput = document.querySelector("#fromInput");
-const toInput = document.querySelector("#toInput");
 
 // Method Filter Functionality
 function setupMethodFilter() {
@@ -1097,7 +1127,17 @@ function handleIndividualChemicalChange(e) {
 
 // update map filters based on year range and selected chemicals
 function updateFilters() {
-	const [fromYear, toYear] = getParsed(fromSlider, toSlider);
+	// Get year values from noUiSlider
+	let fromYear, toYear;
+	if (yearSlider) {
+		const values = yearSlider.get();
+		fromYear = parseInt(values[0], 10);
+		toYear = parseInt(values[1], 10);
+	} else {
+		// Fallback to defaults if slider not initialized
+		fromYear = 2014;
+		toYear = 2024;
+	}
   
   // Build the filter expression
   let filterExpression = ['all'];
@@ -1208,91 +1248,3 @@ function updateFilters() {
   
   console.debug(`Filters updated: Years ${fromYear}-${toYear}, Chemicals: ${selectedChemicals.size}/${chemicalsList.length}, Methods: ${Array.from(selectedMethods).join(', ')}, SelectAll: ${selectAllChecked}`);
 }
-
-// Make sure one of the sliders is always accessible to being moved
-function setToggleAccessible(currentTarget) {
-  const toSlider = document.querySelector("#toSlider");
-  if (Number(currentTarget.value) <= Number(fromSlider.min)) {
-    toSlider.style.zIndex = "2";
-  } else {
-    toSlider.style.zIndex = "0";
-  }
-}
-
-function fillSlider(from, to, sliderColor, rangeColor, controlSlider) {
-  const rangeDistance = to.max - to.min;
-  const fromPosition = from.value - to.min;
-  const toPosition = to.value - to.min;
-  controlSlider.style.background = `linear-gradient(
-    to right,
-    ${sliderColor} 0%,
-    ${sliderColor} ${(fromPosition / rangeDistance) * 100}%,
-    ${rangeColor} ${(fromPosition / rangeDistance) * 100}%,
-    ${rangeColor} ${(toPosition / rangeDistance) * 100}%,
-    ${sliderColor} ${(toPosition / rangeDistance) * 100}%,
-    ${sliderColor} 100%)`;
-}
-
-fillSlider(fromSlider, toSlider, sliderNoColor, sliderBarColor, toSlider);
-setToggleAccessible(toSlider);
-
-function getParsed(currentFrom, currentTo) {
-  const from = parseInt(currentFrom.value, 10);
-  const to = parseInt(currentTo.value, 10);
-  return [from, to];
-}
-
-function controlFromSlider(fromSlider, toSlider, fromInput) {
-  const [from, to] = getParsed(fromSlider, toSlider);
-  fillSlider(fromSlider, toSlider, sliderNoColor, sliderBarColor, toSlider);
-  if (from > to) {
-    fromSlider.value = to;
-    fromInput.value = to;
-  } else {
-    fromInput.value = from;
-  }
-  updateFilters();
-}
-fromSlider.oninput = () => controlFromSlider(fromSlider, toSlider, fromInput);
-
-function controlToSlider(fromSlider, toSlider, toInput) {
-  const [from, to] = getParsed(fromSlider, toSlider);
-  fillSlider(fromSlider, toSlider, sliderNoColor, sliderBarColor, toSlider);
-  setToggleAccessible(toSlider);
-  if (from <= to) {
-    toSlider.value = to;
-    toInput.value = to;
-  } else {
-    toInput.value = from;
-    toSlider.value = from;
-  }
-  updateFilters();
-}
-toSlider.oninput = () => controlToSlider(fromSlider, toSlider, toInput);
-
-function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
-  const [from, to] = getParsed(fromInput, toInput);
-  fillSlider(fromInput, toInput, sliderNoColor, sliderBarColor, controlSlider);
-  if (from > to) {
-    fromSlider.value = to;
-    fromInput.value = to;
-  } else {
-    fromSlider.value = from;
-  }
-  updateFilters();
-}
-fromInput.oninput = () => controlFromInput(fromSlider, fromInput, toInput, toSlider);
-
-function controlToInput(toSlider, fromInput, toInput, controlSlider) {
-  const [from, to] = getParsed(fromInput, toInput);
-  fillSlider(fromInput, toInput, sliderNoColor, sliderBarColor, controlSlider);
-  setToggleAccessible(toInput);
-  if (from <= to) {
-    toSlider.value = to;
-    toInput.value = to;
-  } else {
-    toInput.value = from;
-  }
-  updateFilters();
-}
-toInput.oninput = () => controlToInput(toSlider, fromInput, toInput, toSlider);

@@ -200,67 +200,60 @@ mapbox-search-listbox, mapbox-search-listbox *
 .sliders_control {
     position: relative;
     margin-top: 12px;
-    margin-bottom: 13px;
 }
 
-.form_control {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    padding-top: 5px;
-    font-size: 15px;
-    line-height: normal;
-    color: #635a5a;
+/* noUiSlider Custom Styling */
+#yearSlider {
+    margin: 20px 6px 10px 6px;
+    width: 156px;
 }
 
-input[type=range]::-webkit-slider-thumb,
-input[type=range]::-moz-range-thumb {
-    -webkit-appearance: none;
-    pointer-events: all;
+/* noUiSlider target styling */
+#yearSlider.noUi-target {
+    /*background: #C6C6C6;*/
+    /*border-radius: 4px;*/
+    border: none;
+    /*box-shadow: none;*/
+    height: 2px;
+}
+
+/* Year slider connect bar (selected range) */
+#yearSlider .noUi-connect {
+    background: #FFA500;
+}
+
+/* Year filter handles */
+#yearSlider .noUi-handle {
     width: 18px;
     height: 18px;
-    background-color: #fff;
     border-radius: 50%;
-    box-shadow: 0 0 0 1px #C6C6C6;
+    background: #fff;
+    border: 1px solid #C6C6C6;
+    box-shadow: none;
     cursor: pointer;
+    top: -8px;
 }
 
-input[type=range]::-webkit-slider-thumb:hover {
+#yearSlider .noUi-handle:hover {
     background: #f7f7f7;
 }
 
-input[type=range]::-webkit-slider-thumb:active {
+#yearSlider .noUi-handle:active {
     box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
-    -webkit-box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
 }
 
-input[type="number"] {
-    color: #8a8383;
-    width: auto;
-    height: auto;
+/* Remove default handle stripes */
+#yearSlider .noUi-handle:before,
+#yearSlider .noUi-handle:after {
+    display: none;
+}
+
+/* noUiSlider tooltips */
+#yearSlider .noUi-tooltip {
     font-size: 12px;
+    color: #8a8383;
     border: 1px solid #8a8383;
-    border-radius: 4px;
-    font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
-}
-
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-    opacity: 1;
-}
-
-input[type="range"] {
-    -webkit-appearance: none;
-    height: 2px;
-    width: 100%;
-    position: absolute;
-    background-color: #C6C6C6;
-    pointer-events: none;
-}
-
-#fromSlider {
-    height: 0;
-    z-index: 1;
+    padding: 2px 6px;
 }
 
 .method-content-wrapper {
