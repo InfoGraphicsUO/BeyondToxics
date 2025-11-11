@@ -4,7 +4,7 @@ const lineLayout = {
 }
 
 //blm
-blmFillColor = '#e3e357'  // (20% darker than original #eeee9a)
+blmFillColor = '#d9c352'  // (darker and more brown than original #eeee9a)
 blmFillOpacity = .5
 blmLineColor = 'transparent'
 
