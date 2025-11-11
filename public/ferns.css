@@ -204,7 +204,7 @@ mapbox-search-listbox, mapbox-search-listbox *
 
 /* noUiSlider Custom Styling */
 #yearSlider {
-    margin: 20px 6px 10px 6px;
+    margin: 20px 6px 10px 14px;
     width: 156px;
 }
 
@@ -214,7 +214,7 @@ mapbox-search-listbox, mapbox-search-listbox *
     /*border-radius: 4px;*/
     border: none;
     /*box-shadow: none;*/
-    height: 2px;
+    height: 3px;
 }
 
 /* Year slider connect bar (selected range) */
@@ -232,6 +232,10 @@ mapbox-search-listbox, mapbox-search-listbox *
     box-shadow: none;
     cursor: pointer;
     top: -8px;
+}
+
+#yearSlider .noUi-handle {
+    right: -9px;
 }
 
 #yearSlider .noUi-handle:hover {
@@ -254,6 +258,8 @@ mapbox-search-listbox, mapbox-search-listbox *
     color: #8a8383;
     border: 1px solid #8a8383;
     padding: 2px 6px;
+    width: 42px;
+    text-align: center;
 }
 
 .method-content-wrapper {
