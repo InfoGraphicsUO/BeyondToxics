@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #231f20;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 20px;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1" data-name="Layer 1">
+    <polyline class="cls-1" points="10 147.37 10 190 190 10"/>
+    <path class="cls-1" d="M52.63,190H10h42.63Z"/>
+  </g>
+  <g id="Layer_1_copy" data-name="Layer 1 copy">
+    <polyline class="cls-1" points="147.37 190 190 190 10 10"/>
+    <path class="cls-1" d="M190,147.37v42.63s0-42.63,0-42.63Z"/>
+  </g>
+  <g id="Layer_1_copy_2" data-name="Layer 1 copy 2">
+    <polyline class="cls-1" points="190 52.63 190 10 10 190"/>
+    <path class="cls-1" d="M147.37,10h42.63s-42.63,0-42.63,0Z"/>
+  </g>
+  <g id="Layer_1_copy_3" data-name="Layer 1 copy 3">
+    <polyline class="cls-1" points="52.63 10 10 10 190 190"/>
+    <path class="cls-1" d="M10,52.63V10s0,42.63,0,42.63Z"/>
+  </g>
+</svg>

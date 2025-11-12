@@ -1,0 +1,401 @@
+/* Main */
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+/* Custom Scale Control Positioning */
+.mapboxgl-ctrl-scale {
+    position: absolute !important;
+    bottom: 9px !important;
+    left: 110px !important;
+    margin: 0 !important;
+    height: 20px !important;
+}
+
+/* Custom Attribution Footer */
+.mapboxgl-ctrl-attrib {
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+}
+
+.mapboxgl-ctrl-attrib .attribution-link {
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.mapboxgl-ctrl-attrib .attribution-link:hover {
+    text-decoration: underline;
+}
+
+/* Bottom Left Container */
+#bottom-left-container {
+    position: absolute;
+    bottom: 31px;
+    width: 210px;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    gap: 10px;
+}
+
+/* Standalone Controls (Zoom and Reset Extent) */
+.standalone-controls {
+    position: absolute;
+    left: 220px;
+    bottom: 30px;
+    margin: 0 0 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1;
+}
+
+/* Inset Map */
+#inset-map-container {
+    width: 210px;
+    height: 150px;
+    box-shadow: 0 0 0 2px #0000005a;
+    background-color: #79bcec5a;
+    flex-shrink: 0;
+}
+
+#insetMap {
+    width: 100%;
+    height: 100%;
+}
+
+/* Legend */
+.federal-legend {
+    width: 212px;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    padding: 10px;
+}
+
+.federal-legend-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-check {
+    display: flex;
+    align-items: first baseline;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    min-height: 0;
+}
+
+.federal-legend-inner .form-check-input {
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+#federal-lands-switch .legend-item-label {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.legend-item-symbol {
+    width: 1rem;
+    height: 1rem;
+    display: inline-block;
+    border-width: 2px;
+    border-style: solid;
+    margin-right: 0.25rem;
+    border-color: transparent;
+}
+
+.legend-item-label {
+    display: inline-block;
+    position: relative;
+    bottom: 0.15rem;
+}
+
+/*Tooltips*/
+.mapboxgl-popup-content {
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 10px;
+    color: #333;
+}
+
+.mapboxgl-popup-content p {
+    margin-bottom: 0;
+}
+
+.mapboxgl-popup-content .link-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mapboxgl-popup-content .link-group a {
+    text-decoration: none;
+    color: #0066cc;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.mapboxgl-popup-content .link-group a:hover {
+    color: #004999;
+    text-decoration: underline;
+}
+
+#polygon-selector {
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px #0000001a;
+    cursor: pointer;
+}
+
+#polygon-details {
+    margin-top: 8px;
+}
+
+/*Search Box*/
+mapbox-search-box, mapbox-search-box *,
+mapbox-search-box input, mapbox-search-box input *,
+mapbox-search-listbox, mapbox-search-listbox *
+{
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+}
+
+/* Main Filters Container */
+.right-side-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 31px;
+    width: 224px; /* 204px + 20px padding */
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+}
+
+.right-side-container h1 {
+    font-weight: 400 !important;
+    font-size: 16px;
+    line-height: normal;
+    margin: 0;
+}
+
+/* Year Range Filter & Method Filter Containers */
+.range_container, .method_container {
+    display: flex;
+    flex-direction: column;
+    width: 204px;
+    padding: 10px;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+    line-height: normal;
+    background: #fff;
+    box-shadow: 0 0 0 2px #0000001a;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.sliders_control {
+    position: relative;
+    margin-top: 12px;
+}
+
+/* noUiSlider Custom Styling */
+#yearSlider {
+    margin: 20px 6px 10px 6px;
+    width: 156px;
+}
+
+/* noUiSlider target styling */
+#yearSlider.noUi-target {
+    /*background: #C6C6C6;*/
+    /*border-radius: 4px;*/
+    border: none;
+    /*box-shadow: none;*/
+    height: 2px;
+}
+
+/* Year slider connect bar (selected range) */
+#yearSlider .noUi-connect {
+    background: #FFA500;
+}
+
+/* Year filter handles */
+#yearSlider .noUi-handle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #C6C6C6;
+    box-shadow: none;
+    cursor: pointer;
+    top: -8px;
+}
+
+#yearSlider .noUi-handle:hover {
+    background: #f7f7f7;
+}
+
+#yearSlider .noUi-handle:active {
+    box-shadow: inset 0 0 3px #387bbe, 0 0 9px #387bbe;
+}
+
+/* Remove default handle stripes */
+#yearSlider .noUi-handle:before,
+#yearSlider .noUi-handle:after {
+    display: none;
+}
+
+/* noUiSlider tooltips */
+#yearSlider .noUi-tooltip {
+    font-size: 12px;
+    color: #8a8383;
+    border: 1px solid #8a8383;
+    padding: 2px 6px;
+}
+
+.method-content-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.method-checkboxes {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.method-checkboxes label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px 0;
+    width: fit-content;
+}
+
+.method-legend-item {
+    border-radius: 2px;
+    flex-shrink: 0;
+    visibility: hidden;
+}
+
+.method-legend-item.visible {
+    visibility: visible;
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    margin-right: 4px;
+}
+
+.method-checkboxes input, #chemical-list label input, .select-all-container label input {
+    margin: 3px 3px 3px 4px;
+}
+
+.method-symbology-switch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.method-symbology-switch .form-check {
+    display: flex;
+}
+
+.method-symbology-switch .form-check-input {
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    height: 12px;
+    width: 24px;
+}
+
+.method-symbology-switch .form-check-label {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    font-size: 10px;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.chemical_container {
+    display: flex;
+    flex-direction: column;
+    width: 204px;
+    padding: 10px;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+    line-height: normal;
+    background: #fff;
+    box-shadow: 0 0 0 2px #0000001a;
+    border-radius: 4px;
+    flex: 1; /* Grow to fill available space */
+    min-height: 100px; /* Minimum height */
+    overflow: hidden;
+}
+
+#chemical-search {
+    width: 100%;
+    margin-bottom: 4px;
+    color: #8a8383;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
+    font-size: 12px;
+    border: 1px solid #8a8383;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#chemical-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+#chemical-list label {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px 0;
+}
+
+.select-all-container {
+    margin-bottom: 5px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.select-all-container label {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: normal;
+}
+
+/* Reset Extent */
+.resetExtent {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px #0000001a;
+    height: 29px;
+    width: 29px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.resetExtent img {
+    height: 18px;
+    width: 18px;
+    object-fit: scale-down;
+    color: rgb(33, 37, 41);
+    line-height: 0;
+}
