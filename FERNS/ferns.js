@@ -399,9 +399,9 @@ function getMethodColor() {
       ["!=", ["get", "Methods"], null],
       ["has", "Methods"]
     ],
-    "#6C757D", // Grey for Other
+    "#495057", // Dark grey for Other (more dominant than No Data)
     // No Data (empty, null, or missing)
-    "#495057" // Dark grey for No Data
+    "#ADB5BD" // Light grey for No Data
   ];
 }
 
