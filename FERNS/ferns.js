@@ -63,6 +63,66 @@ const insetMap = new mapboxgl.Map({
 	interactive: false
 });
 
+// Load wheel control
+const wheel = document.getElementById('loading-spinner');
+
+function showLoadingWheel() {
+	wheel.style.display = 'flex';
+	// Stop user interaction while loading
+	// Justification: when user interacts with the map while polygons are drawing, the load wheel disappears.
+	// map.loaded() returns true after the map "loads" from the interaction, but the polygons are still drawing.
+	// Stopping user interaction is the "easy" solution
+	const standaloneControls = document.getElementById('standalone-controls');
+	if (standaloneControls) {
+		standaloneControls.style.pointerEvents = 'none';
+		const buttons = standaloneControls.querySelectorAll('button');
+		buttons.forEach((button) => {
+			button.style.pointerEvents = 'none';
+		});
+	}
+	map.getCanvas().style.pointerEvents = 'none';
+	insetMap.getCanvas().style.pointerEvents = 'none';
+}
+showLoadingWheel();
+
+function hideLoadingWheel() {
+	// Re-enable user interaction
+	const standaloneControls = document.getElementById('standalone-controls');
+	if (standaloneControls) {
+		standaloneControls.style.pointerEvents = 'auto';
+		const buttons = standaloneControls.querySelectorAll('button');
+		buttons.forEach((button) => {
+			button.style.pointerEvents = 'auto';
+		});
+	}
+	map.getCanvas().style.pointerEvents = 'auto';
+	insetMap.getCanvas().style.pointerEvents = 'auto';
+	wheel.style.display = 'none';
+}
+
+// Hide loading wheel when map has finished loading
+let idleTimeout;
+
+map.on("idle", () => {
+	clearTimeout(idleTimeout);
+	if (wheel.style.display === 'flex') {
+		if (map.loaded()) {
+			idleTimeout = setTimeout (() => {
+				hideLoadingWheel();
+			}, 500);
+		} else {
+			idleTimeout = setTimeout (() => {
+				// Still waiting for map to load
+			}, 50);
+		}
+	}
+});
+
+// Hide load wheel if there's an error
+map.on('error', () => {
+	hideLoadingWheel();
+});
+
 let isDragging = false;
 let dragStartLngLat;
 let rectangleFeature;
@@ -933,11 +993,6 @@ document.getElementById("flexSwitchCheckChecked").addEventListener("change", tog
 function initializeYearSlider() {
   const sliderElement = document.getElementById('yearSlider');
 
-  if (!sliderElement) {
-    console.error('Year slider element not found');
-    return;
-  }
-
   noUiSlider.create(sliderElement, {
     start: [2014, 2024],
     connect: true,
@@ -961,8 +1016,12 @@ function initializeYearSlider() {
 
   // Update filters when slider values change
   yearSlider.on('update', function(values) {
-    updateFilters();
+    updateFilters(false);  // don't show the loading wheel while user is still dragging
   });
+
+	yearSlider.on('set', function(values) {
+		updateFilters();  // once the user stops dragging, show the loading wheel
+	});
 }
 initializeYearSlider();
 
@@ -1144,8 +1203,12 @@ function handleIndividualChemicalChange(e) {
   updateFilters();
 }
 
-// update map filters based on year range and selected chemicals
-function updateFilters() {
+// update map filters based on year range, method of application, and selected chemicals
+function updateFilters(showWheel = true) {
+	if (showWheel) {
+		showLoadingWheel();
+	}
+
 	// Get year values from noUiSlider
 	let fromYear, toYear;
 	if (yearSlider) {
