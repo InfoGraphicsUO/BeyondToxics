@@ -62,59 +62,6 @@ body { margin: 0; padding: 0; }
     height: 100%;
 }
 
-/* Legend */
-.federal-legend {
-    width: 212px;
-    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
-    font-size: 12px;
-    background-color: #fff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
-    padding: 10px;
-}
-
-.federal-legend-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.form-check {
-    display: flex;
-    align-items: first baseline;
-    gap: 6px;
-    padding: 0;
-    margin: 0;
-    min-height: 0;
-}
-
-.federal-legend-inner .form-check-input {
-    margin: 0;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-#federal-lands-switch .legend-item-label {
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.legend-item-symbol {
-    width: 1rem;
-    height: 1rem;
-    display: inline-block;
-    border-width: 2px;
-    border-style: solid;
-    margin-right: 0.25rem;
-    border-color: transparent;
-}
-
-.legend-item-label {
-    display: inline-block;
-    position: relative;
-    bottom: 0.15rem;
-}
-
 /*Tooltips*/
 .mapboxgl-popup-content {
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
@@ -172,8 +119,9 @@ mapbox-search-listbox, mapbox-search-listbox *
     width: 224px; /* 204px + 20px padding */
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    padding: 10px 10px 10px 0;
     gap: 10px;
+    z-index: 1;
 }
 
 .right-side-container h1 {
@@ -181,6 +129,72 @@ mapbox-search-listbox, mapbox-search-listbox *
     font-size: 16px;
     line-height: normal;
     margin: 0;
+}
+
+/* Collapsable Filters Button */
+.toggle-panel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 100%;
+    margin-right: 0;
+    width: 22px;
+    height: 30px;
+    background: #fff;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    box-shadow:
+        0 -2px 0 0 #0000001a,
+        0 2px 0 0 #0000001a,
+        -2px 0 0 0 #0000001a;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 0;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    color: #333;
+    transition: all 0.3s ease;
+    perspective: 100px;
+}
+
+.toggle-panel-button:hover {
+    background: #f7f7f7;
+}
+
+.toggle-icon {
+    transition: transform 0.5s ease;
+    display: inline-block;
+    transform-style: preserve-3d;
+}
+
+/* Collapsed State */
+.right-side-container.collapsed {
+    transform: translateX(100%);
+}
+
+.right-side-container.collapsed .toggle-panel-button {
+    right: 100%;
+    left: auto;
+    border-radius: 4px 0 0 4px;
+}
+
+.right-side-container.collapsed .toggle-icon {
+    transform: rotateY(180deg);
+}
+
+.right-side-container.collapsed .range_container,
+.right-side-container.collapsed .method_container,
+.right-side-container.collapsed .chemical_container,
+.right-side-container.collapsed .federal-legend {
+    pointer-events: none;
+}
+
+/* Smooth transition for collapsing/expanding */
+.right-side-container {
+    transition: transform 0.3s ease;
+    overflow: visible;
 }
 
 /* Year Range Filter & Method Filter Containers */
@@ -195,6 +209,8 @@ mapbox-search-listbox, mapbox-search-listbox *
     box-shadow: 0 0 0 2px #0000001a;
     border-radius: 4px;
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .sliders_control {
@@ -337,9 +353,11 @@ mapbox-search-listbox, mapbox-search-listbox *
     background: #fff;
     box-shadow: 0 0 0 2px #0000001a;
     border-radius: 4px;
-    flex: 1; /* Grow to fill available space */
-    min-height: 100px; /* Minimum height */
+    flex: 1;
+    min-height: 100px;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
 }
 
 #chemical-search {
@@ -381,6 +399,61 @@ mapbox-search-listbox, mapbox-search-listbox *
     cursor: pointer;
     font-size: 13px;
     font-weight: normal;
+}
+
+/* Legend */
+.federal-legend {
+    width: 212px;
+    font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    padding: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.federal-legend-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-check {
+    display: flex;
+    align-items: first baseline;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    min-height: 0;
+}
+
+.federal-legend-inner .form-check-input {
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+#federal-lands-switch .legend-item-label {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.legend-item-symbol {
+    width: 1rem;
+    height: 1rem;
+    display: inline-block;
+    border-width: 2px;
+    border-style: solid;
+    margin-right: 0.25rem;
+    border-color: transparent;
+}
+
+.legend-item-label {
+    display: inline-block;
+    position: relative;
+    bottom: 0.15rem;
 }
 
 /* Reset Extent */

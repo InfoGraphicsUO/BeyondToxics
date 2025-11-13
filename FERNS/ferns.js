@@ -29,37 +29,6 @@ let selectAllChecked = true; // Track "Select All" checkbox state
 // Year slider variable (will be initialized after DOM is ready)
 let yearSlider = null;
 
-// Reset all filters to default values on page load
-function resetFiltersToDefaults() {
-  // Reset year slider to default values
-  if (yearSlider) {
-    yearSlider.set([2014, 2024]);
-  }
-  
-  // Reset method checkboxes to all checked
-  document.getElementById('method-aerial').checked = true;
-  document.getElementById('method-ground').checked = true;
-  document.getElementById('method-other').checked = true;
-  document.getElementById('method-no-data').checked = true;
-  
-  // Reset method filter variables
-  selectedMethods = new Set(['Aerial', 'Ground', 'Other', 'No Data']);
-  
-  // Reset symbology switch to OFF
-  document.getElementById('methodSymbologySwitch').checked = false;
-  methodSymbologyEnabled = false;
-  
-  // Hide color indicators
-  document.querySelectorAll('.method-legend-item').forEach(indicator => {
-    indicator.classList.remove('visible');
-  });
-  
-  // Chemical filter will be reset when chemicals.json loads
-  selectAllChecked = true;
-  
-  console.debug("Filters reset to defaults");
-}
-
 // Main Map
 const map = new mapboxgl.Map({
   container: "map", // container ID
@@ -375,6 +344,56 @@ window.addEventListener("load", () => {
 
   map.addControl(searchBox, "top-left");
 });
+
+// Collapsable Filters Button
+function toggleFiltersPanel() {
+  const panel = document.querySelector('.right-side-container');
+  const toggle = document.getElementById('toggle-panel-button');
+
+  if (!panel || !toggle) {
+    console.error('Panel or toggle button not found');
+    return;
+  }
+
+  toggle.addEventListener('click', () => {
+    panel.classList.toggle('collapsed');
+    const isCollapsed = panel.classList.contains('collapsed');
+    toggle.setAttribute('aria-expanded', !isCollapsed);
+    console.debug('Filters panel toggled:', isCollapsed ? 'collapsed' : 'expanded');
+  });
+}
+toggleFiltersPanel();
+
+// Reset all filters to default values on page load
+function resetFiltersToDefaults() {
+  // Reset year slider to default values
+  if (yearSlider) {
+    yearSlider.set([2014, 2024]);
+  }
+  
+  // Reset method checkboxes to all checked
+  document.getElementById('method-aerial').checked = true;
+  document.getElementById('method-ground').checked = true;
+  document.getElementById('method-other').checked = true;
+  document.getElementById('method-no-data').checked = true;
+  
+  // Reset method filter variables
+  selectedMethods = new Set(['Aerial', 'Ground', 'Other', 'No Data']);
+  
+  // Reset symbology switch to OFF
+  document.getElementById('methodSymbologySwitch').checked = false;
+  methodSymbologyEnabled = false;
+  
+  // Hide color indicators
+  document.querySelectorAll('.method-legend-item').forEach(indicator => {
+    indicator.classList.remove('visible');
+  });
+  
+  // Chemical filter will be reset when chemicals.json loads
+  selectAllChecked = true;
+  
+  console.debug("Filters reset to defaults");
+}
 
 // Get color expression for method-based symbology
 function getMethodColor() {
