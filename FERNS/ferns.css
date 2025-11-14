@@ -26,11 +26,11 @@ body { margin: 0; padding: 0; }
 
 /* Custom Scale Control Positioning */
 .mapboxgl-ctrl-scale {
-    position: absolute !important;
-    bottom: 9px !important;
-    left: 110px !important;
+    position: absolute;
+    bottom: 9px;
+    left: 110px;
     margin: 0 !important;
-    height: 20px !important;
+    height: 20px;
 }
 
 /* Custom Attribution Footer */
@@ -75,7 +75,7 @@ body { margin: 0; padding: 0; }
     width: 210px;
     height: 150px;
     box-shadow: 0 0 0 2px #0000005a;
-    background-color: #79bcec5a;
+    background-color: #B1C6F180;
     flex-shrink: 0;
 }
 
@@ -143,7 +143,7 @@ mapbox-search-listbox, mapbox-search-listbox *
     flex-direction: column;
     padding: 10px 10px 10px 0;
     gap: 10px;
-    z-index: 1;
+    z-index: 2;
 }
 
 .right-side-container h1 {
@@ -223,7 +223,7 @@ mapbox-search-listbox, mapbox-search-listbox *
 .range_container, .method_container {
     display: flex;
     flex-direction: column;
-    width: 204px;
+    width: 214px;
     padding: 10px;
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
     line-height: normal;
@@ -243,7 +243,7 @@ mapbox-search-listbox, mapbox-search-listbox *
 /* noUiSlider Custom Styling */
 #yearSlider {
     margin: 20px 6px 10px 14px;
-    width: 156px;
+    width: 166px;
 }
 
 /* noUiSlider target styling */
@@ -368,7 +368,7 @@ mapbox-search-listbox, mapbox-search-listbox *
 .chemical_container {
     display: flex;
     flex-direction: column;
-    width: 204px;
+    width: 214px;
     padding: 10px;
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif !important;
     line-height: normal;
@@ -425,11 +425,11 @@ mapbox-search-listbox, mapbox-search-listbox *
 
 /* Legend */
 .federal-legend {
-    width: 212px;
+    width: 214px;
     font-family: 'proxima-nova', Arial, Helvetica, sans-serif;
     font-size: 12px;
     background-color: #fff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 2px #0000001a;
     border-radius: 3px;
     padding: 10px;
     position: relative;
@@ -496,4 +496,31 @@ mapbox-search-listbox, mapbox-search-listbox *
     object-fit: scale-down;
     color: rgb(33, 37, 41);
     line-height: 0;
+}
+
+@media screen and (max-width: 767px) {
+    #inset-map-container {
+        display: none;
+    }
+
+    .standalone-controls {
+        left: 0;
+    }
+
+    div[class*="--SearchBox"] {
+        width: min(calc(100vw - 20px), 300px);
+    }
+}
+
+@media screen and (max-width: 250px) {
+    .mapboxgl-ctrl-scale {
+        bottom: 30px;
+        left: 40px;
+        margin: 10px !important;
+    }
+
+    .mapboxgl-ctrl-logo.mapboxgl-compact {
+        width: 88px !important;
+        height: 23px !important;
+    }
 }
