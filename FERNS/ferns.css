@@ -266,6 +266,7 @@ mapbox-search-listbox, mapbox-search-listbox *
     height: 18px;
     border-radius: 50%;
     background: #fff;
+    border: 1px solid #C6C6C6;
     box-shadow: none;
     cursor: pointer;
     top: -8px;
@@ -290,13 +291,10 @@ mapbox-search-listbox, mapbox-search-listbox *
 #yearSlider .noUi-tooltip {
     font-size: 12px;
     color: #8a8383;
-    border: 0;
-    background: transparent;
+    border: 1px solid #8a8383;
     padding: 2px 6px;
-    width: auto;
-    min-width: 42px;
+    width: 42px;
     text-align: center;
-    white-space: nowrap;
 }
 
 .method-content-wrapper {
