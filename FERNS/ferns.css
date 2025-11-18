@@ -233,6 +233,8 @@ mapbox-search-listbox, mapbox-search-listbox *
     flex-shrink: 0;
     position: relative;
     z-index: 1;
+    overflow-x: hidden;
+    overflow-y: visible;
 }
 
 .sliders_control {
@@ -242,8 +244,8 @@ mapbox-search-listbox, mapbox-search-listbox *
 
 /* noUiSlider Custom Styling */
 #yearSlider {
-    margin: 20px 6px 10px 14px;
-    width: 166px;
+    margin: 20px 6px 10px 24px;
+    width: 145px;
 }
 
 /* noUiSlider target styling */
