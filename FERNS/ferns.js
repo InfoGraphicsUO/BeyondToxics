@@ -10,8 +10,9 @@ const bounds = [
   [-128.2951742043245, 41.27570884209203], // Southwest (lng,lat)
   [-113.36579758866097, 46.46271965782327] // Northeast (lng,lat)
 ];
-const defaultCenter = [-123.04, 44.944]; // Salem
-const defaultZoom = 8;
+// const defaultCenter = [-123.04, 44.944]; // Salem
+const defaultCenter = {lng: -120.35933770135752, lat: 44.40462530519895}
+const defaultZoom = 7;
 
 const ACCESS_TOKEN = "pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q";
 mapboxgl.accessToken = ACCESS_TOKEN;
@@ -488,120 +489,7 @@ function getMethodColor() {
 let hoveredPolygonId = null; // Variable to store the currently hovered polygon ID
 window.selectedPolygonId = null; // Variable to store the currently selected polygon ID
 function addSourceAndLayer() {
-	// Get the first symbol layer to place new layers beneath it (TODO: Improve this. cant see where federal layers end bc they're under the roads e.g USFWS west of Salem)
-	const layers = map.getStyle().layers;
-	let underLayer;
-	for (const layer of layers) {
-		if (layer.type === 'line') {
-			underLayer = layer.id;
-		}
-	}
-	const federalBLM = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Fee_Managers_PADUS/FeatureServer/0/query?where=State_Nm%3D%27OR%27+AND+Own_Name%3D%27BLM%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
-	const federalUSFS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Fee_Managers_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Name%3D%27USFS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
-	const federalUSFWS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Fee_Managers_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Name%3D%27FWS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
-	const federalNPS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Fee_Managers_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Name%3D%27NPS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
-
-	map.addSource('BLM', {
-		type: 'geojson',
-		data: federalBLM
-	});
-
-	map.addSource('USFS', {
-		type: 'geojson',
-		data: federalUSFS
-	});
-
-	map.addSource('USFWS', {
-		type: 'geojson',
-		data: federalUSFWS
-	});
-
-	map.addSource('NPS', {
-		type: 'geojson',
-		data: federalNPS
-	});
-
-	map.addLayer({
-		id: 'BLM-fill',
-		source: 'BLM',
-		type: 'fill',
-		paint: blmPaint,
-		layout: {}
-	}, underLayer)
-
-	map.addLayer({
-		id: 'USFS-fill',
-		source: 'USFS',
-		type: 'fill',
-		paint: usfsPaint,
-		layout: {},
-	}, underLayer)
-
-	map.addLayer({
-		id: 'USFS-line',
-		source: 'USFS',
-		type: 'line',
-		paint: usfsLinePaint,
-		layout: lineLayout
-	}, underLayer)
-
-	map.addLayer({
-		id: 'USFS-line-inner',
-		source: 'USFS',
-		type: 'line',
-		paint: usfsInnerLinePaint,
-		layout: lineLayout
-	}, underLayer)
-
-		map.addLayer({
-		id: 'USFWS-fill',
-		source: 'USFWS',
-		type: 'fill',
-		paint: usfwsPaint,
-		layout: {},
-	}, underLayer)
-
-	map.addLayer({
-		id: 'USFWS-line',
-		source: 'USFWS',
-		type: 'line',
-		paint: usfwsLinePaint,
-		layout: lineLayout
-	}, underLayer)
-
-	map.addLayer({
-		id: 'USFWS-line-inner',
-		source: 'USFWS',
-		type: 'line',
-		paint: usfwsInnerLinePaint,
-		layout: lineLayout
-	}, underLayer)
-
-	map.addLayer({
-		id: 'NPS-fill',
-		source: 'NPS',
-		type: 'fill',
-		paint: npsPaint,
-		layout: {}
-	}, underLayer)
-
-	map.addLayer({
-		id: 'NPS-line',
-		source: 'NPS',
-		type: 'line',
-		paint: npsLinePaint,
-		layout: lineLayout
-	}, underLayer)
-
-	map.addLayer({
-		id: 'NPS-line-inner',
-		source: 'NPS',
-		type: 'line',
-		paint: npsInnerLinePaint,
-		layout: lineLayout
-	}, underLayer)
-
-
+  // add defult FERNS-data
   map.addSource("FERNS-tileset", {
     type: "vector",
     // url: "mapbox://infographics.blqieafd" 2022 only
@@ -617,7 +505,8 @@ function addSourceAndLayer() {
     paint: {
       "fill-color": getMethodColor(),
       "fill-opacity": 0.5
-    }
+    },
+    minzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
   });
 
   // Base stroke (all polygons, colored by method)
@@ -629,7 +518,13 @@ function addSourceAndLayer() {
     layout: {},
     paint: {
       "line-color": getMethodColor(),
-      "line-width": 2
+      'line-width': [
+        'interpolate',
+        ["linear"],
+        ['zoom'],
+        7, 0.25,
+        13, 3
+      ]
     }
   });
 
@@ -688,6 +583,7 @@ function addSourceAndLayer() {
     }
   });
 
+  // open popups on click
   map.on("click", "pesticides-fill_base", (e) => {
     const features = map.queryRenderedFeatures(e.point, {
       layers: ["pesticides-fill_base"]
@@ -889,11 +785,50 @@ function addSourceAndLayer() {
       setSelected(null);
     });
 
+    popup.on("open", () => {
+      // make sure popups are fully visible by panning the map
+      const popupElement = popup.getElement();
+			const panel = document.querySelector('.right-side-container');
+
+			let dx;
+			// if panel is open and on mobile, add horizontal offset to account for the width of the panel
+			if (!panel.classList.contains('collapsed') && window.innerWidth < 767) {
+				dx = -224/2;
+			} else {
+				dx = 0;
+			}
+
+			const popupHeight = popupElement.offsetHeight;
+			const dy = (popupHeight / 2) + 20;
+
+			map.easeTo({
+				center: popup.getLngLat(),
+				offset: [dx, dy],
+				duration: 300
+			});
+    });
+
     showDetails(features[selectedIdx]);
     setHighlight(features[selectedIdx].id);
     setSelected(features[selectedIdx].id);
 
     popup.setDOMContent(container).addTo(map);
+  });
+
+  // when at full extent zoom closer on click
+  map.on("click", (e) => {
+
+    if (map.getZoom() < 8){
+      const { lng, lat } = e.lngLat;
+      map.flyTo({
+            center: [lng, lat],
+            zoom: 9,       // Target zoom level
+            speed: 1.2,     // Fly speed (default 1.2)
+            curve: 1.42,    // Flight curve (default 1.42)
+            essential: true // This animation is considered essential for accessibility
+      });
+    }
+
   });
 
   let tooltip; // Hover tooltip
@@ -960,6 +895,159 @@ function addSourceAndLayer() {
     }
     hoveredPolygonId = null;
   });
+
+
+  // add generalized FERNS map data
+  map.addSource("FERNS-tileset_generalized", {
+    type: "vector",
+    url: "mapbox://infographics.5yiufya4" // AllYears_StateSimple_5km-2aehi0
+  });
+
+  // Base fill (all polygons, semi-transparent)
+  map.addLayer({
+    id: "pesticides-fill_base_generalized",
+    source: "FERNS-tileset_generalized",
+    "source-layer": "AllYears_StateSimple_5km-2aehi0",
+    type: "fill",
+    paint: {
+      "fill-color": getMethodColor(),
+      "fill-opacity": 0.5
+    },
+    maxzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
+  });
+
+    // add to generalized FERNS points map data
+  map.addSource("FERNS-tileset_generalized_points", {
+    type: "vector",
+    url: "mapbox://infographics.1n1d2u5c" // AllYears_StateSimple_5km-2aehi0
+  });
+
+    // Base points (all points)
+  map.addLayer({
+    id: "pesticides-fill_base_generalized_points",
+    source: "FERNS-tileset_generalized_points",
+    "source-layer": "AllYears_StateSimple_5km_Pnt-3270vk",
+    type: "circle",
+    paint: {
+      'circle-color': getMethodColor(), 
+      'circle-radius': 2, 
+    },
+    maxzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
+  });
+
+
+	// Get the first symbol layer to place new layers beneath it (TODO: Improve this. cant see where federal layers end bc they're under the roads e.g USFWS west of Salem)
+	const layers = map.getStyle().layers;
+	let underLayer;
+	for (const layer of layers) {
+		if (layer.type === 'line') {
+			underLayer = layer.id;
+		}
+	}
+	const federalBLM = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Fee_Managers_PADUS/FeatureServer/0/query?where=State_Nm%3D%27OR%27+AND+Own_Name%3D%27BLM%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+	const federalUSFS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Fee_Managers_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Name%3D%27USFS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+	const federalUSFWS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Fee_Managers_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Name%3D%27FWS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+	const federalNPS = 'https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Fee_Managers_PADUS/FeatureServer/0//query?where=State_Nm%3D%27OR%27+AND+Own_Name%3D%27NPS%27&objectIds=&geometry=&geometryType=esriGeometryPolygon&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&outDistance=&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&returnAggIds=false&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=';
+
+	map.addSource('BLM', {
+		type: 'geojson',
+		data: federalBLM
+	});
+
+	map.addSource('USFS', {
+		type: 'geojson',
+		data: federalUSFS
+	});
+
+	map.addSource('USFWS', {
+		type: 'geojson',
+		data: federalUSFWS
+	});
+
+	map.addSource('NPS', {
+		type: 'geojson',
+		data: federalNPS
+	});
+
+	map.addLayer({
+		id: 'BLM-fill',
+		source: 'BLM',
+		type: 'fill',
+		paint: blmPaint,
+		layout: {}
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFS-fill',
+		source: 'USFS',
+		type: 'fill',
+		paint: usfsPaint,
+		layout: {},
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFS-line',
+		source: 'USFS',
+		type: 'line',
+		paint: usfsLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFS-line-inner',
+		source: 'USFS',
+		type: 'line',
+		paint: usfsInnerLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+		map.addLayer({
+		id: 'USFWS-fill',
+		source: 'USFWS',
+		type: 'fill',
+		paint: usfwsPaint,
+		layout: {},
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFWS-line',
+		source: 'USFWS',
+		type: 'line',
+		paint: usfwsLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+	map.addLayer({
+		id: 'USFWS-line-inner',
+		source: 'USFWS',
+		type: 'line',
+		paint: usfwsInnerLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+	map.addLayer({
+		id: 'NPS-fill',
+		source: 'NPS',
+		type: 'fill',
+		paint: npsPaint,
+		layout: {}
+	}, underLayer)
+
+	map.addLayer({
+		id: 'NPS-line',
+		source: 'NPS',
+		type: 'line',
+		paint: npsLinePaint,
+		layout: lineLayout
+	}, underLayer)
+
+	map.addLayer({
+		id: 'NPS-line-inner',
+		source: 'NPS',
+		type: 'line',
+		paint: npsInnerLinePaint,
+		layout: lineLayout
+	}, underLayer)
 }
 
 map.on("style.load", () => {
@@ -1014,6 +1102,9 @@ function initializeYearSlider() {
 
   yearSlider = sliderElement.noUiSlider;
 
+  // Merge tooltips when they are close together
+  mergeTooltips(sliderElement, 25, ' - ');
+
   // Update filters when slider values change
   yearSlider.on('update', function(values) {
     updateFilters(false);  // don't show the loading wheel while user is still dragging
@@ -1043,6 +1134,8 @@ function toggleMethodSymbology() {
   
   if (map.getLayer('pesticides-fill_base')) {
     map.setPaintProperty('pesticides-fill_base', 'fill-color', colorExpression);
+    map.setPaintProperty('pesticides-fill_base_generalized', 'fill-color', colorExpression);
+    map.setPaintProperty('pesticides-fill_base_generalized_points', 'circle-color', colorExpression);
   }
   
   if (map.getLayer('pesticides-stroke_base')) {
@@ -1316,10 +1409,13 @@ function updateFilters(showWheel = true) {
   // Apply filter to all polygon layers
   const layersToFilter = [
     'pesticides-fill_base',
+    'pesticides-fill_base_generalized',
+    'pesticides-fill_base_generalized_points',
     'pesticides-stroke_base',
     'pesticides-stroke_selected',
     'pesticides-fill_hover',
-    'pesticides-stroke_hover'
+    'pesticides-stroke_hover',
+
   ];
   
   layersToFilter.forEach(layerId => {
