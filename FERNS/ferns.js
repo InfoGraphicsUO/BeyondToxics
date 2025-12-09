@@ -10,8 +10,9 @@ const bounds = [
   [-128.2951742043245, 41.27570884209203], // Southwest (lng,lat)
   [-113.36579758866097, 46.46271965782327] // Northeast (lng,lat)
 ];
-const defaultCenter = [-123.04, 44.944]; // Salem
-const defaultZoom = 8;
+// const defaultCenter = [-123.04, 44.944]; // Salem
+const defaultCenter = {lng: -120.35933770135752, lat: 44.40462530519895}
+const defaultZoom = 7;
 
 const ACCESS_TOKEN = "pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q";
 mapboxgl.accessToken = ACCESS_TOKEN;
@@ -488,6 +489,7 @@ function getMethodColor() {
 let hoveredPolygonId = null; // Variable to store the currently hovered polygon ID
 window.selectedPolygonId = null; // Variable to store the currently selected polygon ID
 function addSourceAndLayer() {
+  // add defult FERNS-data
   map.addSource("FERNS-tileset", {
     type: "vector",
     // url: "mapbox://infographics.blqieafd" 2022 only
@@ -503,7 +505,8 @@ function addSourceAndLayer() {
     paint: {
       "fill-color": getMethodColor(),
       "fill-opacity": 0.5
-    }
+    },
+    minzoom: 8  // Layer disappears after zoom level 7 - swap with main base layer
   });
 
   // Base stroke (all polygons, colored by method)
@@ -515,7 +518,13 @@ function addSourceAndLayer() {
     layout: {},
     paint: {
       "line-color": getMethodColor(),
-      "line-width": 2
+      'line-width': [
+        'interpolate',
+        ["linear"],
+        ['zoom'],
+        7, 0.25,
+        13, 3
+      ]
     }
   });
 
@@ -574,6 +583,7 @@ function addSourceAndLayer() {
     }
   });
 
+  // open popups on click
   map.on("click", "pesticides-fill_base", (e) => {
     const features = map.queryRenderedFeatures(e.point, {
       layers: ["pesticides-fill_base"]
@@ -805,6 +815,22 @@ function addSourceAndLayer() {
     popup.setDOMContent(container).addTo(map);
   });
 
+  // when at full extent zoom closer on click
+  map.on("click", (e) => {
+
+    if (map.getZoom() < 8){
+      const { lng, lat } = e.lngLat;
+      map.flyTo({
+            center: [lng, lat],
+            zoom: 9,       // Target zoom level
+            speed: 1.2,     // Fly speed (default 1.2)
+            curve: 1.42,    // Flight curve (default 1.42)
+            essential: true // This animation is considered essential for accessibility
+      });
+    }
+
+  });
+
   let tooltip; // Hover tooltip
 
   if (!isTouchDevice) {
@@ -868,6 +894,26 @@ function addSourceAndLayer() {
       );
     }
     hoveredPolygonId = null;
+  });
+
+
+  // add to generalized map data
+  map.addSource("FERNS-tileset_generalized", {
+    type: "vector",
+    url: "mapbox://infographics.5yiufya4" // AllYears_StateSimple_5km-2aehi0
+  });
+
+    // Base fill (all polygons, semi-transparent)
+  map.addLayer({
+    id: "pesticides-fill_base_generalized",
+    source: "FERNS-tileset_generalized",
+    "source-layer": "AllYears_StateSimple_5km-2aehi0",
+    type: "fill",
+    paint: {
+      "fill-color": getMethodColor(),
+      "fill-opacity": 0.5
+    },
+    maxzoom: 8  // Layer disappears after zoom level 7 - swap with main base layer
   });
 
 	// Get the first symbol layer to place new layers beneath it (TODO: Improve this. cant see where federal layers end bc they're under the roads e.g USFWS west of Salem)
