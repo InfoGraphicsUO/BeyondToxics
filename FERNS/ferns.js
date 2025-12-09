@@ -897,13 +897,13 @@ function addSourceAndLayer() {
   });
 
 
-  // add to generalized map data
+  // add generalized FERNS map data
   map.addSource("FERNS-tileset_generalized", {
     type: "vector",
     url: "mapbox://infographics.5yiufya4" // AllYears_StateSimple_5km-2aehi0
   });
 
-    // Base fill (all polygons, semi-transparent)
+  // Base fill (all polygons, semi-transparent)
   map.addLayer({
     id: "pesticides-fill_base_generalized",
     source: "FERNS-tileset_generalized",
@@ -915,6 +915,26 @@ function addSourceAndLayer() {
     },
     maxzoom: 8  // Layer disappears after zoom level 7 - swap with main base layer
   });
+
+    // add to generalized FERNS points map data
+  map.addSource("FERNS-tileset_generalized_points", {
+    type: "vector",
+    url: "mapbox://infographics.1n1d2u5c" // AllYears_StateSimple_5km-2aehi0
+  });
+
+    // Base points (all points)
+  map.addLayer({
+    id: "pesticides-fill_base_generalized_points",
+    source: "FERNS-tileset_generalized_points",
+    "source-layer": "AllYears_StateSimple_5km_Pnt-3270vk",
+    type: "circle",
+    paint: {
+      'circle-color': "orange", 
+      'circle-radius': 2, 
+    },
+    maxzoom: 8  // Layer disappears after zoom level 7 - swap with main base layer
+  });
+
 
 	// Get the first symbol layer to place new layers beneath it (TODO: Improve this. cant see where federal layers end bc they're under the roads e.g USFWS west of Salem)
 	const layers = map.getStyle().layers;
