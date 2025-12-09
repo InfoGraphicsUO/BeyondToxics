@@ -233,8 +233,6 @@ mapbox-search-listbox, mapbox-search-listbox *
     flex-shrink: 0;
     position: relative;
     z-index: 1;
-    overflow-x: hidden;
-    overflow-y: visible;
 }
 
 .sliders_control {
@@ -244,8 +242,8 @@ mapbox-search-listbox, mapbox-search-listbox *
 
 /* noUiSlider Custom Styling */
 #yearSlider {
-    margin: 20px 6px 10px 24px;
-    width: 145px;
+    margin: 20px 6px 10px 14px;
+    width: 166px;
 }
 
 /* noUiSlider target styling */
@@ -268,7 +266,6 @@ mapbox-search-listbox, mapbox-search-listbox *
     height: 18px;
     border-radius: 50%;
     background: #fff;
-    border: 1px solid #C6C6C6;
     box-shadow: none;
     cursor: pointer;
     top: -8px;
@@ -293,10 +290,13 @@ mapbox-search-listbox, mapbox-search-listbox *
 #yearSlider .noUi-tooltip {
     font-size: 12px;
     color: #8a8383;
-    border: 1px solid #8a8383;
+    border: 0;
+    background: transparent;
     padding: 2px 6px;
-    width: 42px;
+    width: auto;
+    min-width: 42px;
     text-align: center;
+    white-space: nowrap;
 }
 
 .method-content-wrapper {
