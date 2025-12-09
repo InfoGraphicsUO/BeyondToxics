@@ -506,7 +506,7 @@ function addSourceAndLayer() {
       "fill-color": getMethodColor(),
       "fill-opacity": 0.5
     },
-    minzoom: 8  // Layer disappears after zoom level 7 - swap with main base layer
+    minzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
   });
 
   // Base stroke (all polygons, colored by method)
@@ -913,7 +913,7 @@ function addSourceAndLayer() {
       "fill-color": getMethodColor(),
       "fill-opacity": 0.5
     },
-    maxzoom: 8  // Layer disappears after zoom level 7 - swap with main base layer
+    maxzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
   });
 
     // add to generalized FERNS points map data
@@ -929,10 +929,10 @@ function addSourceAndLayer() {
     "source-layer": "AllYears_StateSimple_5km_Pnt-3270vk",
     type: "circle",
     paint: {
-      'circle-color': "orange", 
+      'circle-color': getMethodColor(), 
       'circle-radius': 2, 
     },
-    maxzoom: 8  // Layer disappears after zoom level 7 - swap with main base layer
+    maxzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
   });
 
 
@@ -1134,6 +1134,8 @@ function toggleMethodSymbology() {
   
   if (map.getLayer('pesticides-fill_base')) {
     map.setPaintProperty('pesticides-fill_base', 'fill-color', colorExpression);
+    map.setPaintProperty('pesticides-fill_base_generalized', 'fill-color', colorExpression);
+    map.setPaintProperty('pesticides-fill_base_generalized_points', 'circle-color', colorExpression);
   }
   
   if (map.getLayer('pesticides-stroke_base')) {
@@ -1407,10 +1409,13 @@ function updateFilters(showWheel = true) {
   // Apply filter to all polygon layers
   const layersToFilter = [
     'pesticides-fill_base',
+    'pesticides-fill_base_generalized',
+    'pesticides-fill_base_generalized_points',
     'pesticides-stroke_base',
     'pesticides-stroke_selected',
     'pesticides-fill_hover',
-    'pesticides-stroke_hover'
+    'pesticides-stroke_hover',
+
   ];
   
   layersToFilter.forEach(layerId => {
