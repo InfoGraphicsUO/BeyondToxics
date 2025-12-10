@@ -404,7 +404,7 @@ const resetButton = createControlButton('resetExtent', 'Reset Extent', () => {
     essential: true
   });
 });
-resetButton.innerHTML = '<img src="../icons/Expand_Icon_L.svg" alt="Reset view button" height="18px" width="18px">';
+resetButton.innerHTML = '<img src="icons/Expand_Icon_L.svg" alt="Reset view button" height="18px" width="18px">';
 resetExtentGroup.appendChild(resetButton);
 
 // Add controls to container and append to document
