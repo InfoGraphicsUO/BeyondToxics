@@ -396,13 +396,19 @@ navControlGroup.append(zoomInButton, zoomOutButton);
 // Reset Extent Button
 const resetExtentGroup = createControlGroup();
 const resetButton = createControlButton('resetExtent', 'Reset Extent', () => {
-  map.flyTo({
-    center: defaultCenter,
-    zoom: defaultZoom,
-    bearing: 0,
-    pitch: 0,
-    essential: true
+  // map.flyTo({
+  //   center: defaultCenter,
+  //   zoom: defaultZoom,
+  //   bearing: 0,
+  //   pitch: 0,
+  //   essential: true
+  // });
+
+  map.fitBounds(oregonBounds, {
+    duration: 2000, // Animation duration in ms
+    essential: true // Required for accessibility (screen readers, reduced motion)
   });
+
 });
 resetButton.innerHTML = '<img src="icons/Expand_Icon_L.svg" alt="Reset view button" height="18px" width="18px">';
 resetExtentGroup.appendChild(resetButton);
