@@ -7,17 +7,44 @@ console.debug("Is touch device:", isTouchDevice);
 
 // Map Default Extent config
 const bounds = [
-  [-128.2951742043245, 41.27570884209203], // Southwest (lng,lat)
-  [-113.36579758866097, 46.46271965782327] // Northeast (lng,lat)
+  [-128.29517, 41.2757088], // Southwest (lng,lat)
+  [-113.36579, 46.462719] // Northeast (lng,lat)
 ];
+
+const oregonBounds = [
+  [-124.566, 41.85], // Southwest (lng, lat)
+  [-116.463, 47.0]  // Northeast (lng, lat)
+];
+
+// derrive corners for adding points to aid adjustments
+const [sw, ne] = oregonBounds;
+
+const swLng = sw[0];
+const swLat = sw[1];
+const neLng = ne[0];
+const neLat = ne[1];
+
+// Derive other corners
+const nw = [swLng, neLat];  // NW = (SW.lng, NE.lat)
+const se = [neLng, swLat];  // SE = (NE.lng, SW.lat)
+
+// All four corners
+const corners = {
+  sw,
+  nw,
+  ne,
+  se
+};
+
+// set with bounds instead
 // const defaultCenter = [-123.04, 44.944]; // Salem
-const defaultCenter = {lng: -120.35933770135752, lat: 44.40462530519895}
-const defaultZoom = 7;
+// const defaultCenter = {lng: -120.35933770135752, lat: 44.40462530519895}
+// const defaultZoom = 7;
 
 const ACCESS_TOKEN = "pk.eyJ1IjoiaW5mb2dyYXBoaWNzIiwiYSI6ImNqaTR0eHhnODBjeTUzdmx0N3U2dWU5NW8ifQ.fVbTCmIrqILIzv5QGtVJ2Q";
 mapboxgl.accessToken = ACCESS_TOKEN;
 const basemap_style = "mapbox://styles/infographics/cmhl11j9c00h301r6bwbbc6hg";
-const sourceLayer = "FERNS_Simplified-748ocs";
+const sourceLayer = "FERNS"
 
 // Method filter variables
 let selectedMethods = new Set(['Aerial', 'Ground', 'Other', 'No Data']); // All selected by default
@@ -34,9 +61,8 @@ let yearSlider = null;
 const map = new mapboxgl.Map({
   container: "map", // container ID
   style: basemap_style,
-  center: defaultCenter, // starting position [lng, lat]. Note that lat must be set between -90 and 90
   maxBounds: bounds,
-  zoom: defaultZoom, // starting zoom
+  bounds: oregonBounds,
   maxZoom: 16,
   attributionControl: false // disable default attribution to create our own
 }).addControl(
@@ -489,11 +515,11 @@ function getMethodColor() {
 let hoveredPolygonId = null; // Variable to store the currently hovered polygon ID
 window.selectedPolygonId = null; // Variable to store the currently selected polygon ID
 function addSourceAndLayer() {
-  // add defult FERNS-data
+  // add default FERNS-data
   map.addSource("FERNS-tileset", {
     type: "vector",
     // url: "mapbox://infographics.blqieafd" 2022 only
-    url: "mapbox://infographics.38lldpvm"
+    url: "mapbox://infographics.ferns-tileset"
   });
 
   // Base fill (all polygons, semi-transparent)
@@ -506,7 +532,7 @@ function addSourceAndLayer() {
       "fill-color": getMethodColor(),
       "fill-opacity": 0.5
     },
-    minzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
+    // minzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
   });
 
   // Base stroke (all polygons, colored by method)
@@ -903,39 +929,6 @@ function addSourceAndLayer() {
     url: "mapbox://infographics.5yiufya4" // AllYears_StateSimple_5km-2aehi0
   });
 
-  // Base fill (all polygons, semi-transparent)
-  map.addLayer({
-    id: "pesticides-fill_base_generalized",
-    source: "FERNS-tileset_generalized",
-    "source-layer": "AllYears_StateSimple_5km-2aehi0",
-    type: "fill",
-    paint: {
-      "fill-color": getMethodColor(),
-      "fill-opacity": 0.5
-    },
-    maxzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
-  });
-
-    // add to generalized FERNS points map data
-  map.addSource("FERNS-tileset_generalized_points", {
-    type: "vector",
-    url: "mapbox://infographics.1n1d2u5c" // AllYears_StateSimple_5km-2aehi0
-  });
-
-    // Base points (all points)
-  map.addLayer({
-    id: "pesticides-fill_base_generalized_points",
-    source: "FERNS-tileset_generalized_points",
-    "source-layer": "AllYears_StateSimple_5km_Pnt-3270vk",
-    type: "circle",
-    paint: {
-      'circle-color': getMethodColor(), 
-      'circle-radius': 2, 
-    },
-    maxzoom: 8  // Layer disappears after zoom level 8 - swap with main base layer
-  });
-
-
 	// Get the first symbol layer to place new layers beneath it (TODO: Improve this. cant see where federal layers end bc they're under the roads e.g USFWS west of Salem)
 	const layers = map.getStyle().layers;
 	let underLayer;
@@ -1055,6 +1048,14 @@ map.on("style.load", () => {
   updateFilters();
   // Set initial visibility of federal land layers based on checkbox state
   toggleFederalLands();
+
+  // view initial map zoom corners
+//   Object.entries(corners).forEach(([name, coord]) => {
+//     new mapboxgl.Marker({ color: "red" })
+//       .setLngLat(coord)
+//       .setPopup(new mapboxgl.Popup().setText(name.toUpperCase()))
+//       .addTo(map);
+//   });
 });
 
 // Federal Lands Toggle (NPS, USFS, USFWS)
