@@ -66,7 +66,8 @@ function mergeTooltips(slider, threshold, separator) {
                   offset = (textIsRtl && !isVertical ? 100 : 0) + (offset / handlesInPool) - lastOffset;
 
                   // Center this tooltip over the affected handles
-                  tooltips[handleNumber].innerHTML = poolValues[poolIndex].join(separator);
+                  var val = poolValues[poolIndex];
+                  tooltips[handleNumber].innerHTML = (val.length === 2 && val[0] === val[1]) ? val[0] : val.join(separator);
                   tooltips[handleNumber].style.display = 'block';
                   tooltips[handleNumber].style[direction] = offset + '%';
               } else {
