@@ -5,7 +5,13 @@ const lineLayout = {
 
 //blm
 blmFillColor = '#d9c352'  // (darker and more brown than original #eeee9a)
-blmFillOpacity = .5
+blmFillOpacity = [
+      "interpolate",
+      ["linear"],
+      ["zoom"],
+      8, 0.25,     // barely there at zoom 5
+      13, 0.5      // 0.5 transparent at zoom 8
+    ]
 blmLineColor = 'transparent'
 
 //usfs
