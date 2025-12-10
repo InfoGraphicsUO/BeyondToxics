@@ -404,7 +404,7 @@ const resetButton = createControlButton('resetExtent', 'Reset Extent', () => {
     essential: true
   });
 });
-resetButton.innerHTML = '<img src="../icons/Expand_Icon_L.svg" alt="Reset view button" height="18px" width="18px">';
+resetButton.innerHTML = '<img src="icons/Expand_Icon_L.svg" alt="Reset view button" height="18px" width="18px">';
 resetExtentGroup.appendChild(resetButton);
 
 // Add controls to container and append to document
@@ -841,6 +841,22 @@ function addSourceAndLayer() {
     popup.setDOMContent(container).addTo(map);
   });
 
+  // when at full extent zoom closer on click
+  map.on("click", (e) => {
+
+    if (map.getZoom() < 8){
+      const { lng, lat } = e.lngLat;
+      map.flyTo({
+            center: [lng, lat],
+            zoom: 9,       // Target zoom level
+            speed: 1.2,     // Fly speed (default 1.2)
+            curve: 1.42,    // Flight curve (default 1.42)
+            essential: true // This animation is considered essential for accessibility
+      });
+    }
+
+  });
+
   let tooltip; // Hover tooltip
 
   if (!isTouchDevice) {
@@ -1119,6 +1135,8 @@ function toggleMethodSymbology() {
   
   if (map.getLayer('pesticides-fill_base')) {
     map.setPaintProperty('pesticides-fill_base', 'fill-color', colorExpression);
+    map.setPaintProperty('pesticides-fill_base_generalized', 'fill-color', colorExpression);
+    map.setPaintProperty('pesticides-fill_base_generalized_points', 'circle-color', colorExpression);
   }
   
   if (map.getLayer('pesticides-stroke_base')) {
@@ -1392,6 +1410,8 @@ function updateFilters(showWheel = true) {
   // Apply filter to all polygon layers
   const layersToFilter = [
     'pesticides-fill_base',
+    'pesticides-fill_base_generalized',
+    'pesticides-fill_base_generalized_points',
     'pesticides-stroke_base',
     'pesticides-stroke_selected',
     'pesticides-fill_hover',
