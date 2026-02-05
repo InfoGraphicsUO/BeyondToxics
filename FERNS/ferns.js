@@ -662,7 +662,7 @@ function addSourceAndLayer() {
 
       // Details of the selected polygon
       details.innerHTML = `
-        <p><strong>Method of Presticide Application:</strong> ${displayValue(f.Methods)}</p>
+        <p><strong>Method of Pesticide Application:</strong> ${displayValue(f.Methods)}</p>
         <p><strong>Chemicals Applied:</strong> ${displayValue(f.Chemicals)}</p>
         <p><strong>Time Range of Application:</strong> ${formatDate(
           f.StartDate
