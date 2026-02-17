@@ -628,7 +628,7 @@ function addSourceAndLayer() {
     // Container for the entire popup content
     const container = document.createElement("div");
     container.innerHTML = `
-			<label style="margin-bottom: 2px;"><strong>Select Pesticide Permit:</strong></label>
+			<label style="margin-bottom: 2px;"><strong>Select Notification (NOAP):</strong></label>
 			<div id="polygon-selector"></div>
 			<div id="polygon-details"></div>
     `;
@@ -662,15 +662,15 @@ function addSourceAndLayer() {
 
       // Details of the selected polygon
       details.innerHTML = `
-        <p><strong>Method of Pesticide Application:</strong> ${displayValue(f.Methods)}</p>
-        <p><strong>Chemicals Applied:</strong> ${displayValue(f.Chemicals)}</p>
-        <p><strong>Time Range of Application:</strong> ${formatDate(
+        <p><strong>Proposed Method of Pesticide Application:</strong> ${displayValue(f.Methods)}</p>
+        <p><strong>Possible Chemicals:</strong> ${displayValue(f.Chemicals)}</p>
+        <p><strong>Planned Date Range:</strong> ${formatDate(
           f.StartDate
         )} - ${formatDate(f.EndDate)}</p>
         <div id="links">
-            <p><strong>View Original NOAP:</strong><br>
+            <p><strong>View Current Notification:</strong><br>
             <div class="link-group">
-							<a href="${f.PDFLink}" target="_blank">Permit PDF</a>
+							<a href="${f.PDFLink}" target="_blank">NOAP PDF</a>
             </div>
             </p>
         </div>
