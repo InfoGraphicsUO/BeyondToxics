@@ -380,7 +380,7 @@ mapbox-search-listbox, mapbox-search-listbox *
     box-shadow: 0 0 0 2px #0000001a;
     border-radius: 4px;
     flex: 1;
-    min-height: 100px;
+    min-height: 150px;
     overflow: hidden;
     position: relative;
     z-index: 1;
@@ -400,6 +400,8 @@ mapbox-search-listbox, mapbox-search-listbox *
 #chemical-list {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
 }
 
@@ -438,6 +440,7 @@ mapbox-search-listbox, mapbox-search-listbox *
     padding: 10px;
     position: relative;
     z-index: 1;
+    flex-shrink: 0;
 }
 
 .federal-legend-inner {
