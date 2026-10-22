@@ -519,6 +519,38 @@ mapbox-search-listbox, mapbox-search-listbox *
     }
 }
 
+/* compact the right panels on short viewports */
+@media screen and (max-height: 650px) {
+    .right-side-container {
+        padding: 6px 6px 6px 0;
+        gap: 6px;
+    }
+
+    .range_container, .method_container, .chemical_container, .federal-legend {
+        padding: 6px 8px;
+    }
+
+    .right-side-container h1 {
+        font-size: 14px;
+    }
+
+    #yearSlider {
+        margin: 14px 6px 6px 24px;
+    }
+
+    .method-checkboxes label, #chemical-list label {
+        padding: 0;
+    }
+
+    .chemical_container {
+        min-height: 120px;
+    }
+
+    .federal-legend-inner {
+        gap: 2px;
+    }
+}
+
 @media screen and (max-width: 250px) {
     .mapboxgl-ctrl-scale {
         bottom: 30px;
